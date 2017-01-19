@@ -1,0 +1,4 @@
+g++ fit.cpp -o fitter
+g++ -o fitter fit.cpp `root-config --cflags --glibs`
+
+./fitter
