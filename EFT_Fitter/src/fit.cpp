@@ -9,7 +9,6 @@
 #include "fit.h"
 
 
-
 using namespace std;
 
 
@@ -68,43 +67,62 @@ int main(int argc, const char * argv[]) {
 vector <TH1F*> Fitter::initialise(double integral){
     vector<TH1F *> mc_histos;
 
-    std::cout << "Initialising fitter\n";
+    std::cout << "Initialise... \n";
 
    string var_name = "CMS_dilepton_diff/ttbar_mass";
     // string var_name = "CMS_dilepton_diff/t_pT";
 
     stringstream ss;
     
-    double dummy_weights[11] = {   0.00001, 0.0001 ,0.001 ,0.01 ,0.1,1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0   };
+    double CtG_vals[11] = {  -1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0  };
+
     
-    for (int file = 0 ; file < 1; file++){
+    //first extract raw histos
+        string filename_neg2 = "files/EFTNLO_CtGNeg2.root";
+        string filename_pos2 = "files/EFTNLO_CtGPos2.root";
+        string filename_0 = "files/EFTNLO_CtG0.root";
         
-        ss.str("");
-        ss << file;
-        string file_s = ss.str();
+        TFile * f_neg2 = new TFile(filename_neg2.c_str());
+        TFile * f_0 = new TFile(filename_0.c_str());
+        TFile * f_pos2 = new TFile(filename_pos2.c_str());
         
-        //string filename = "files/EFT_tt_rivet_small" + file_s + ".root";
+        TH1F * mc_histo_neg2 = (TH1F*)f_neg2->Get(var_name.c_str());
+        TH1F * mc_histo_0 = (TH1F*)f_0->Get(var_name.c_str());
+        TH1F * mc_histo_pos2 = (TH1F*)f_pos2->Get(var_name.c_str());
 
-        string filename = "Rivet.root";
+        if (!mc_histo_neg2) cout << "mc histo: "<<  filename_neg2  <<" not found" << endl;
+    
+   //make histo of pure CtG contribution
+       TH1F * h_pure_Ctg = (TH1F*)mc_histo_pos2->Clone();
+       h_pure_Ctg->Add(mc_histo_neg2, -1);
+ 
+    
+    TFile * f_basis = new TFile("basis_histos.root", "RECREATE");
+    mc_histo_neg2->SetName("Neg2");
+    mc_histo_neg2->Write();
+    mc_histo_0->SetName("0");
+    mc_histo_0->Write();
+    mc_histo_pos2->SetName("Pos2");
+    mc_histo_pos2->Write();
+    h_pure_Ctg->Write();
+    f_basis->Close();
+    
+    
+    //loop over chosen CtG values and make prediction
+       for (int scale = 0 ; scale < 11; scale++){
+          double CtG = CtG_vals[scale];
+           TH1F * h_CtG_pred = (TH1F*)mc_histo_0->Clone();
+           h_CtG_pred->Add(h_pure_Ctg, CtG/2.0);
+           
+           double scaling = integral/h_CtG_pred->Integral();
+           h_CtG_pred->Scale(scaling);
+           mc_histos.push_back(h_CtG_pred);
 
-        
-        TFile * f = new TFile(filename.c_str());
-        
-        TH1F * mc_histo = (TH1F*)f->Get(var_name.c_str());
+       }
+    
+    
+    
 
-        if (!mc_histo) cout << "mc histo: "<<  filename  <<" not found" << endl;
-        
-        double scale = integral/mc_histo->Integral();
-        
-        
-       // scale = scale * dummy_weights[file];
-        
-        mc_histo->Scale(scale);
-        mc_histos.push_back(mc_histo);
-        
-        std::cout << "MC histo number"<<  file << " has integral " << mc_histo->Integral() ;
-
-}
     
     return mc_histos;
 
@@ -129,35 +147,61 @@ void Fitter::scan_couplings(vector<TH1F *> mc_histos,TH1F * data_histo ){
     
     std::cout << "Scanning couplings with "<<   mc_histos.size() <<" weights \n";
     
-    for (int weight = 0 ; weight < mc_histos.size() ; weight++){
-        if (!mc_histos[weight]) cout << "mc histo not found" << endl;
+    double CtG_vals[11] = {  -1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0  };
 
+    TFile * f_preds = new TFile("pred_histos.root", "RECREATE");
+
+    for (int weight = 0 ; weight < mc_histos.size() ; weight++){
         
+        std::cout << "Looping histos...1 \n";
+
+        if (!mc_histos[weight]) cout << "mc histo not found" << endl;
+        if (!data_histo) cout << "data histo not found" << endl;
+
+
+
         if (data_histo && mc_histos[weight] ){
+            
+            std::cout << "got histos \n";
+            mc_histos[weight]->Write();
+            
 
             mc_histos[weight]->SetLineColor(weight);
             
             if (weight ==0) {
+                std::cout << "first hsto 1 \n";
+
                 mc_histos[weight]->SetStats(kFALSE);
                 mc_histos[weight]->SetYTitle("A.U.");
                 mc_histos[weight]->Draw("HIST");
                 mc_histos[weight]->GetYaxis()->SetRangeUser(0.00001, 0.01);
 
-                
+                std::cout << "first hsto N\n";
+
             }else {
             
                 mc_histos[weight]->Draw("HISTSAME");
             }
+            std::cout << "gcalculating chi2t ....\n";
+
             
-            double chi2 = data_histo->Chi2Test(mc_histos[weight],"WUCHI2/NDOF");
-            std::cout << "Weight = "<< weight <<"  chi2 = "<< chi2 << "\n";
+            double chi2 = data_histo->Chi2Test(mc_histos[weight],"WWCHI2/NDOF");
+            std::cout << "Weight = "<< weight <<" CtG "<<  CtG_vals[weight]  <<"  chi2 = "<< chi2 << "\n";
             std::cout << "Weight = "<< "\n";
             double weight_d = (weight/5.0) * 2.5  ;
-            g->SetPoint(weight, weight_d, chi2);
+            g->SetPoint(weight, CtG_vals[weight], chi2);
+            std::cout << "gsetting point ....\n";
+
             
         }
         
+        
     }
+    
+    f_preds->Close();
+    
+     cout << "DRAWING" << endl;
+
     
     if (data_histo) {
         data_histo->SetMarkerSize(1.0);
@@ -165,6 +209,8 @@ void Fitter::scan_couplings(vector<TH1F *> mc_histos,TH1F * data_histo ){
         data_histo->Draw("psame");
     }
 
+    
+    
     
     TLegend *leg = new TLegend(0.5,0.6,0.8,0.8);
     //leg->SetTextFont(65);
@@ -198,7 +244,7 @@ void Fitter::scan_couplings(vector<TH1F *> mc_histos,TH1F * data_histo ){
     mc_temp->SetMarkerStyle(21);
     mc_temp->SetMarkerColor(histo);
     mc_temp->SetLineColor(histo);
-    mc_temp->GetYaxis()->SetRangeUser(0.0, 5.0);
+    mc_temp->GetYaxis()->SetRangeUser(-0.0, 5.0);
     mc_temp->GetYaxis()->SetLabelSize(0.1);
     mc_temp->GetXaxis()->SetLabelSize(0.1);
     mc_temp->GetXaxis()->SetTitleSize(0.16);
@@ -227,8 +273,10 @@ void Fitter::scan_couplings(vector<TH1F *> mc_histos,TH1F * data_histo ){
     TCanvas * c1 = new TCanvas();
    // g->SetMinimum(0.002);
    // g->SetMaximum(0.0026);
-    g->GetHistogram()->GetXaxis()->SetTitle("OtG");
+    g->GetHistogram()->GetXaxis()->SetTitle("CtG");
     g->GetHistogram()->GetYaxis()->SetTitle("#chi^{2} (DATA-THEORY)");
+    g->GetHistogram()->GetXaxis()->SetRangeUser(-5.0, 5.0);
+
 
     g->Draw("PAC");
     c1->SetLogy();
