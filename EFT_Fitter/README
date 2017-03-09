@@ -1,4 +1,2 @@
-g++ fit.cpp -o fitter
-g++ -o fitter fit.cpp `root-config --cflags --glibs`
-
-./fitter
+g++ -o bin/fitter src/fit.cpp `root-config --cflags --glibs`
+./bin/fitter
