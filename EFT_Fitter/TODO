@@ -1,0 +1,11 @@
+1. Add binning arrays for different observables
+
+2. Generalise methods so that any obervable can be set as input
+
+3. Change to proper Chi2 and/or LL calculation
+
+4. Add 68% CL on scan plot
+
+5. Master chi2 scan plot show constraints from different obseravbles, abs. vs. norm.
+
+
