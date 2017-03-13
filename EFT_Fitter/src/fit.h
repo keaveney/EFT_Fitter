@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string.h>
 #include "TH1F.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
@@ -23,8 +24,8 @@ class Fitter {
         Fitter(string, string);
         void run_extraction(int, float bins[], std::string, std::string, bool, std::string);
         std::pair <TH1F*, vector<TH1F *>> initialise(std::string, std::string, int, float bins[], bool, std::string);
-        void scan_couplings(std::pair <TH1F*, vector<TH1F *>> );
-
+    void scan_couplings(std::string, std::pair <TH1F*, vector<TH1F *>> );
+    void make_summary_plot(vector <TGraphErrors*>);
 
     private:
         double calculate_test_statistic(TH1F*, TH1F*);
@@ -33,3 +34,6 @@ class Fitter {
 
 
 Fitter* f_EFT;
+
+vector <TGraphErrors*> scans;
+vector <std::string> obs_names;

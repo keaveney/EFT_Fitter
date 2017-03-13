@@ -27,7 +27,6 @@
 
 
 
-
 using namespace std;
 
 TH1F * h;
