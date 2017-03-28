@@ -7,217 +7,118 @@
 //
 
 #include "fit.h"
-
-
 using namespace std;
 
-
 int main(int argc, const char * argv[]){
+    
+f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
-    float bins_mtt[] = { 0.0, 380.0, 470.0, 620.0, 820.0, 1100.0, 1600.0 };
-    float bins_ptt[] = { 0.0, 65.0, 125.0, 200.0, 290.0, 400.0, 545.0 };
-    float bins_pttt[] = { 0.0, 30.0, 80.0, 170.0, 300.0, 500.0 };
-    float bins_ytt[] = { -2.5, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.5};
-    float bins_yt[] = { -2.5, -1.6, -1.0, -0.5, 0.0, 0.5, 1.0, 1.6, 2.5};
-
-    f_EFT->run_extraction( 6, bins_mtt, "files/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_mass", true, "data" );
-    f_EFT->run_extraction( 6, bins_ptt, "files/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", true, "data" );
-    f_EFT->run_extraction( 5, bins_pttt, "files/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", true, "data" );
-    f_EFT->run_extraction( 8, bins_ytt, "files/DiffXS_HypTTBarRapidity_source.root", "CMS_dilepton_diff/ttbar_y", true, "data" );
-    f_EFT->run_extraction( 8, bins_yt, "files/DiffXS_HypTopRapidity_source.root", "CMS_dilepton_diff/t_y", true, "data" );
-
-    f_EFT->make_summary_plot(scans);
+    
+std::string mode = "norm_fid";
+    
+    
+    if (mode == "abs_only"){
+f_EFT->run_extraction(6,bins_mtt,"data_staterror_only","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false);
+f_EFT->run_extraction(6,bins_ptt,"data","files/Abs/DiffXS_HypToppT_source.root","CMS_dilepton_diff/t_pT",mode,false );
+f_EFT->run_extraction(5,bins_pttt,"data_staterror_only","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false);
+f_EFT->run_extraction(8,bins_ytt,"data_staterror_only","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false);
+f_EFT->run_extraction(8,bins_yt,"data_staterror_only","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false);
+    }
+    else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
+f_EFT->run_extraction( 6, bins_mtt,"data", "files/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_mass", mode, false );
+f_EFT->run_extraction( 6, bins_ptt, "data","files/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false  );
+f_EFT->run_extraction( 5, bins_pttt,"data", "files/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false );
+f_EFT->run_extraction( 8, bins_ytt,"data", "files/Norm/DiffXS_HypTTBarRapidity_source.root", "CMS_dilepton_diff/ttbar_y",mode, false );
+f_EFT->run_extraction( 8, bins_yt, "data","files/Norm/DiffXS_HypTopRapidity_source.root", "CMS_dilepton_diff/t_y", mode, false );
+    }
+    
+    
+    
+f_EFT->make_summary_plot(scans);
     
     return 0;
 }
 
-void Fitter::run_extraction(int nbins, float bins[], std::string filename_data,std::string histoname_pred, bool norm, std::string mode){
+void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data, std::string filename_data,std::string histoname_pred, std::string mode, bool closure_test){
     
-    //First prepare histos
-    pair<TH1F*, vector<TH1F *>>  histos  = f_EFT->initialise(filename_data, histoname_pred, nbins, bins, norm, mode);
-    
-    if(debug)    cout << "Histos prepared\n";
-
-    //Second run scan over predictions
-    f_EFT->scan_couplings(histoname_pred, histos) ;
+     pair<TH1F*, vector<TH1F *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test);
+    f_EFT->scan_couplings(histoname_pred, histos ,mode) ;
 }
 
 
-std::pair <TH1F*, vector<TH1F *>> Fitter::initialise(std::string filename_data, std::string histoname_pred, int nbins, float bins[], bool norm, string mode){
-   
-    TH1F* data_histo;
-    double running_total = 0.0;
-
-    if (mode == "closuretest"){
-        
-        TFile* f_data = new TFile("files/EFT_tt_rivet_small4.root");
-        data_histo = (TH1F*)f_data->Get("CMS_dilepton_diff/ttbar_mass");
-        if(debug)    cout << "Closure test\n";
-        
-    }else if (mode == "data"){
-        if(debug)    cout << "data mode\n";
-        if(debug)    cout << "Extracting data graph from " <<  filename_data.c_str()    <<"\n";
-
-        TFile *f_data = new TFile(filename_data.c_str());
-        TGraphAsymmErrors* g_data = (TGraphAsymmErrors*) f_data->Get("data");
-        
-        data_histo = new TH1F("n","t", nbins, bins);
-        double bin_centre, bin_height;
-
-        for (int point = 0; point <= nbins; point ++){
-            if(debug)    cout << "looping on graph points, "<<  " running_total " << running_total  <<"\n";
-            g_data->GetPoint(point, bin_centre, bin_height);
-            data_histo->SetBinContent(point+1, bin_height);
-            double bin_error = g_data->GetErrorYhigh(point);
-            data_histo->SetBinError(point+1, bin_error);
-            running_total = running_total + bin_height;
-            }
-        }
-    
-        if(debug)    cout << "Running total for data histo  =" <<  running_total  <<"\n";
-    
-        //first extract raw histos to make basis histos
-        string filename_neg2 = "files/EFTNLO_CtGNeg2.root";
-        string filename_pos2 = "files/EFTNLO_CtGPos2.root";
-        string filename_0 = "files/EFTNLO_CtG0.root";
-        
-        TFile * f_neg2 = new TFile(filename_neg2.c_str());
-        TFile * f_0 = new TFile(filename_0.c_str());
-        TFile * f_pos2 = new TFile(filename_pos2.c_str());
-        
-        TH1F * mc_histo_neg2 = (TH1F*)f_neg2->Get(histoname_pred.c_str());
-        TH1F * mc_histo_0 = (TH1F*)f_0->Get(histoname_pred.c_str());
-        TH1F * mc_histo_pos2 = (TH1F*)f_pos2->Get(histoname_pred.c_str());
-
-        if (!mc_histo_neg2) cout << "mc histo: "<<  filename_neg2  <<" not found" << endl;
-    
-        //make histo of pure CtG contribution
-        TH1F * h_pure_Ctg = (TH1F*)mc_histo_pos2->Clone();
-        h_pure_Ctg->Add(mc_histo_neg2, -1);
- 
-    
-      //  std::string basis_name = "basis_histos/" + histoname_pred + "_basis.root";
-       // TFile * f_basis = new TFile(basis_name.c_str(), "RECREATE");
-       // mc_histo_neg2->SetName("Neg2");
-      //  mc_histo_neg2->Write();
-      //  mc_histo_0->SetName("0");
-      //  mc_histo_0->Write();
-      //  mc_histo_pos2->SetName("Pos2");
-      //  mc_histo_pos2->Write();
-      //  h_pure_Ctg->Write();
-      //  f_basis->Close();
-      //  f_neg2->Close();
-      //  f_pos2->Close();
-      //  f_0->Close();
-
-    
-        double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
-        double scaling =1.0, CtG;
-        vector<TH1F *> mc_histos;
-        TH1F * h_CtG_pred;
-    
-        //loop over chosen CtG values and make prediction histos
-        for (int scale = 0 ; scale < 11; scale++){
-            CtG = CtG_vals[scale];
-            h_CtG_pred = (TH1F*)mc_histo_0->Clone();
-            h_CtG_pred->Add(h_pure_Ctg, CtG/2.0);
-            
-            for (int bin = 1 ; bin <= nbins; bin++){
-                double bin_width = bins[bin] - bins[bin-1];
-                double bin_xsec  = h_CtG_pred->GetBinContent(bin) / bin_width;
-                h_CtG_pred->SetBinContent(bin, bin_xsec);
-            }
-            
-            scaling = running_total/h_CtG_pred->Integral();
-            if(norm) h_CtG_pred->Scale(scaling);
-            mc_histos.push_back(h_CtG_pred);
-       }
-
-        std::pair <TH1F*, vector<TH1F *>> histos;
-        histos = std::make_pair (data_histo, mc_histos);
-
-        return histos;
-}
-
-
-
-void Fitter::scan_couplings(std::string var_name,  std::pair <TH1F*, vector<TH1F *>> histos){
+void Fitter::scan_couplings(std::string var_name,std::pair <TH1F*, vector<TH1F *>> histos, std::string mode){
 
     if (debug) cout << "Fitter::scan_couplings" << endl;
 
-    if (!histos.first) cout << "data histo not found" << endl;
+    if (!  histos.first) cout << "data histo not found" << endl;
 
     TGraphErrors * g = new TGraphErrors();
     TCanvas * c_compare_dists = new TCanvas();
-    TPad *pad1 = new TPad("pad1","pad1",0,0.3,1,1);
+    TPad *pad1 = new TPad("pad1","pad1",0,0.45,1,1);
     pad1->SetBottomMargin(0);
     pad1->Draw();
     pad1->cd();
     
-double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
+    double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 
-    for (int weight = 0 ; weight < histos.second.size() ; weight++){
-
-        if (!histos.second[weight]) cout << "mc histo not found" << endl;
-        if (!histos.first) cout << "data histo not found" << endl;
-
-        if (histos.first && histos.second[weight] ){
-           // histos.second[weight]->Write();
-            histos.second[weight]->SetLineColor(weight);
-            
+    for (int weight = 0 ; weight < histos.second.size(); weight++){
+        if (  histos.first && histos.second[weight] ){
+              histos.second[weight]->SetLineColor(weight);
             if (weight ==0) {
-
-                histos.second[weight]->SetStats(kFALSE);
-                histos.second[weight]->SetYTitle("#frac{1}{#sigma} \; #frac{#delta(#sigma_tt)}{#delta(x)}");
-
-                histos.second[weight]->Draw("HIST");
-                histos.second[weight]->GetYaxis()->SetRangeUser(0.00001, 1.0);
-
+                  histos.second[weight]->SetStats(kFALSE);
+                  histos.second[weight]->SetYTitle("#frac{1}{#sigma} \; #frac{#delta(#sigma_tt)}{#delta(x)}");
+                  histos.second[weight]->Draw("HIST");
+                  histos.second[weight]->GetYaxis()->SetRangeUser(0.0001, 50.0);
             }else {
-            
-                histos.second[weight]->Draw("HISTSAME");
+                  histos.second[weight]->Draw("HISTSAME");
             }
-        
-            //Standard chi2 calculation from ROOT
-            //double chi2 = histos.first->Chi2Test(histos.second[weight],"WWCHI2/NDOF");
-            double chi2 = this->calculate_test_statistic(histos.first,histos.second[weight]);
-            double weight_d = (weight/5.0) * 2.5  ;
-            g->SetPoint(weight, CtG_vals[weight], chi2);
+            double chi2 = -1.0;
+            
+            if (mode=="norm_only" || mode=="abs_only") {
+                chi2 = this->calculate_test_statistic(  histos.first,  histos.second[weight]);
+            }
+            else if(mode=="norm_fid"){
+              chi2 = (this->calculate_test_statistic(  histos.first,  histos.second[weight]) + this->calculate_test_statistic(dummy_fiducial_data,mc_histos_fiducial[weight])   );
+            }
+           g->SetPoint(weight, CtG_vals[weight], chi2);
         }
     }
     
-    if (histos.first) {
-        histos.first->SetMarkerSize(1.0);
-        histos.first->SetMarkerStyle(22);
-        histos.first->SetFillColor(kBlue);
-        histos.first->SetFillStyle(3005);
-        histos.first->Draw("E2psame");
+    if (  histos.first) {
+          histos.first->SetMarkerSize(1.0);
+          histos.first->SetMarkerStyle(22);
+          histos.first->SetFillColor(kRed);
+          histos.first->SetFillStyle(3005);
+          histos.first->Draw("E2psame");
     }
     
     TLegend *leg = new TLegend(0.5,0.6,0.8,0.8);
     //leg->SetTextFont(65);
-    leg->AddEntry( histos.first ,"DATA","E1p");
-    leg->AddEntry( histos.second[1] ,"EFT predictions","fl");
+    leg->AddEntry(   histos.first ,"DATA","E2p");
+    leg->AddEntry(   histos.second[1] ,"EFT predictions","fl");
     leg->Draw();
     
     c_compare_dists->cd();
-    TPad *pad2 = new TPad("pad2","pad2",0,0.05,1,0.3);
+    TPad *pad2 = new TPad("pad2","pad2",0,0.05,1,0.45);
     pad2->SetTopMargin(0);
     pad2->Draw();
     pad2->cd();
     pad2->SetBottomMargin(0.3);
     pad2->SetTopMargin(0.0);
     
-    for (int histo = 0; histo < histos.second.size(); histo++){
+    if (debug) cout << "Fitter::scan_couplings::making ratio plot" << endl;
 
-    TH1F* mc_temp = (TH1F*)histos.second[histo]->Clone("");
+    for (int histo = 0; histo <   histos.second.size(); histo++){
+        if (debug) cout << "Fitter::scan_couplings::making ratio plot, looping" << endl;
+
+    TH1F* mc_temp = (TH1F*)  histos.second[histo]->Clone();
     mc_temp->Sumw2();
     mc_temp->SetStats(0);
     mc_temp->Divide(histos.first);
     mc_temp->SetMarkerStyle(21);
     mc_temp->SetMarkerColor(histo);
     mc_temp->SetLineColor(histo);
-    mc_temp->GetYaxis()->SetRangeUser(0.3, 1.7);
+    mc_temp->GetYaxis()->SetRangeUser(0.3, 2.5);
     mc_temp->GetYaxis()->SetLabelSize(0.1);
     mc_temp->GetXaxis()->SetLabelSize(0.1);
     mc_temp->GetXaxis()->SetTitleSize(0.16);
@@ -238,13 +139,12 @@ double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
         }
         
         std::string xtitle =seglist[1] + "  (GeV)";
-        
-    mc_temp->SetXTitle(xtitle.c_str());
+        mc_temp->SetXTitle(xtitle.c_str());
 
         if(histo == 0){
-            mc_temp->Draw("HIST");
+            mc_temp->Draw("E1p");
         }else{
-            mc_temp->Draw("HISTSAME");
+            mc_temp->Draw("E1pSAME");
         }
     }
     
@@ -275,7 +175,6 @@ double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
     g->GetHistogram()->GetYaxis()->SetTitle("#chi^{2} (DATA-THEORY)");
     g->GetHistogram()->GetXaxis()->SetRangeUser(-5.0, 5.0);
 
-
     g->Draw("PAC");
     scans.push_back(g);
     obs_names.push_back(seglist[1]);
@@ -286,23 +185,19 @@ double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
     
     std::string scan_rootfile_name = "scan_" +  seglist[1]  + ".root";
     TFile * f_out = new TFile(scan_rootfile_name.c_str(), "RECREATE");
-    histos.first->Write();
-    for ( int histo = 0; histo < histos.second.size(); histo++){
-        histos.second[histo]->Write();
+      histos.first->Write();
+    for ( int histo = 0; histo <   histos.second.size(); histo++){
+          histos.second[histo]->Write();
     }
     c1->Write();
     c_compare_dists->Write();
     f_out->Close();
     
-    
+    return;
 }
 
 
 double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred){
-
-    std::cout << "\n";
-    std::cout << "\n";
-    std::cout << "Fitter::calculate_test_statistic \n";
     
     double test_statistic = 0.0;
     int nbins  = data->GetSize() - 2;
@@ -317,20 +212,18 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred){
     deltas.clear();
     errors.clear();
     
-    for (int i=1;i<=nbins; i++){
+    for (int i=1;i<=  data->GetSize() -2   ; i++){
         double data_bin = data->GetBinContent(i);
         double pred_bin = pred->GetBinContent(i);
         double delta = data_bin - pred_bin;
         deltas.push_back(delta);
         
         if (data_errors_only){
-std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  "  running chi2 =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
-
+      //  std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  "  running chi2 =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
             errors.push_back(data->GetBinError(i));
         }else{
         //implmement quadrature addition of data and pred errors
             errors.push_back(data->GetBinError(i));
-
         }
     }
     
@@ -343,33 +236,27 @@ std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin 
             }
             else {
                 if(i == j){
-       // std::cout << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
+       //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
                     double delta_sq = deltas[i-1]*deltas[i-1];
-                    double chi2_bin = delta_sq/errors[i-1];
+                    //double chi2_bin = delta_sq/errors[i-1];
+                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
                     chisq += chi2_bin;
                 }
             }
         }
     }
-    
-    std::cout <<" chi2 = "<< chisq << "\n";
+   if(debug) std::cout <<" chi2 = "<< chisq << "\n";
     return chisq;
-    
-    
 }
-
-
 
 
 void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     
-    std::cout <<" make_summary_plot "<< "\n";
-    
+   if(debug) std::cout <<" make_summary_plot "<< "\n";
     TFile * all_scans = new TFile("all_scans.root", "RECREATE");
 
     double x, y, min_y;
     min_y = 99999999.9;
-    
     vector <double> min_vals;
     min_vals.clear();
     
@@ -378,67 +265,70 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     //first find min chi2 of each var for sensitivity comparison
     for (int scan = 0; scan< scans.size(); scan ++){
         
-        //int n = scans[scan]->GetN(); //get ploted array dimention
+        //int n = scans[scan]->GetN(); //get ploted array dimension
         min_y = 99999999.9;
 
         for(Int_t i=0; i< scans[scan]->GetN(); i++) {
             scans[scan]->GetPoint(i,x,y);
             if (y < min_y) min_y = y;
-            std::cout <<" points   = = "<< y <<"\n";
+           // std::cout <<" points   = = "<< y <<"\n";
         }
-        std::cout <<" "<<"\n";
-        std::cout <<" found min chi2,  var  "<< scan <<"  " <<min_y<<"\n";
-        std::cout <<" "<<"\n";
+        //std::cout <<" "<<"\n";
+        //std::cout <<" found min chi2,  var  "<< scan <<"  " <<min_y<<"\n";
+        //std::cout <<" "<<"\n";
 
-        
         min_vals.push_back(min_y);
     }
-
     
-    std::cout <<" found min chi2 "<< "\n";
 
-    
     for (int scan = 0; scan< scans.size(); scan ++){
         TGraphErrors * gr_rel = new TGraphErrors();
         for(Int_t i=0; i < scans[scan]->GetN(); i++) {
             scans[scan]->GetPoint(i,x,y);
-            double rel_y  = y / min_vals[scan];
+            double rel_y  = y - min_vals[scan];
             gr_rel->SetPoint(i,x,rel_y);
+        
+    //        std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
         }
         rel_scans.push_back(gr_rel);
-
     }
     
-    
-    std::cout <<" make vec of min chi2 "<< "\n";
 
-        TCanvas * all_relscans_c = new TCanvas();
+    TCanvas * all_relscans_c = new TCanvas();
     TLegend *leg_rel = new TLegend(0.5,0.6,0.8,0.8);
     
     for (int scan = 0; scan< rel_scans.size(); scan ++){
         rel_scans[scan]->SetLineColor(scan+1);
         rel_scans[scan]->SetLineWidth(2);
-    
+        rel_scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(0.0, 80.0);
+
         if (scan ==0){
             rel_scans[scan]->Draw("AC");
         }else{
             rel_scans[scan]->Draw("C");
         }
         leg_rel->AddEntry( rel_scans[scan], obs_names[scan].c_str(),"l");
-
-    
     }
     leg_rel->Draw();
     
-    std::cout <<" all relscans drawn "<< "\n";
-    all_relscans_c->SaveAs("all_relscans.pdf");
-    
+    //all_relscans_c->SetLogy();
 
+    TLine *line_lower = new TLine(-0.42,0,-0.42,0.10);
+    TLine *line_upper = new TLine(0.3,0,0.3,0.10);
+    line_lower->SetLineColor(kGreen);
+    line_upper->SetLineColor(kGreen);
+    line_lower->SetLineStyle(4);
+    line_upper->SetLineStyle(4);
+    line_lower->SetLineWidth(3);
+    line_upper->SetLineWidth(3);
+    line_lower->Draw();
+    line_upper->Draw();
     
-    
+    all_relscans_c->SaveAs("all_relscans.pdf");
     TCanvas * allscans_c = new TCanvas();
     TLegend *leg = new TLegend(0.5,0.6,0.8,0.8);
 
+    scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(100, 20000.0);
 
     for (int scan = 0; scan< scans.size(); scan ++){
         scans[scan]->SetLineColor(scan+1);
@@ -452,19 +342,11 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
             leg->AddEntry( scans[scan], obs_names[scan].c_str(),"l");
             }
     
-    scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(0.0001, 1.0);
-
-    
     leg->Draw();
-    allscans_c->SetLogy();
-
+    //allscans_c->SetLogy();
     allscans_c->SaveAs("all_scans.pdf");
-    
     allscans_c->Write();
     all_relscans_c->Write();
-
     all_scans->Close();
     
 }
-
-
