@@ -85,7 +85,7 @@ std::pair <TH1F*, vector<TH1F *>> Fitter::initialise(std::string graphname_data,
     double running_total = 0.0;
     TH1F * h_CtG_pred;
     TH1F * h_CtG_pred_fiducial;
-    double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
+    double CtG_vals[11] = {-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0};
     double scaling =1.0, CtG;
     
     if (closure_test){
@@ -116,10 +116,10 @@ std::pair <TH1F*, vector<TH1F *>> Fitter::initialise(std::string graphname_data,
     }
     
     if(debug)    cout << "Running total for data histo  =" <<  running_total  <<"\n";
-    
-    string filename_neg2 = "files/nom_ctg-2.root";
-    string filename_pos2 = "files/nom_ctg2.root";
-    string filename_0 = "files/nom_ctg0.root";
+
+    string filename_neg2 = "files/CTG_-2_nominal_2M.root";
+    string filename_pos2 = "files/CTG_2_nominal_2M.root";
+    string filename_0 = "files/CTG_0_nominal_2M.root";
     
     TFile * f_neg2 = new TFile(filename_neg2.c_str());
     TFile * f_0 = new TFile(filename_0.c_str());

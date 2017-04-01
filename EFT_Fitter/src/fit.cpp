@@ -14,17 +14,19 @@ int main(int argc, const char * argv[]){
 f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
     
-std::string mode = "norm_fid";
+std::string mode = "abs_only";
     
     
     if (mode == "abs_only"){
-f_EFT->run_extraction(6,bins_mtt,"data_staterror_only","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false);
+f_EFT->run_extraction(6,bins_mtt,"data","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false);
 f_EFT->run_extraction(6,bins_ptt,"data","files/Abs/DiffXS_HypToppT_source.root","CMS_dilepton_diff/t_pT",mode,false );
-f_EFT->run_extraction(5,bins_pttt,"data_staterror_only","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false);
-f_EFT->run_extraction(8,bins_ytt,"data_staterror_only","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false);
-f_EFT->run_extraction(8,bins_yt,"data_staterror_only","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false);
+f_EFT->run_extraction(5,bins_pttt,"data","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false);
+f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false);
+f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
+//f_EFT->run_extraction( 6, bins_mtt,"data", "files/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_delphi", mode, false );
+//f_EFT->run_extraction( 6, bins_mtt,"data", "files/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ll_delphi", mode, false );
 f_EFT->run_extraction( 6, bins_mtt,"data", "files/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_mass", mode, false );
 f_EFT->run_extraction( 6, bins_ptt, "data","files/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false  );
 f_EFT->run_extraction( 5, bins_pttt,"data", "files/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false );
@@ -59,7 +61,7 @@ void Fitter::scan_couplings(std::string var_name,std::pair <TH1F*, vector<TH1F *
     pad1->Draw();
     pad1->cd();
     
-    double CtG_vals[11] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
+    double CtG_vals[11] = {-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0};
 
     for (int weight = 0 ; weight < histos.second.size(); weight++){
         if (  histos.first && histos.second[weight] ){
@@ -239,7 +241,9 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred){
        //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
                     double delta_sq = deltas[i-1]*deltas[i-1];
                     //double chi2_bin = delta_sq/errors[i-1];
-                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+//                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+                    double chi2_bin = delta_sq/(0.1* errors[i-1]*errors[i-1]);
+
                     chisq += chi2_bin;
                 }
             }
