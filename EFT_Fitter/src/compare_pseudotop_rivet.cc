@@ -17,26 +17,28 @@ int main(int argc, const char * argv[]) {
 
     std::cout <<"comparing histos "<< std::endl;
     
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoToppT", "test_wXtraVars.root", "CMS_dilepton_diff/t_pT");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarMass", "test_wXtraVars.root", "CMS_dilepton_diff/ttbar_mass");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarRapidity", "test_wXtraVars.root", "CMS_dilepton_diff/ttbar_y");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarpT", "test_wXtraVars.root", "CMS_dilepton_diff/ttbar_pT");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTopRapidity", "test_wXtraVars.root", "CMS_dilepton_diff/t_y");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoToppT", "files/test_2M.root", "CMS_dilepton_diff/t_pT");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarMass", "files/test_2M.root", "CMS_dilepton_diff/ttbar_mass");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarRapidity", "files/test_2M.root", "CMS_dilepton_diff/ttbar_y");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarpT", "files/test_2M.root", "CMS_dilepton_diff/ttbar_pT");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTopRapidity", "files/test_2M.root", "CMS_dilepton_diff/t_y");
 
     
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenToppT", "test.root", "CMS_dilepton_diff/t_pT_parton");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarMass", "test.root", "CMS_dilepton_diff/ttbar_mass_parton");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarRapidity", "test.root", "CMS_dilepton_diff/ttbar_y_parton");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarpT", "test.root", "CMS_dilepton_diff/ttbar_pT_parton");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTopRapidity", "test.root", "CMS_dilepton_diff/t_y_parton");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenToppT", "files/test_2M.root", "CMS_dilepton_diff/t_pT_parton");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarMass", "files/test_2M.root", "CMS_dilepton_diff/ttbar_mass_parton");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarRapidity", "files/test_2M.root", "CMS_dilepton_diff/ttbar_y_parton");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTTBarpT", "files/test_2M.root", "CMS_dilepton_diff/ttbar_pT_parton");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenTopRapidity", "files/test_2M.root", "CMS_dilepton_diff/t_y_parton");
     
     
 
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLLBarDPhi", "test_wXtraVars.root", "CMS_dilepton_diff/ll_delphi");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLLBarMass", "test_wXtraVars.root", "CMS_dilepton_diff/ll_mass");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLeptonpT", "test_wXtraVars.root", "CMS_dilepton_diff/l_pT");
-  //  makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","HypjetMulti", "test_wXtraVars.root", "CMS_dilepton_diff/Njets");
-    makeComparisonPlots("emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarDeltaPhi", "test_wXtraVars.root", "CMS_dilepton_diff/ttbar_delphi");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLLBarDPhi", "files/test_2M.root", "CMS_dilepton_diff/ll_delphi_abs");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLLBarMass", "files/test_2M.root", "CMS_dilepton_diff/ll_mass");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoLeptonpT", "files/test_2M.root", "CMS_dilepton_diff/l_pT");
+  //  makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","HypjetMulti", "files/test_2M.root", "CMS_dilepton_diff/Njets");
+    makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisPseudoTTBarDeltaPhi", "files/test_2M.root", "CMS_dilepton_diff/ttbar_delphi_abs");
+
+        makeComparisonPlots("files/emu_ttbarsignalplustau_1M_noALLfilters.root","VisGenLeptonBjetMass", "files/test_2M.root", "CMS_dilepton_diff/lb_mass");
     
     
 }
@@ -76,8 +78,8 @@ void makeComparisonPlots(string pt_filename, string pt_plotname, string rivet_fi
     }else if (pt_plotname == "VisPseudoTTBarMass" ||  pt_plotname == "VisGenTTBarMass" ){
         std::cout <<"Making comparison of  "<< pt_plotname <<std::endl;
 
-        double edges_mass[7] = { 0.0, 380.0, 470.0, 620.0, 820.0, 1100.0, 1600.00 };
-        hnew = (TH1F*)pseudotop_histo->Rebin(6,"hnew",edges_mass);
+        double edges_mass[8] = { 300.00, 380.0,  470.0, 620.0,  820.0,  1100.0,  1550.0, 2500.0};
+        hnew = (TH1F*)pseudotop_histo->Rebin(7,"hnew",edges_mass);
         hnew->SetTitle("");
         hnew->SetXTitle("M_{tt}");
         hnew->SetYTitle("A.U.");
@@ -111,8 +113,10 @@ void makeComparisonPlots(string pt_filename, string pt_plotname, string rivet_fi
 
     }else if (pt_plotname == "VisPseudoLLBarDPhi"){
         std::cout <<"Making comparison of  "<< pt_plotname <<std::endl;
-double edges_lldphi[16] = { -3.14, -2.722, -2.304, -1.886,-1.486,-1.05, -0.632, -0.214, 0.204,0.622, 1.04, 1.458, 1.876, 2.294, 2.712 , 3.14};
-        hnew = (TH1F*)pseudotop_histo->Rebin(15,"hnew",edges_lldphi);
+//double edges_lldphi[16] = { -3.14, -2.722, -2.304, -1.886,-1.486,-1.05, -0.632, -0.214, 0.204,0.622, 1.04, 1.458, 1.876, 2.294, 2.712 , 3.14};
+        
+        double edges_lldphi[21] = {0.0, 0.16, 0.32, 0.48, 0.64, 0.80, 0.96, 1.12, 1.28, 1.44, 1.60, 1.76, 1.92, 2.08, 2.24, 2.40, 2.56, 2.72, 2.88, 3.04, 3.20};
+       hnew = (TH1F*)pseudotop_histo->Rebin(20,"hnew",edges_lldphi);
         hnew->SetTitle("");
         hnew->SetXTitle("DelPhi_{ll}");
         hnew->SetYTitle("A.U.");
@@ -137,7 +141,7 @@ double edges_lldphi[16] = { -3.14, -2.722, -2.304, -1.886,-1.486,-1.05, -0.632, 
         
     }  else if (pt_plotname == "VisPseudoLeptonpT"){
         std::cout <<"Making comparison of  "<< pt_plotname <<std::endl;
-        double edges_lpt[16] = {0.0,20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0, 180.0, 200.0, 220.0, 240.0, 260.0, 280.0, 300.0};
+        double edges_lpt[31] = {0.0,10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0,160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0};
         hnew = (TH1F*)pseudotop_histo->Rebin(15,"hnew",edges_lpt);
         hnew->SetTitle("");
         hnew->SetXTitle("pT_l");
@@ -145,10 +149,21 @@ double edges_lldphi[16] = { -3.14, -2.722, -2.304, -1.886,-1.486,-1.05, -0.632, 
         
     }else if (pt_plotname == "VisPseudoTTBarDeltaPhi"){
         std::cout <<"Making comparison of  "<< pt_plotname <<std::endl;
-        double edges_lldelphi[16] = {0.0, 0.3925 , 0.785, 1.1775, 1.57, 1.9625, 2.355, 2.7475, 3.14  };
-        hnew = (TH1F*)pseudotop_histo->Rebin(8,"hnew",edges_lldelphi);
+        //double edges_ttdelphi[9] = {0.0, 0.3925 , 0.785, 1.1775, 1.57, 1.9625, 2.355, 2.7475, 3.14  };
+        double edges_ttdelphi[5] = {0.0, 1.89,2.77, 3.05, 3.15 };
+        hnew = (TH1F*)pseudotop_histo->Rebin(4,"hnew",edges_ttdelphi);
         hnew->SetTitle("");
         hnew->SetXTitle("delphi_tt");
+        hnew->SetYTitle("A.U.");
+        
+    }
+    
+    else if (pt_plotname == "VisGenLeptonBjetMass"){
+        std::cout <<"Making comparison of  "<< pt_plotname <<std::endl;
+        double edges_mlb[31] = {0.0,10.0, 20.0, 30.0, 40.0, 50.0,  60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0,160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0,  270.0, 280.0, 290.0, 300.0 };
+        hnew = (TH1F*)pseudotop_histo->Rebin(30,"hnew",edges_mlb);
+        hnew->SetTitle("");
+        hnew->SetXTitle("mlb");
         hnew->SetYTitle("A.U.");
         
     }
@@ -173,7 +188,7 @@ double edges_lldphi[16] = { -3.14, -2.722, -2.304, -1.886,-1.486,-1.05, -0.632, 
     hnew->DrawNormalized("E1p");
     rivet_histo->DrawNormalized("SAME");
     
-    TLegend * leg = new TLegend(0.7,0.6,0.88,0.8);
+    TLegend * leg = new TLegend(0.2,0.6,0.4,0.8);
     leg->AddEntry(hnew,"PseudoTop Producer","Epl");
     leg->AddEntry(rivet_histo,"RIVET","Epl");
     leg->Draw();
