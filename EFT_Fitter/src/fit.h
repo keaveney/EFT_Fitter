@@ -18,9 +18,9 @@
 
 using namespace std;
 
-bool debug = true;
+bool debug = false;
 
-const int n_preds = 101;
+const int n_preds = 51;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
@@ -121,6 +121,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             double bin_width = bins[bin] - bins[bin-1];
             double bin_xsec_0  = data_histo->GetBinContent(bin) / bin_width;
             data_histo->SetBinContent(bin, bin_xsec_0);
+            data_histo->SetBinError(bin, 0.5);
+
         }
         
         double data_int = data_histo->Integral();
@@ -140,11 +142,12 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         
         for (int point = 0; point < nbins; point ++){
             g_data->GetPoint(point, bin_centre, bin_height);
-           if(debug)  cout << "looping on graph points, "<< point <<  "  "<<  bin_height  << " running_total " << running_total  <<"\n";
-
             data_histo->SetBinContent(point+1, bin_height);
             double bin_error = (g_data->GetErrorYhigh(point) + g_data->GetErrorYlow(point))/2.0 ; //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
             data_histo->SetBinError(point+1, bin_error);
+              cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
+
+            
             running_total = running_total + bin_height;
         }
 //        data_histo->Scale(running_total/data_histo->Integral());
@@ -153,14 +156,24 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     
     if(debug)    cout << "Running total for data histo  =" <<  running_total  <<"\n";
 //CTG_pos2_1M.root
-    string filename_neg2 = "files/CTG_-2_nominal_v2.root";
-    string filename_pos2 = "files/CtG_2_nominal_v2.root";
-    string filename_0 = "files/CtG_0_nominal_v2.root";
+    
+    
+    //string filename_neg2 = "files/CTG_-2_nominal_v2.root";
+    //string filename_pos2 = "files/CtG_2_nominal_v2.root";
+    //string filename_0 = "files/CtG_0_nominal_v2.root";
     
     //nominal files
-    //string filename_neg2 = "files/CtG_neg2_nominal.root";
-    //string filename_pos2 = "files/CtG_pos2_nominal.root";
-    //string filename_0 = "files/CtG_0_nominal.root";
+  //  string filename_neg2 = "files/CtG_-2_scaledown_v2.root";
+   // string filename_pos2 = "files/CtG_2_scaledown_v2.root";
+   // string filename_0 = "files/CtG_0_scaledown_v2.root";
+    
+    
+    //nominal files
+    string filename_neg2 = "files/CtG_-2_scaleup_v2.root";
+    string filename_pos2 = "files/CtG_2_scaleup_v2.root";
+    string filename_0 = "files/CtG_0_scaleup_v2.root";
+    
+    
     
     //scale down files
     string filename_neg2_scaledown = "files/CtG_-2_scaledown_v2.root";
@@ -266,6 +279,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         mc_histo_neg2_scaleup->SetBinContent(bin, bin_xsec_neg2_scaleup);
         mc_histo_0_scaleup->SetBinContent(bin, bin_xsec_0_scaleup);
         mc_histo_pos2_scaleup->SetBinContent(bin, bin_xsec_pos2_scaleup);
+        
+
         
       if (add_pwhg)  mc_histo_pwhg->SetBinContent(bin, bin_xsec_pwhg);
     }
@@ -373,7 +388,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             mc_histos_fiducial.push_back(h_CtG_pred_fiducial);
             
             
-            cout <<"BEFORE SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
+           if (debug) cout <<"BEFORE SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
 
         
             //if running in norm or norm_fid, rescale the diff. predictions to match the measured data.
@@ -387,7 +402,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
                 h_CtG_pred_scaleup->Scale(scaling);
             }
             
-            cout <<"AFTER SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
+           if (debug) cout <<"AFTER SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
 
             
             //fill error graph
@@ -644,7 +659,7 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
                 std::get<1>(histos)[weight]->Draw("HISTSAME");
                 std::get<2>(histos)[weight]->Draw("E2SAME");
                 
-                cout << "Drawing histo # " << weight  <<endl;
+               if (debug) cout << "Drawing histo # " << weight  <<endl;
                 
             }
             double chi2 = -1.0;

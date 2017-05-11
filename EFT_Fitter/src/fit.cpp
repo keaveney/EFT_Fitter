@@ -33,7 +33,7 @@ f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_sourc
 f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false, true);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
-f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, true , false);
+f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
         
 f_EFT->run_extraction(12, bins_costhetastar,"data","files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/Cos_theta_star", mode, true, false);
 
@@ -59,6 +59,9 @@ f_EFT->make_summary_plot(scans);
 void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data, std::string filename_data,std::string histoname_pred,  std::string mode, bool closure_test, bool add_pwhg){
     
      tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg);
+    
+    
+    
     f_EFT->scan_couplings(histoname_pred, histos ,mode, add_pwhg) ;
 }
 
@@ -75,7 +78,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     vector<double> errors;
 
     double corr_coff = 1.0;
-    bool data_errors_only = false;
+    bool data_errors_only = true;
     double chisq = 0.0;
     double theory_error =0.0;
     double total_error =0.0;
@@ -102,7 +105,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
             }else if (data_bin < pred_bin ){
                 theory_error = gr_errors->GetErrorYlow(i-1);
             }
-            total_error =  pow(  pow( (theory_error +  data->GetBinError(i) ) , 2.0     ), 0.5);
+            total_error =  pow(  pow( (theory_error +  data->GetBinError(i) ) ,2.0), 0.5);
             errors.push_back( total_error);
         }
     }
@@ -127,8 +130,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
             }
         }
     }
-std::cout <<" chi2 = "<< chisq << "\n";
- if (debug) std::cout <<" "<< chisq << "\n";
+ if (debug) std::cout <<"chi2 "<< chisq << "\n";
 
     return chisq;
 }
@@ -204,8 +206,16 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         rel_scans[scan]->SetMarkerSize(1);
         rel_scans[scan]->SetMarkerColor(scan+1);
         rel_scans[scan]->SetMarkerStyle(22);
+        
+        
+        std::string gr_name_rel = obs_names[scan] + "_relscan";
+        rel_scans[scan]->Write(gr_name_rel.c_str());
+        
         TSpline3 *s = new TSpline3("grs",rel_scans[scan]);
         s->SetLineColor(scan+1);
+        
+        
+        
         if (scan ==0){
             rel_scans[scan]->Draw("AC");
             // use a cubic spline to smooth the graph
@@ -230,8 +240,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     all_relscans_c->SaveAs("all_relscans.pdf");
 
     
-    
-
     TCanvas * allscans_c = new TCanvas();
     TLegend *leg = new TLegend(0.5,0.6,0.8,0.8);
 
@@ -240,6 +248,9 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     for (int scan = 0; scan< scans.size(); scan ++){
         scans[scan]->SetLineColor(scan+1);
         scans[scan]->SetLineWidth(2);
+        
+       std:string gr_name = obs_names[scan] + "_scan";
+        scans[scan]->Write(gr_name.c_str());
         
 
         if (scan ==0){
@@ -256,5 +267,36 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     allscans_c->Write("Scans");
     all_relscans_c->Write("RelScans");
     all_scans->Close();
+    
+    
+    
+    TCanvas * limit_c = new TCanvas();
+    TFile * f_scan_nominal = new TFile("all_scans_nominal.root");
+    TFile * f_scan_scaledown = new TFile("all_scans_scaledown.root");
+    TFile * f_scan_scaleup = new TFile("all_scans_scaleup.root");
+
+    TGraphErrors * gr_nom;
+    TGraphErrors * gr_down;
+    TGraphErrors * gr_up;
+    
+    if (  f_scan_nominal && f_scan_scaledown && f_scan_scaleup  ){
+        for (int scan = 0; scan< scans.size(); scan ++){
+            TCanvas * limit_c = new TCanvas();
+            std::string gr_name = obs_names[scan] + "_relscan";
+            std::string c_name = obs_names[scan] + "_limit.pdf";
+
+         gr_nom = (TGraphErrors*)f_scan_nominal->Get(gr_name.c_str());
+         gr_down =  (TGraphErrors*)f_scan_scaledown->Get(gr_name.c_str());
+         gr_up =  (TGraphErrors*)f_scan_scaleup->Get(gr_name.c_str());
+         gr_down->SetLineStyle(2);
+         gr_up->SetLineStyle(2);
+         gr_nom->Draw("AL");
+         gr_down->Draw("LSAME");
+         gr_up->Draw("LSAME");
+         limit_c->SaveAs(c_name.c_str());
+        }
+
+        
+    }
     
 }
