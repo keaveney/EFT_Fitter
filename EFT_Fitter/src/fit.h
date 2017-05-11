@@ -14,9 +14,12 @@
 #include "TLegendEntry.h"
 #include <utility>
 #include <tuple>
-
+#include <RooRealVar.h>
+#include <RooDataSet.h>
+#include <RooDataHist.h>
 
 using namespace std;
+using namespace RooFit ;
 
 bool debug = false;
 
@@ -34,6 +37,7 @@ class Fitter {
         std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > initialise(std::string, std::string, std::string, int, float bins[], std::string, bool, bool);
         void scan_couplings(std::string, std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  std::string mode , bool add_pwhg );
         void make_summary_plot(vector <TGraphErrors*>);
+        void toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  int  );
         void create_dummy_fiducial_measurement(double, double);
 
     private:
@@ -809,6 +813,30 @@ std:string scan_canvas_name = "scans/scan_" +  seglist[1]  + "_.pdf";
     f_out->Close();
     
     return;
+}
+
+
+void Fitter::toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> > histos,  int Ntoys){
+
+    int SM_pred_index = (n_preds-1)/2;
+    TH1F * ref_pred  = (TH1F*)std::get<1>(histos)[SM_pred_index];
+    
+    
+    // Declare observable x
+    RooRealVar x("x","x",-1,1) ;
+    
+    // Create a binned dataset that imports contents of TH1 and associates its contents to observable 'x'
+   // RooDataHist dh("dh","dh",x,Import(*ref_pred)) ;
+    
+    //Make RooDataHist
+    
+    for (int toy = 0; toy < Ntoys; toy++ ){
+    
+    
+    
+    
+    }
+    
 }
 
 

@@ -60,8 +60,13 @@ void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data,
     
      tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg);
     
+    //Toy study routine -
+    // 1. Take all predictions as input
+    // 2. Takes SM predction and generates N toy distributions according to binned statistical uncertainties of data
+    // 3. For each toy, the chi2 between SM pred and toy distribution is recorded
+    // 4. Distribution of chi2 values is plotted
     
-    
+    f_EFT->toy_study( histos, 1);
     f_EFT->scan_couplings(histoname_pred, histos ,mode, add_pwhg) ;
 }
 
