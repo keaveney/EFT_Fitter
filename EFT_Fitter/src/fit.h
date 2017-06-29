@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string.h>
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
 #include "TStyle.h"
@@ -9,6 +10,7 @@
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TLegend.h"
+#include "TRandom.h"
 #include "TSpline.h"
 #include "TLine.h"
 #include "TLegendEntry.h"
@@ -17,13 +19,17 @@
 #include <RooRealVar.h>
 #include <RooDataSet.h>
 #include <RooDataHist.h>
+#include <RooHistPdf.h>
+#include <RooPlot.h>
+#include <RooMCStudy.h>
+#include <RooBinning.h>
+
 
 using namespace std;
 using namespace RooFit ;
 
 bool debug = false;
-
-const int n_preds = 51;
+const int n_preds = 5;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
@@ -35,9 +41,10 @@ class Fitter {
         Fitter(string, string);
         void run_extraction(int, float bins[], std::string, std::string, std::string, std::string ,bool, bool );
         std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > initialise(std::string, std::string, std::string, int, float bins[], std::string, bool, bool);
-        void scan_couplings(std::string, std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  std::string mode , bool add_pwhg );
+        std::tuple < double, double > scan_couplings(std::string, std::string, std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  std::string mode , bool add_pwhg );
         void make_summary_plot(vector <TGraphErrors*>);
         void toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  int  );
+        TH1* make_poisson_toy(TH1*,TH1*, int, double);
         void create_dummy_fiducial_measurement(double, double);
 
     private:
@@ -69,23 +76,53 @@ float bins_delphibb[] = {0.0, 0.16, 0.32, 0.48, 0.64, 0.80, 0.96, 1.12, 1.28, 1.
 
 float bins_delphitt[] = {0.0, 1.89,2.77, 3.05, 3.15};
 float bins_dephilb[] = { 0.0, 0.314, 0.628, 0.942, 1.256, 1.57 , 1.884, 2.198, 2.512, 2.826, 3.14};
-float bins_costhetastar[] = {-1.0, -0.834, -0.668, -0.502, -0.336, -0.17, -0.004 , 0.162, 0.328 , 0.494, 0.66,  0.826, 1.0};
+//float bins_costhetastar[] = {-1.0, -0.834, -0.668, -0.502, -0.336, -0.17, -0.004 , 0.162, 0.328 , 0.494, 0.66,  0.826, 1.0};
+float bins_costhetastar[] = {-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5 , 0.75, 1.0};
+
 
 //scale basis histos according to cross sections (re-check these numbers)
 //NLO SM Sigma
-double sigma_sm_nlo = 674.0;
-double sigma_CtG_neg2_nlo = 373.6;
-double sigma_CtG_pos2_nlo = 975.0;
-double k_factor = 831.76/674.1;
-double BR = 0.045;
+//double sigma_sm_nlo = 674.0;
+//double sigma_CtG_neg2_nlo = 373.6;
+//double sigma_CtG_pos2_nlo = 975.0;
+//double k_factor = 831.76/674.0;
+
+
+double sigma_sm_nlo = 687.14;
+double sigma_CtG_neg2_nlo = 404.48;
+double sigma_CtG_pos2_nlo = 1270.204;
+double k_factor = 831.76/687.14;
+
+//double BR = 0.045;
+double BR = 0.0493;
+
 //acceptances (to be re-checked with higher stats)
 double acc_sm_nlo = 0.3785;
 double acc_CtG_neg2_nlo = 0.3899;
 double acc_CtG_pos2_nlo = 0.3854;
-double sigma_sm_fid = sigma_sm_nlo * k_factor * BR *acc_sm_nlo;
+
+//double acc_sm_nlo = 0.28421;
+//double acc_CtG_neg2_nlo = 0.28421;
+//double acc_CtG_pos2_nlo = 0.28421;
+
+
+
+//this is the effect of the scale variations on the inclusive
+// cross sections at NNLO+NNLL
+double effect_SM_scaleup_nlo = 1.023;
+double effect_SM_scaledown_nlo = 1.035;
+
+double sigma_sm_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo;
 double sigma_CtG_neg2_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo;
 double sigma_CtG_pos2_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo;
 
+double sigma_sm_scaledown_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo * effect_SM_scaledown_nlo ;
+double sigma_CtG_neg2_scaledown_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_scaledown_nlo;
+double sigma_CtG_pos2_scaledown_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_scaledown_nlo;
+
+double sigma_sm_scaleup_fid = sigma_sm_nlo * k_factor * BR *acc_sm_nlo * effect_SM_scaleup_nlo;
+double sigma_CtG_neg2_scaleup_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_scaleup_nlo;
+double sigma_CtG_pos2_scaleup_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_scaleup_nlo;
 
 
 void Fitter::create_dummy_fiducial_measurement(double result, double rel_uncertainty){
@@ -110,13 +147,13 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     TH1F * h_CtG_pred_scaleup;
     TH1F * h_CtG_pred_fiducial;
     
-
-
     double scaling =1.0, CtG;
     
     if (closure_test){
         
-        TFile* f_data = new TFile("files/CtG_0_nominal_v2.root");
+        cout <<"CLOSURE TEST"<< endl;
+        
+        TFile* f_data = new TFile("files/CtG_0_nominal_v3.root");
         data_histo = (TH1F*)f_data->Get(histoname_pred.c_str());
         
         if(debug)    cout << "Closure test\n";
@@ -149,9 +186,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             data_histo->SetBinContent(point+1, bin_height);
             double bin_error = (g_data->GetErrorYhigh(point) + g_data->GetErrorYlow(point))/2.0 ; //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
             data_histo->SetBinError(point+1, bin_error);
-              cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
+             // cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
 
-            
             running_total = running_total + bin_height;
         }
 //        data_histo->Scale(running_total/data_histo->Integral());
@@ -159,12 +195,12 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     }
     
     if(debug)    cout << "Running total for data histo  =" <<  running_total  <<"\n";
-//CTG_pos2_1M.root
     
+    //v3 = unweighted, v6 = weigted
     
-    //string filename_neg2 = "files/CTG_-2_nominal_v2.root";
-    //string filename_pos2 = "files/CtG_2_nominal_v2.root";
-    //string filename_0 = "files/CtG_0_nominal_v2.root";
+    string filename_neg2 = "files/CtG_-2_nominal_v6.root";
+    string filename_pos2 = "files/CtG_0_nominal_v6.root";
+    string filename_0 = "files/CtG_2_nominal_v6.root";
     
     //nominal files
   //  string filename_neg2 = "files/CtG_-2_scaledown_v2.root";
@@ -173,21 +209,19 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     
     
     //nominal files
-    string filename_neg2 = "files/CtG_-2_scaleup_v2.root";
-    string filename_pos2 = "files/CtG_2_scaleup_v2.root";
-    string filename_0 = "files/CtG_0_scaleup_v2.root";
-    
-    
+    //string filename_neg2 = "files/CtG_-2_scaleup_v2.root";
+   // string filename_pos2 = "files/CtG_2_scaleup_v2.root";
+   // string filename_0 = "files/CtG_0_scaleup_v2.root";
     
     //scale down files
-    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v2.root";
-    string filename_pos2_scaledown = "files/CtG_2_scaledown_v2.root";
-    string filename_0_scaledown = "files/CtG_0_scaledown_v2.root";
+    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v6.root";
+    string filename_pos2_scaledown = "files/CtG_0_scaledown_v6.root";
+    string filename_0_scaledown = "files/CtG_2_scaledown_v6.root";
     
     //scale up files
-    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v2.root";
-    string filename_pos2_scaleup = "files/CtG_2_scaleup_v2.root";
-    string filename_0_scaleup = "files/CtG_0_scaleup_v2.root";
+    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v6.root";
+    string filename_pos2_scaleup = "files/CtG_0_scaleup_v6.root";
+    string filename_0_scaleup = "files/CtG_2_scaleup_v6.root";
     
     TFile * f_neg2 = new TFile(filename_neg2.c_str());
     TFile * f_0 = new TFile(filename_0.c_str());
@@ -239,8 +273,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     //divide bin heights by bin widths
     for (int bin = 1 ; bin <= nbins; bin++){
         double bin_width = bins[bin] - bins[bin-1];
-       if (debug) cout << "bin width  "<<  bin_width  << endl;
-        
+        if (debug) cout << "bin width  "<<  bin_width  << endl;
         
         double bin_xsec_0  = mc_histo_0->GetBinContent(bin) / bin_width;
         double bin_xsec_neg2  = mc_histo_neg2->GetBinContent(bin) / bin_width;
@@ -269,7 +302,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         running_fid_xs_0_scaleup = running_fid_xs_0_scaleup  + mc_histo_0_scaleup->GetBinContent(bin) ;
         running_fid_xs_pos2_scaleup = running_fid_xs_pos2_scaleup + mc_histo_pos2_scaleup->GetBinContent(bin);
         
-        
         if (add_pwhg)   running_fid_xs_pwhg = running_fid_xs_pwhg + mc_histo_pwhg->GetBinContent(bin);
 
         mc_histo_neg2->SetBinContent(bin, bin_xsec_neg2);
@@ -284,10 +316,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         mc_histo_0_scaleup->SetBinContent(bin, bin_xsec_0_scaleup);
         mc_histo_pos2_scaleup->SetBinContent(bin, bin_xsec_pos2_scaleup);
         
-
-        
-      if (add_pwhg)  mc_histo_pwhg->SetBinContent(bin, bin_xsec_pwhg);
-    }
+        if (add_pwhg)  mc_histo_pwhg->SetBinContent(bin, bin_xsec_pwhg);
+        }
     
        //now scale the basis histos to the right XS
        //need to check the XS for scale variations, right now assuming the
@@ -296,17 +326,15 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         mc_histo_neg2->Scale(sigma_CtG_neg2_fid/running_fid_xs_neg2);
         mc_histo_pos2->Scale(sigma_CtG_pos2_fid/running_fid_xs_pos2);
     
+        mc_histo_0_scaledown->Scale(sigma_sm_scaledown_fid/running_fid_xs_0_scaledown);
+        mc_histo_neg2_scaledown->Scale(sigma_CtG_neg2_scaledown_fid/running_fid_xs_neg2_scaledown);
+        mc_histo_pos2_scaledown->Scale(sigma_CtG_pos2_scaledown_fid/running_fid_xs_pos2_scaledown);
     
-        mc_histo_0_scaledown->Scale(sigma_sm_fid/running_fid_xs_0_scaledown);
-        mc_histo_neg2_scaledown->Scale(sigma_CtG_neg2_fid/running_fid_xs_neg2_scaledown);
-        mc_histo_pos2_scaledown->Scale(sigma_CtG_pos2_fid/running_fid_xs_pos2_scaledown);
+        mc_histo_0_scaleup->Scale(sigma_sm_scaleup_fid/running_fid_xs_0_scaleup);
+        mc_histo_neg2_scaleup->Scale(sigma_CtG_neg2_scaleup_fid/running_fid_xs_neg2_scaleup);
+        mc_histo_pos2_scaleup->Scale(sigma_CtG_pos2_scaleup_fid/running_fid_xs_pos2_scaleup);
     
-        mc_histo_0_scaleup->Scale(sigma_sm_fid/running_fid_xs_0_scaleup);
-        mc_histo_neg2_scaleup->Scale(sigma_CtG_neg2_fid/running_fid_xs_neg2_scaleup);
-        mc_histo_pos2_scaleup->Scale(sigma_CtG_pos2_fid/running_fid_xs_pos2_scaleup);
-    
-    
-     if (add_pwhg)    mc_histo_pwhg->Scale(sigma_sm_fid/running_fid_xs_pwhg);
+       if (add_pwhg)    mc_histo_pwhg->Scale(sigma_sm_fid/running_fid_xs_pwhg);
     
     
        //make histo of pure CtG contribution
@@ -373,7 +401,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             h_CtG_pred_scaledown->Add(h_pure_Ctg_scaledown, CtG);
             h_CtG_pred_scaleup->Add(h_pure_Ctg_scaleup, CtG);
             
-            
             //create histo containing prediction for fiducial cross section
             h_CtG_pred_fiducial = new TH1F("","", 1, 0.0,1.0);
             double fid_xsec_pred =0.0;
@@ -384,7 +411,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
                 double bin_width = bins[bin] - bins[bin-1];
                 fid_xsec_pred  = fid_xsec_pred  + ( h_CtG_pred->GetBinContent(bin) * bin_width );
                 h_CtG_pred->SetBinError(bin, h_CtG_pred->GetBinContent(bin) * 0.02);
-
             }
             
             h_CtG_pred_fiducial->SetBinContent(1,fid_xsec_pred);
@@ -392,7 +418,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             mc_histos_fiducial.push_back(h_CtG_pred_fiducial);
             
             
-           if (debug) cout <<"BEFORE SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
+          // if (debug) cout <<"BEFORE SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
 
         
             //if running in norm or norm_fid, rescale the diff. predictions to match the measured data.
@@ -406,13 +432,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
                 h_CtG_pred_scaleup->Scale(scaling);
             }
             
-           if (debug) cout <<"AFTER SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
-
-            
-            //fill error graph
-            
-            //NEXT: get errors from scale up/down plots instead of arbitary values...
-            
+       //  cout <<"AFTER SCALING: "<< histoname_pred << " data integral =" <<  running_total  <<" Pred integral = "<<  h_CtG_pred->Integral()  <<"\n";
             
             for ( int bin = 1 ; bin <= nbins; bin++){
                  double bin_width = bins[bin] - bins[bin-1];
@@ -447,24 +467,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
                     }else{
                         gr_errors->SetPointEYlow(bin-1,3.0* ( h_CtG_pred->GetBinContent(bin) - h_CtG_pred_scaleup->GetBinContent(bin) ) );
                     }
-                    
                 }
-                
                 gr_errors->SetPointEXlow(bin-1, bin_width/2.0  );
                 gr_errors->SetPointEXhigh(bin-1, bin_width/2.0 );
             }
             
-            
-            //TODO: update to new rivet files,
-            // check why scale uncertainty is smaller for Ctg preds that nominal (if still the case)
-            // make global variable for N CtG vals to avoid tedious changing
-            // add dummy covariance matrices
-            // keep data in graph rather than converting to TH1
-            // start on slides
-            
-        
             mc_histos.push_back(h_CtG_pred);
             error_graphs.push_back(gr_errors);
+            TAxis *xaxis = h_CtG_pred->GetXaxis();
 
         
             std::string pred_name_s = "CtG_" + to_string(CtG_vals[scale]);
@@ -501,7 +511,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     std::string basis_canvas_name = "basis_histos/" + seglist[1] + "_canvas.pdf";
     std::string discrimination_canvas_name = "basis_histos/" + seglist[1] + "discrim_canvas.pdf";
     c_discrimination->SaveAs(discrimination_canvas_name.c_str());
-    
     
     cout <<"basis name "<<   basis_name <<endl;
     
@@ -603,9 +612,9 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
 }
 
 
-void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>> histos, std::string mode, bool add_pwhg){
+std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::string var_name, std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>> histos, std::string mode, bool add_pwhg){
     
-    if (debug) cout << "Fitter::scan_couplings" << endl;
+    if (debug) cout << "Fitter::scan_couplings, in mode " << run_name <<endl;
     
     if (!std::get<0>(histos)) cout << "data histo not found" << endl;
     
@@ -630,12 +639,16 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
     }
     
     
-    if (debug) cout << "Fitter::scan_couplings:: data integral " << std::get<0>(histos)->Integral()   <<endl;
+   // if (debug) cout << "Fitter::scan_couplings:: data integral " << std::get<0>(histos)->Integral()   <<endl;
 
+    double best_val = -99.0;
+    double minchi2 = 100.0;
+    double best_unc = -99.0;
+    
     for (int weight = 0 ; weight < n_hists ; weight++){
         if (  std::get<0>(histos) && std::get<1>(histos)[weight] ){
             
-            if (debug) cout << "Fitter::scan_couplings:: pred integral " << std::get<1>(histos)[weight]->Integral()   <<endl;
+//            if (debug) cout << "Fitter::scan_couplings:: pred integral " << std::get<1>(histos)[weight]->Integral()   <<endl;
 
             std::get<1>(histos)[weight]->SetLineColor(weight+1);
             std::get<1>(histos)[weight]->SetLineWidth(1.0);
@@ -663,7 +676,7 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
                 std::get<1>(histos)[weight]->Draw("HISTSAME");
                 std::get<2>(histos)[weight]->Draw("E2SAME");
                 
-               if (debug) cout << "Drawing histo # " << weight  <<endl;
+           //    if (debug) cout << "Drawing histo # " << weight  <<endl;
                 
             }
             double chi2 = -1.0;
@@ -675,6 +688,13 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
                 chi2 = (this->calculate_test_statistic( std::get<0>(histos),  std::get<1>(histos)[weight], std::get<2>(histos)[weight]) + this->calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight]  ));
             }
             g->SetPoint(weight, CtG_vals[weight], chi2);
+            
+            if ( chi2 < minchi2){
+            
+                minchi2 = chi2;
+                best_val = CtG_vals[weight];
+                best_unc = fabs(CtG_vals[1] - CtG_vals[0]);
+            }
         }
     }
     
@@ -732,6 +752,9 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
         mc_temp->GetYaxis()->SetLabelSize(0.05);
         mc_temp->GetXaxis()->SetLabelSize(0.1);
         mc_temp->GetXaxis()->SetTitleSize(0.16);
+        if (debug) cout << "Fitter::scan_couplings::here 1 " <<  endl;
+
+        
         mc_temp->GetXaxis()->SetTitleOffset(0.8);
         mc_temp->GetYaxis()->SetTitleOffset(0.35);
         mc_temp->GetYaxis()->SetTitleSize(0.09);
@@ -739,6 +762,8 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
 //        mc_temp->SetXTitle("#Delta#Phi(l^{+}l^{-})");
         mc_temp->SetXTitle("Cos #theta *");
       
+        if (debug) cout << "Fitter::scan_couplings::here 2 " <<  endl;
+
         
         std::stringstream ss;
         ss << var_name;
@@ -750,9 +775,10 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
         {
             seglist.push_back(segment);
         }
-        
+        if (debug) cout << "Fitter::scan_couplings::here 3 " <<  endl;
+
         std::string xtitle =seglist[1] + "  (GeV)";
-        // mc_temp->SetXTitle(xtitle.c_str());
+         mc_temp->SetXTitle(xtitle.c_str());
         
         if (add_pwhg) {
         if(histo == std::get<1>(histos).size() -2) {
@@ -760,12 +786,22 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
         }
         }
         
+        if (debug) cout << "Fitter::scan_couplings::here 3 5" <<  endl;
+
+        
         if(histo == 0){
             mc_temp->Draw("HIST");
         }else{
             mc_temp->Draw("HISTSAME");
         }
+        if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
+
+        
     }
+    
+    
+    if (debug) cout << "Fitter::scan_couplings::here 4 " <<  endl;
+
     
     c_compare_dists->cd();
     //  pad1->SetLogy();
@@ -787,6 +823,12 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
     //c_compare_dists->Write();
     c_compare_dists->SaveAs(compare_canvas_name.c_str());
     
+    if (debug) cout << "Fitter::scan_couplings::making canvas" <<  endl;
+
+    
+    
+    
+    
     TCanvas * c1 = new TCanvas();
     // g->SetMinimum(0.002);
     // g->SetMaximum(0.0026);
@@ -799,44 +841,252 @@ void Fitter::scan_couplings(std::string var_name, std::tuple <TH1F*, vector<TH1F
     obs_names.push_back(seglist[1]);
     
     c1->SetLogy();
-std:string scan_canvas_name = "scans/scan_" +  seglist[1]  + "_.pdf";
+    std:string scan_canvas_name = "scans/scan_" +  seglist[1]  + "_.pdf";
     c1->SaveAs(scan_canvas_name.c_str());
     
-    std::string scan_rootfile_name = "scan_" +  seglist[1]  + ".root";
+    std::string scan_rootfile_name = "scan_" + run_name + "_" + seglist[1]  + ".root";
     TFile * f_out = new TFile(scan_rootfile_name.c_str(), "RECREATE");
+    
+    if (debug) cout << "Fitter::scan_couplings::making rootfile" <<  endl;
+
+    
     std::get<0>(histos)->Write();
     for ( int histo = 0; histo <   std::get<1>(histos).size(); histo++){
         std::get<1>(histos)[histo]->Write();
     }
+    g->Write();
     c1->Write();
     c_compare_dists->Write();
     f_out->Close();
     
-    return;
+    if (debug) cout << "Fitter::scan_couplings::end of function" <<  endl;
+
+    
+    std::tuple<double, double >  fit_results (best_val, best_unc);
+
+    
+    return fit_results;
 }
 
 
 void Fitter::toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> > histos,  int Ntoys){
 
+    cout <<" toy_study  " << endl;
+
     int SM_pred_index = (n_preds-1)/2;
-    TH1F * ref_pred  = (TH1F*)std::get<1>(histos)[SM_pred_index];
+    TH1F* ref_pred = (TH1F*)std::get<1>(histos)[SM_pred_index];
+    TH1* ref_data;
+    
+    int ndof  = ref_pred->GetNbinsX();
+   //cout << "Fitter::toy_study" <<  " SM pred index = "   <<  SM_pred_index <<" ref_pred "<< ref_pred->Integral() << "ref_data  " << ref_data->Integral() <<endl;
+    
+    TGraphAsymmErrors *dummy_gr;
+    TH1F * h_chi2 = new TH1F("", "", 30, 0 , 30);
+    TH1F * h_chi2_ndof = new TH1F("", "", 30, 0 , 5);
+    
+    TH1F* ref_pred_clone;
+    TH1F* data_clone;
+    TH1F* toy;
+    TH1F* pred_toy;
+ 
+    TH2F* signal_injection = new TH2F("","", n_preds, -1, 1, 30, 0, 5);
     
     
-    // Declare observable x
-    RooRealVar x("x","x",-1,1) ;
+    ///////////////////////
+    /// COVERAGE TEST  ////
+    ///////////////////////
     
-    // Create a binned dataset that imports contents of TH1 and associates its contents to observable 'x'
-   // RooDataHist dh("dh","dh",x,Import(*ref_pred)) ;
+    for (int scale = SM_pred_index; scale < SM_pred_index+1; scale++){
+     //for (int scale = 0; scale < n_preds; scale++){
+
+        cout <<" looping CtG vals  " << endl;
     
-    //Make RooDataHist
+        double ctg = CtG_vals[scale];
+        ref_pred = (TH1F*)std::get<1>(histos)[scale];
+        ref_data = (TH1*)std::get<0>(histos);
+        
+        ref_pred_clone  = (TH1F*)ref_pred->Clone();
+        data_clone  = (TH1F*)ref_data->Clone();
+        
+    //coverage for each scenario
+    for (int itoy = 0; itoy < 10; itoy++){
+        toy = (TH1F*)this->make_poisson_toy(ref_pred_clone, data_clone, 256196, ref_data->Integral());
+        double chi2 = this->calculate_test_statistic(toy, ref_pred, dummy_gr);
+        h_chi2->Fill(chi2);
+        h_chi2_ndof->Fill(chi2/ndof);
+        signal_injection->Fill(ctg, chi2/ndof);
+        cout <<" TOY = = " <<"  CHI2  "<< chi2 << endl;
+    }
     
-    for (int toy = 0; toy < Ntoys; toy++ ){
+    //injection test
+      //  pred_toy = (TH1F*)this->make_poisson_toy(ref_pred_clone, data_clone, 256196, ref_data->Integral());
+       // std::string toy_name = "sig_injection_" + std::to_string(scale);
+}
+   
     
     
+    ///////////////////////
+    /// INJECTION TEST  ///
+    ///////////////////////
     
+    TGraphAsymmErrors * injection_gr = new TGraphAsymmErrors(n_preds*10);
+    TH1F * injection = new TH1F("coverage","coverage", 100, -0.3 ,0.3 );
+
+    TH2F * injection_h = new TH2F("","", n_preds, -1.0 ,1.0, 200, -1.0 ,1.0 );
+
+    
+    for (int pred = SM_pred_index; pred < SM_pred_index+1; pred++){
+
+     //for (int pred = 0; pred < n_preds; pred++){
+
+        ref_pred = (TH1F*)std::get<1>(histos)[pred];
+        ref_pred_clone  = (TH1F*)ref_pred->Clone();
+        
+        cout <<"   *********   "<< endl;
+        
+         for (int t = 0 ; t < 1000 ; t++){
+            toy = (TH1F*)this->make_poisson_toy(ref_pred_clone, data_clone, 256196, ref_data->Integral() );
+            std::tuple<TH1F*, vector<TH1F*>, vector<TGraphAsymmErrors * >>  toy_histos (toy, std::get<1>(histos), std::get<2>(histos));
+            std::tuple<double, double> toy_results  = this->scan_couplings("toy","toy/ll_delphi_abs", toy_histos ,"abs_only", false);
+            injection_h->Fill(CtG_vals[pred],std::get<0>(toy_results));
+            injection->Fill(std::get<0>(toy_results));
+            cout.precision(17);
+            cout <<"   injected CtG  =    "<< CtG_vals[pred]  <<",  best fit CtG = "<< fixed <<std::get<0>(toy_results)  <<endl;
+
+            injection_gr->SetPoint(pred, CtG_vals[pred], std::get<0>(toy_results));
+            injection_gr->SetPointEYhigh(pred, std::get<1>(toy_results)/2.0);
+            injection_gr->SetPointEYlow(pred, std::get<1>(toy_results)/2.0);
+            //cout <<"PRED = "<<  pred <<" TOY = = "<< t <<"  bestfit  "<< std::get<0>(toy_results)<< endl;
+
+        }
     
     }
     
+    
+    TFile * f_toy = new TFile("toy.root", "RECREATE");
+    toy->Write();
+    injection_h->Write();
+    injection->Write();
+    injection_gr->Write();
+    h_chi2->Write();
+    h_chi2_ndof->Write();
+    signal_injection->Write();
+    ref_pred->Write();
+    f_toy->Close();
+    
+}
+
+
+TH1* Fitter::make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integral){
+    
+    //double n_toys = 523850.625;
+    
+    //This function make a Poisson toy for a given prediction at particle level
+    // corresponding to the same number of events as observed in data.
+    
+    //Histos to contain raw distributions for prediction and data.
+
+    
+   // TH1F* hh_t = new TH1F("","", hh->GetNbinsX() , 0.0, 3.15);
+   // TH1F* hh_data = new TH1F("","", hh->GetNbinsX() , 0.0, 3.15);
+    TH1F* hh_t = (TH1F*)hh->Clone();
+    TH1F* hh_data = (TH1F*)hh->Clone();
+    hh_t->Reset();
+    hh_data->Reset();
+    double bin_height_pred ;
+    double bin_height_data ;
+
+    
+    //Multiply back by bin widths to get cross sections as bin heights
+    for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
+        if (bin == hh->GetNbinsX() ){
+         bin_height_pred = (0.24)*hh->GetBinContent(bin);
+         bin_height_data = (0.24)*data->GetBinContent(bin);
+        }else{
+            bin_height_pred = (0.25)*hh->GetBinContent(bin);
+            bin_height_data = (0.25)*data->GetBinContent(bin);
+        }
+        hh_t->SetBinContent(bin, bin_height_pred);
+        hh_data->SetBinContent(bin, bin_height_data);
+    }
+    
+    
+    //now scale by integrated lumi
+    //double scaling = hh->Integral() / hh_t->Integral();
+
+//    double int_lumi = 37500000.0;
+     //double int_lumi = 3750.0;
+
+    double int_lumi = 6000.0;
+    
+    //hh_t->Scale(int_lumi);
+
+    //TH1F* h_forPDF = new TH1F("","", hh->GetNbinsX() , -1.0,1.0);
+    TH1F* h_forPDF = (TH1F*)hh->Clone();
+    h_forPDF->Reset();
+    
+    
+    //fill histo with raw event counts for this prediction
+    for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
+        h_forPDF->SetBinContent(bin, int_lumi *  hh_t->GetBinContent(bin));
+    }
+
+
+    //some neccessary Roofit declarations
+    RooRealVar x("x","x",0,3.15);
+    x.setBins(hh->GetNbinsX());
+
+    
+    //convert raw prediction into pdf
+    RooDataHist dh("hh_t","hh_t",x,Import(*h_forPDF)) ;
+    RooHistPdf histpdf1("histpdf1","histpdf1",x,dh,0) ;
+    
+    //generate toy event count
+    TRandom * r = new TRandom();
+    double n_expected = r->Poisson(h_forPDF->Integral());
+    
+    //generate binned toys according the PDF with Poisson errors
+    RooDataHist* toy_data = histpdf1.generateBinned(x,n_expected);
+
+    //convert it back to a TH1
+    TH1 * hh_f = toy_data->createHistogram("toy", x);
+    
+    
+    
+    double bbin;
+    double bbin_error;
+    
+    //convert back to 'cross section result' histo
+    //divide by bin width
+    for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
+
+        if (bin == hh->GetNbinsX() ){
+             bbin = hh_f->GetBinContent(bin)/(0.24);
+            // bbin_error = hh_f->GetBinError(bin)/(0.24);
+            bbin_error = bbin *(0.01);
+
+        }else{
+             bbin = hh_f->GetBinContent(bin)/(0.25);
+            // bbin_error = hh_f->GetBinError(bin)/(0.25);
+            bbin_error = bbin *(0.01);
+
+        }
+        
+        hh_f->SetBinContent(bin,bbin);
+        hh_f->SetBinError(bin,bbin_error);
+    }
+
+    //divide by lumi
+    hh_f->Scale(1.0/int_lumi);
+    
+    
+    
+   // double scaling_2 = data_integral/hh_f->Integral();
+     double scaling_2 = hh->Integral()/hh_f->Integral();
+
+    //hh_f->Scale(scaling_2);
+    
+    return hh_f;
 }
 
 

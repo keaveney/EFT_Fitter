@@ -13,29 +13,31 @@ int main(int argc, const char * argv[]){
 
     gStyle->SetOptStat(0);
     
-f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
+    f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
     
-std::string mode = "norm_only";
+    std::string mode = "abs_only";
     
-for(int pred = 0; pred < n_preds; pred++){
-    
-    CtG_vals[pred] = (4.0/(n_preds-1))*pred - 2.0;
-    
+    for(int pred = 0; pred < n_preds; pred++){
+    CtG_vals[pred] = (2.0/(n_preds-1))*pred - 1.0;
+   // CtG_vals[pred] = (0.5/(n_preds-1))*pred - 0.25;
+
     }
-    
+
     
     if (mode == "abs_only"){
-f_EFT->run_extraction(6,bins_mtt,"data_staterror_only","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false, true);
-f_EFT->run_extraction(6,bins_ptt,"data","files/Abs/DiffXS_HypToppT_source.root","CMS_dilepton_diff/t_pT",mode,false, true );
-f_EFT->run_extraction(5,bins_pttt,"data","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false, true);
-f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false, true);
-f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false, true);
+//f_EFT->run_extraction(6,bins_mtt,"data_staterror_only","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false, true);
+//f_EFT->run_extraction(6,bins_ptt,"data","files/Abs/DiffXS_HypToppT_source.root","CMS_dilepton_diff/t_pT",mode,false, true );
+//f_EFT->run_extraction(5,bins_pttt,"data","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false, true);
+//f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false, true);
+//f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false, true);
+f_EFT->run_extraction(13, bins_delphill,"data_staterror_only", "files/Abs/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
+
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
 f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
         
-f_EFT->run_extraction(12, bins_costhetastar,"data","files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/Cos_theta_star", mode, true, false);
+//f_EFT->run_extraction(8, bins_costhetastar,"data","files/DiffXS_HypLLBarCosPhiInTopRestFrame_source.root", "CMS_dilepton_diff/Cos_theta_star", mode, true, false);
 
 //f_EFT->run_extraction( 4, bins_delphitt,"data", "files/April20/Norm/DiffXS_HypTTBarDeltaPhi_source.root", "CMS_dilepton_diff/ttbar_delphi_abs", mode, false , true );
 //f_EFT->run_extraction( 6, bins_mtt,"data", "files/April20/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_mass", mode, false, false );
@@ -43,16 +45,17 @@ f_EFT->run_extraction(12, bins_costhetastar,"data","files/April20/Norm/DiffXS_Hy
 //f_EFT->run_extraction( 10, bins_dephilb,"data", "files/April20/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/lb_delphi_abs", mode, true , false);
         
 //f_EFT->run_extraction( 20, bins_delphibb,"data", "files/April20/Norm/DiffXS_HypBBBarDPhi_source.root", "CMS_dilepton_diff/bb_delphi_abs", mode, true , true);
-//f_EFT->run_extraction( 6, bins_ptt, "data","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
-//f_EFT->run_extraction( 5, bins_pttt,"data", "files/April20/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false , true);
+f_EFT->run_extraction( 6, bins_ptt, "data","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
+
+        //f_EFT->run_extraction( 5, bins_pttt,"data", "files/April20/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false , true);
 //f_EFT->run_extraction( 8, bins_ytt,"data", "files/Norm/DiffXS_HypTTBarRapidity_source.root", "CMS_dilepton_diff/ttbar_y",mode, false , true);
 //f_EFT->run_extraction( 8, bins_yt, "data","files/Norm/DiffXS_HypTopRapidity_source.root", "CMS_dilepton_diff/t_y", mode, false, true );
     }
     
-    
-    
-f_EFT->make_summary_plot(scans);
-    
+
+    f_EFT->make_summary_plot(scans);
+    if(debug) std::cout <<" make_summary_plot done "<< "\n";
+
     return 0;
 }
 
@@ -60,19 +63,10 @@ void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data,
     
      tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg);
     
-    //Toy study routine -
-    // 1. Take all predictions as input
-    // 2. Takes SM predction and generates N toy distributions according to binned statistical uncertainties of data
-    // 3. For each toy, the chi2 between SM pred and toy distribution is recorded
-    // 4. Distribution of chi2 values is plotted
-    
-    f_EFT->toy_study( histos, 1);
-    f_EFT->scan_couplings(histoname_pred, histos ,mode, add_pwhg) ;
+  // f_EFT->toy_study( histos, 1);
+   f_EFT->scan_couplings("data", histoname_pred, histos ,mode, add_pwhg) ;
 }
 
-//use proper uncertainties from tgraph
-//Pass graph with scale uncertainties to calculate_test_statistic()
-// use them in denominator
 
 double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors){
     
@@ -119,7 +113,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
         for (int j=1;j<=nbins; j++){
             
            // double corr_coff = cov->GetBinContent(i+1,j+1);
-            if (schmitt_fit) {
+            if (schmitt_fit){
                 chisq += deltas[i]*deltas[j]*corr_coff;
             }
             else {
@@ -135,7 +129,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
             }
         }
     }
- if (debug) std::cout <<"chi2 "<< chisq << "\n";
+ //if (debug) std::cout <<"chi2 "<< chisq << "\n";
 
     return chisq;
 }
@@ -179,10 +173,12 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
             scans[scan]->GetPoint(i,x,y);
             double rel_y  = y - min_vals[scan];
             gr_rel->SetPoint(i,x,rel_y);
-           if (debug) std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
-           if (debug) std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
+            std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
+            std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
         }
         rel_scans.push_back(gr_rel);
+        if (debug) std::cout <<" added graph "<<"\n";
+
     }
     
 
@@ -203,11 +199,12 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
 
     
     for (int scan = 0; scan< rel_scans.size(); scan ++){
+        if (debug) std::cout <<" looping relscans "<<"\n";
+
         rel_scans[scan]->SetLineColor(scan+1);
         rel_scans[scan]->SetLineWidth(2);
         rel_scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(-1.0, 10.0);
         rel_scans[0]->GetHistogram()->GetXaxis()->SetRangeUser(-0.5, 0.5);
-
         rel_scans[scan]->SetMarkerSize(1);
         rel_scans[scan]->SetMarkerColor(scan+1);
         rel_scans[scan]->SetMarkerStyle(22);
@@ -215,11 +212,13 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         
         std::string gr_name_rel = obs_names[scan] + "_relscan";
         rel_scans[scan]->Write(gr_name_rel.c_str());
+        if (debug) std::cout <<" relscan written "<<"\n";
+
         
         TSpline3 *s = new TSpline3("grs",rel_scans[scan]);
         s->SetLineColor(scan+1);
         
-        
+
         
         if (scan ==0){
             rel_scans[scan]->Draw("AC");
@@ -251,6 +250,8 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(0, 120.0);
 
     for (int scan = 0; scan< scans.size(); scan ++){
+        if (debug) std::cout <<" drawing scans "<<"\n";
+
         scans[scan]->SetLineColor(scan+1);
         scans[scan]->SetLineWidth(2);
         
@@ -280,9 +281,12 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     TFile * f_scan_scaledown = new TFile("all_scans_scaledown.root");
     TFile * f_scan_scaleup = new TFile("all_scans_scaleup.root");
 
-    TGraphErrors * gr_nom;
-    TGraphErrors * gr_down;
-    TGraphErrors * gr_up;
+    if (debug) std::cout <<" got all scan variations "<<"\n";
+
+    
+  //  TGraphErrors * gr_nom;
+  //  TGraphErrors * gr_down;
+   // TGraphErrors * gr_up;
     
     if (  f_scan_nominal && f_scan_scaledown && f_scan_scaleup  ){
         for (int scan = 0; scan< scans.size(); scan ++){
@@ -290,15 +294,20 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
             std::string gr_name = obs_names[scan] + "_relscan";
             std::string c_name = obs_names[scan] + "_limit.pdf";
 
-         gr_nom = (TGraphErrors*)f_scan_nominal->Get(gr_name.c_str());
-         gr_down =  (TGraphErrors*)f_scan_scaledown->Get(gr_name.c_str());
-         gr_up =  (TGraphErrors*)f_scan_scaleup->Get(gr_name.c_str());
-         gr_down->SetLineStyle(2);
-         gr_up->SetLineStyle(2);
-         gr_nom->Draw("AL");
-         gr_down->Draw("LSAME");
-         gr_up->Draw("LSAME");
+        TGraphErrors * gr_nom =  (TGraphErrors*)f_scan_nominal->Get(gr_name.c_str());
+        TGraphErrors * gr_down =  (TGraphErrors*)f_scan_scaledown->Get(gr_name.c_str());
+        TGraphErrors * gr_up =    (TGraphErrors*)f_scan_scaleup->Get(gr_name.c_str());
+            
+            if (debug) std::cout <<" got graph variations "<<"\n";
+
+      //   gr_down->SetLineStyle(2);
+      //   gr_up->SetLineStyle(2);
+      //   gr_nom->Draw("AL");
+      //   gr_down->Draw("LSAME");
+      //   gr_up->Draw("LSAME");
          limit_c->SaveAs(c_name.c_str());
+            if (debug) std::cout <<" graph variations drawn "<<"\n";
+
         }
 
         
