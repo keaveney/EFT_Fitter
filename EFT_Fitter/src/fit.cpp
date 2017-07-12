@@ -15,12 +15,11 @@ int main(int argc, const char * argv[]){
     
     f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
-    
     std::string mode = "abs_only";
     
     for(int pred = 0; pred < n_preds; pred++){
     CtG_vals[pred] = (2.0/(n_preds-1))*pred - 1.0;
-   // CtG_vals[pred] = (0.5/(n_preds-1))*pred - 0.25;
+   // CtG_vals[pred] = (0.8/(n_preds-1))*pred - 0.4;
 
     }
 
@@ -31,7 +30,7 @@ int main(int argc, const char * argv[]){
 //f_EFT->run_extraction(5,bins_pttt,"data","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false, true);
 //f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false, true);
 //f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false, true);
-f_EFT->run_extraction(13, bins_delphill,"data_staterror_only", "files/Abs/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
+f_EFT->run_extraction(13, bins_delphill, "data_staterror_only", "files/July3/DiffXS_HypLLBarDPhi_source.root ", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
 
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
@@ -45,7 +44,7 @@ f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypL
 //f_EFT->run_extraction( 10, bins_dephilb,"data", "files/April20/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/lb_delphi_abs", mode, true , false);
         
 //f_EFT->run_extraction( 20, bins_delphibb,"data", "files/April20/Norm/DiffXS_HypBBBarDPhi_source.root", "CMS_dilepton_diff/bb_delphi_abs", mode, true , true);
-f_EFT->run_extraction( 6, bins_ptt, "data","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
+f_EFT->run_extraction( 6, bins_ptt, "data_staterror_only","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
 
         //f_EFT->run_extraction( 5, bins_pttt,"data", "files/April20/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false , true);
 //f_EFT->run_extraction( 8, bins_ytt,"data", "files/Norm/DiffXS_HypTTBarRapidity_source.root", "CMS_dilepton_diff/ttbar_y",mode, false , true);
@@ -61,7 +60,7 @@ f_EFT->run_extraction( 6, bins_ptt, "data","files/April20/Norm/DiffXS_HypToppT_s
 
 void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data, std::string filename_data,std::string histoname_pred,  std::string mode, bool closure_test, bool add_pwhg){
     
-     tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg);
+     tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg, "nom");
     
   // f_EFT->toy_study( histos, 1);
    f_EFT->scan_couplings("data", histoname_pred, histos ,mode, add_pwhg) ;
@@ -79,6 +78,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     double corr_coff = 1.0;
     bool data_errors_only = true;
     double chisq = 0.0;
+    double chi2_bin = 0.0;
     double theory_error =0.0;
     double total_error =0.0;
 
@@ -92,7 +92,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
         deltas.push_back(delta);
         
         if (data_errors_only){
-      //  std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  "  running chi2 =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
+       //std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  " chi2 in bin =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
             errors.push_back(data->GetBinError(i));
            // errors.push_back(pred_bin);
 
@@ -122,14 +122,15 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
                     double delta_sq = deltas[i-1]*deltas[i-1];
                     //double chi2_bin = delta_sq/errors[i-1];
 //                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
-                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+                    chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+                  //  std::cout <<"chi2 "<< chisq << "\n";
 
                     chisq += chi2_bin;
                 }
             }
         }
     }
- //if (debug) std::cout <<"chi2 "<< chisq << "\n";
+// std::cout <<"chi2 final "<< chisq << "\n";
 
     return chisq;
 }
@@ -173,8 +174,8 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
             scans[scan]->GetPoint(i,x,y);
             double rel_y  = y - min_vals[scan];
             gr_rel->SetPoint(i,x,rel_y);
-            std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
-            std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
+          //  std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
+          //  std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
         }
         rel_scans.push_back(gr_rel);
         if (debug) std::cout <<" added graph "<<"\n";
@@ -217,8 +218,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         
         TSpline3 *s = new TSpline3("grs",rel_scans[scan]);
         s->SetLineColor(scan+1);
-        
-
         
         if (scan ==0){
             rel_scans[scan]->Draw("AC");
@@ -307,10 +306,74 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
       //   gr_up->Draw("LSAME");
          limit_c->SaveAs(c_name.c_str());
             if (debug) std::cout <<" graph variations drawn "<<"\n";
-
         }
-
-        
     }
     
+    ////////////////////////////////////////////////
+    ////////// Make coverage plot //////////////////
+    ////////////////////////////////////////////////
+    
+    TFile * f_toys = new TFile("toy.root");
+    TH1F * h_coverage = (TH1F*)f_toys->Get("coverage");
+    h_coverage->SetXTitle("best fit CtG/#Lambda^{2}");
+    h_coverage->SetYTitle("N_{toys}");
+
+    
+    TCanvas * c_coverage = new TCanvas();
+    h_coverage->Fit("gaus");
+    TF1 *myfunc = (TF1*)h_coverage ->GetFunction("gaus");
+
+    Double_t p1 = myfunc->GetParameter(1);
+    Double_t e1 = myfunc->GetParError(1);
+    Double_t p2 = myfunc->GetParameter(2);
+    Double_t e2 = myfunc->GetParError(2);
+
+    
+    TLatex Tl;
+    Tl.SetTextAlign(12);
+    Tl.SetTextSize(0.03);
+  
+    TFile * f_cov = new TFile("coverage.root", "RECREATE");
+    
+    std::string fit_result_1 = "Mean = " + std::to_string(p1) + "+/-" + std::to_string(e1);
+    std::string fit_result_2 = "#sigma = " + std::to_string(p2) + "+/-" + std::to_string(e2);
+    
+
+    Tl.DrawLatex(0.04,1.0,fit_result_1.c_str());
+    Tl.DrawLatex(0.04,0.9,fit_result_2.c_str());
+
+    Float_t ymax = h_coverage->GetMaximum();
+
+    TLine *line1 = new TLine(( p1 - p2 ),0.0,( p1 - p2 ),ymax);
+    line1->SetLineColor(kGreen);
+    line1->Draw();
+    
+    TLine *line2 = new TLine(( p1 + p2 ),0.0,( p1 + p2 ),ymax);
+    line2->SetLineColor(kGreen);
+    line2->Draw();
+    
+    TLine *line3 = new TLine(( p1 - 2*p2 ),0.0,( p1 - 2*p2 ),ymax);
+    line3->SetLineColor(kYellow);
+    line3->Draw();
+    
+    TLine *line4 = new TLine(( p1 + 2*p2 ),0.0,( p1 + 2*p2 ),ymax);
+    line4->SetLineColor(kYellow);
+    line4->Draw();
+    
+    Tl.SetTextColor(kGreen);
+    Tl.DrawLatex( (p1 - p2), (ymax +1.0), "-1 #sigma");
+    Tl.DrawLatex( (p1 + p2), (ymax +1.0), "+1 #sigma");
+
+    Tl.SetTextColor(kYellow);
+    Tl.DrawLatex( (p1 - 2*p2), (ymax +1.0), "-2 #sigma");
+    Tl.DrawLatex( (p1 + 2*p2), (ymax +1.0), "+2 #sigma");
+
+    
+    
+    c_coverage->Write();
+    
+    
+    cout <<"MEAN = "<<  p1  <<"  SIGMA = "<< p2<< endl;
+
+
 }
