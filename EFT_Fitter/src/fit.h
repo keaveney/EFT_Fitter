@@ -1,12 +1,15 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string.h>
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
+#include "TProfile.h"
 #include "TStyle.h"
 #include "TLatex.h"
+#include "TMatrixD.h"
 
 #include "TGraphAsymmErrors.h"
 #include "TCanvas.h"
@@ -33,10 +36,10 @@
 using namespace std;
 using namespace RooFit ;
 
-bool debug = false;
+bool debug = true;
 //const int n_preds = 501;
 
-const int n_preds = 5;
+const int n_preds = 301;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
@@ -56,9 +59,12 @@ class Fitter {
         void toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  int  );
         TH1* make_poisson_toy(TH1*,TH1*, int, double);
         void create_dummy_fiducial_measurement(double, double);
+    TH2D* make_covariance_matrix(std::string, std::string);
+
 
     private:
         double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*);
+
 };
 
 
@@ -80,7 +86,8 @@ float bins_yt[] = { -2.5, -1.6, -1.0, -0.5, 0.0, 0.5, 1.0, 1.6, 2.5};
 //float bins_delphill[] = { -3.14, -2.72, -2.30, -1.88, -1.47, -1.05, -0.63, -0.21, 0.21, 0.63, 1.05, 1.47, 1.88, 2.30, 2.72, 3.14 };
 //float bins_delphill[] = {0.0, 0.16, 0.32, 0.48, 0.64, 0.80, 0.96, 1.12, 1.28, 1.44, 1.60, 1.76, 1.92, 2.08, 2.24, 2.40, 2.56, 2.72, 2.88, 3.04, 3.20};
 
-float bins_delphill[] ={0.0, 0.24,0.48, 0.73, 0.97, 1.21, 1.45, 1.7, 1.94, 2.18, 2.42, 2.67, 2.91, 3.15};
+//float bins_delphill[] ={0.0, 0.24,0.48, 0.73, 0.97, 1.21, 1.45, 1.7, 1.94, 2.18, 2.42, 2.67, 2.91, 3.15};
+float bins_delphill[] ={0.0, 0.4, 0.78, 1.14, 1.48, 1.8, 2.1, 2.38, 2.64, 2.89, 3.142};
 
 float bins_delphibb[] = {0.0, 0.16, 0.32, 0.48, 0.64, 0.80, 0.96, 1.12, 1.28, 1.44, 1.60, 1.76, 1.92, 2.08, 2.24, 2.40, 2.56, 2.72, 2.88, 3.04, 3.20};
 
@@ -177,7 +184,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             double bin_xsec_0  = data_histo->GetBinContent(bin) / bin_width;
             data_histo->SetBinContent(bin, bin_xsec_0);
             data_histo->SetBinError(bin, 0.5);
-
         }
         
         double data_int = data_histo->Integral();
@@ -211,7 +217,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
                 data_histo->SetBinContent(point+1, bin_height + bin_error_up);
             }
             
-            
             data_histo->SetBinError(point+1, bin_error);
              // cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
 
@@ -225,9 +230,9 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     
     //v3 = unweighted, v6 = weigted
     
-    string filename_neg2 = "files/CtG_-2_nominal_v3.root";
-    string filename_pos2 = "files/CtG_0_nominal_v3.root";
-    string filename_0 = "files/CtG_2_nominal_v3.root";
+    string filename_neg2 = "files/CtG_-2_nominal_v8.root";
+    string filename_pos2 = "files/CtG_0_nominal_v8.root";
+    string filename_0 = "files/CtG_2_nominal_v8.root";
     
     //nominal files
    // string filename_neg2 = "files/CtG_-2_scaledown_v2.root";
@@ -241,14 +246,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
    // string filename_0 = "files/CtG_0_scaleup_v2.root";
     
     //scale down files
-    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v6.root";
-    string filename_pos2_scaledown = "files/CtG_0_scaledown_v6.root";
-    string filename_0_scaledown = "files/CtG_2_scaledown_v6.root";
+    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v7.root";
+    string filename_pos2_scaledown = "files/CtG_0_scaledown_v7.root";
+    string filename_0_scaledown = "files/CtG_2_scaledown_v7.root";
     
     //scale up files
-    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v6.root";
-    string filename_pos2_scaleup = "files/CtG_0_scaleup_v6.root";
-    string filename_0_scaleup = "files/CtG_2_scaleup_v6.root";
+    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v7.root";
+    string filename_pos2_scaleup = "files/CtG_0_scaleup_v7.root";
+    string filename_0_scaleup = "files/CtG_2_scaleup_v7.root";
     
     TFile * f_neg2 = new TFile(filename_neg2.c_str());
     TFile * f_0 = new TFile(filename_0.c_str());
@@ -273,6 +278,27 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     TH1F * mc_histo_neg2_scaleup = (TH1F*)f_neg2_scaleup->Get(histoname_pred.c_str());
     TH1F * mc_histo_0_scaleup = (TH1F*)f_0_scaleup->Get(histoname_pred.c_str());
     TH1F * mc_histo_pos2_scaleup = (TH1F*)f_pos2_scaleup->Get(histoname_pred.c_str());
+    
+    // Get top pt vs delphi plot
+    TH2D * toppt_delphi = (TH2D*)f_0->Get("CMS_dilepton_diff/tpt_delphi");
+    TProfile *toppt_delphi_prof_x = (TProfile*)toppt_delphi->ProfileX();
+    toppt_delphi_prof_x->SetLineColor(kRed);
+    toppt_delphi_prof_x->SetLineWidth(3.0);
+    TProfile *toppt_delphi_prof_y = (TProfile*)toppt_delphi->ProfileY();
+    toppt_delphi_prof_y->SetLineColor(kBlue);
+    toppt_delphi_prof_y->SetLineWidth(3.0);
+    
+    toppt_delphi->SetXTitle("#Delta #Phi (ll)");
+    toppt_delphi->SetYTitle("P_{T} top");
+    TCanvas * c_2d = new TCanvas();
+    
+    toppt_delphi->Draw();
+    toppt_delphi_prof_x->Draw("same");
+    toppt_delphi_prof_y->Draw("same");
+
+    c_2d->SaveAs("tpt_delphi.pdf");
+    
+    
     
     TH1F* mc_histo_pwhg;
     TFile * f_pwhg = new TFile("files/test_2M.root");
@@ -722,6 +748,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             else if(mode=="norm_fid"){
                 chi2 = (this->calculate_test_statistic( std::get<0>(histos),  std::get<1>(histos)[weight], std::get<2>(histos)[weight]) + this->calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight]  ));
             }
+            
             g->SetPoint(weight, CtG_vals[weight], chi2);
             
             if ( chi2 < minchi2){
@@ -1071,6 +1098,8 @@ TH1* Fitter::make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integ
     double bin_height_pred;
     double bin_height_data;
     
+
+    
     if (opt == "manual"){
         for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
             double mean = hh->GetBinContent(bin);
@@ -1177,6 +1206,100 @@ TH1* Fitter::make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integ
    //cout <<" toy integral  = "<<  hh_f->Integral()<< endl;
 
     return hh_f;
+}
+
+
+TH2D* make_covariance_matrix(std::string filename, std::string data_file){
+
+    cout <<" Making covariance matrix..."<< endl;
+
+    ifstream readFile(filename.c_str());
+
+    vector<vector<string>> matrix;
+    vector<string> tokens;
+    
+    std::string line;
+    std::string delimiter = " ";
+    
+    while(getline(readFile,line)){
+        tokens.clear();
+        istringstream iss(line);
+        
+        //copy(istream_iterator<string>(iss),istream_iterator<string>(), back_inserter(tokens));
+        size_t pos = 0;
+        std::string token;
+        
+        //std::cout <<" " << std::endl;
+        //std::cout <<"line: " << std::endl;
+
+        while ((pos = line.find(delimiter)) != std::string::npos){
+            token = line.substr(0, pos);
+         //   std::cout <<" mini-loop token "<< token << std::endl;
+            line.erase(0, pos + delimiter.length());
+            tokens.push_back(token);
+        }
+        //std::cout <<" mini-loop token "<< line << std::endl;
+
+        tokens.push_back(line);
+
+        matrix.push_back(tokens);
+       // cout <<"line-- = "<< line << " " <<  matrix[0][0] <<endl;
+    }
+    
+    readFile.close();
+    
+    cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<endl;
+    
+    TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
+    
+    TH2D* cov = new TH2D("cov","cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
+    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
+
+    TFile * f_data = new TFile(data_file.c_str());
+    
+    TGraphAsymmErrors * g_data = (TGraphAsymmErrors*)f_data->Get("data");
+    double point_i_x,point_i_y, point_j_x, point_j_y;
+    
+    
+    for (int x = 0; x < matrix.size(); x++){
+        for (int y = 0; y < matrix[x].size(); y++){
+            std::string::size_type sz;
+            std::string cov_elem_str = matrix[x][y];
+            double cov_elem = std::stod(cov_elem_str, &sz);
+
+            g_data->GetPoint(x, point_i_x, point_i_y );
+            g_data->GetPoint(y, point_j_x, point_j_y );
+            cov_elem = (cov_elem)*(point_i_y)*(point_j_y);
+            
+            cout <<" x = "<< x <<"  y "<< y <<"  "<<  cov_elem_str <<endl;
+            cov->SetBinContent(x+1, y+1, cov_elem);
+            mat[x][y] = cov_elem;
+        }
+    }
+    
+    std::string rootfile_name = filename.substr(0, filename.length() - 3) + "root";
+    cout <<" rootfile name " << rootfile_name <<endl;
+    
+    //invert convariance matrix and write
+    Double_t det2;
+    mat.Invert(&det2);
+    
+    for (int x = 0; x < matrix.size(); x++){
+        for (int y = 0; y < matrix[x].size(); y++){
+                    inv_cov->SetBinContent(x+1, y+1, mat[x][y]);
+        }
+    }
+    
+    
+    TFile * file = new TFile(rootfile_name.c_str(), "RECREATE");
+    cov->Write();
+    inv_cov->Write();
+    mat.Write();
+
+    file->Close();
+    
+    return cov;
+
 }
 
 

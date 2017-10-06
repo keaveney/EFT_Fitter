@@ -12,45 +12,22 @@ using namespace std;
 int main(int argc, const char * argv[]){
 
     gStyle->SetOptStat(0);
-    
     f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
     std::string mode = "abs_only";
     
     for(int pred = 0; pred < n_preds; pred++){
     CtG_vals[pred] = (2.0/(n_preds-1))*pred - 1.0;
-   // CtG_vals[pred] = (0.8/(n_preds-1))*pred - 0.4;
-
     }
 
-    
     if (mode == "abs_only"){
-//f_EFT->run_extraction(6,bins_mtt,"data_staterror_only","files/Abs/DiffXS_HypTTBarMass_source.root","CMS_dilepton_diff/ttbar_mass",mode,false, true);
-//f_EFT->run_extraction(6,bins_ptt,"data","files/Abs/DiffXS_HypToppT_source.root","CMS_dilepton_diff/t_pT",mode,false, true );
-//f_EFT->run_extraction(5,bins_pttt,"data","files/Abs/DiffXS_HypTTBarpT_source.root","CMS_dilepton_diff/ttbar_pT",mode,false, true);
-//f_EFT->run_extraction(8,bins_ytt,"data","files/Abs/DiffXS_HypTTBarRapidity_source.root","CMS_dilepton_diff/ttbar_y",mode,false, true);
-//f_EFT->run_extraction(8,bins_yt,"data","files/Abs/DiffXS_HypTopRapidity_source.root","CMS_dilepton_diff/t_y",mode,false, true);
-f_EFT->run_extraction(13, bins_delphill, "data_staterror_only", "files/July3/DiffXS_HypLLBarDPhi_source.root ", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
-
+       make_covariance_matrix("HypLLBarDPhi_totCovMtrxFile.txt", "files/Oct4/DiffXS_HypLLBarDPhi_source.root");
+       f_EFT->run_extraction(10, bins_delphill, "data_staterror_only", "files/Oct4/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
-f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
-        
-//f_EFT->run_extraction(8, bins_costhetastar,"data","files/DiffXS_HypLLBarCosPhiInTopRestFrame_source.root", "CMS_dilepton_diff/Cos_theta_star", mode, true, false);
-
-//f_EFT->run_extraction( 4, bins_delphitt,"data", "files/April20/Norm/DiffXS_HypTTBarDeltaPhi_source.root", "CMS_dilepton_diff/ttbar_delphi_abs", mode, false , true );
-//f_EFT->run_extraction( 6, bins_mtt,"data", "files/April20/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/ttbar_mass", mode, false, false );
-        
-//f_EFT->run_extraction( 10, bins_dephilb,"data", "files/April20/Norm/DiffXS_HypTTBarMass_source.root", "CMS_dilepton_diff/lb_delphi_abs", mode, true , false);
-        
-//f_EFT->run_extraction( 20, bins_delphibb,"data", "files/April20/Norm/DiffXS_HypBBBarDPhi_source.root", "CMS_dilepton_diff/bb_delphi_abs", mode, true , true);
-f_EFT->run_extraction( 6, bins_ptt, "data_staterror_only","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
-
-        //f_EFT->run_extraction( 5, bins_pttt,"data", "files/April20/Norm/DiffXS_HypTTBarpT_source.root ", "CMS_dilepton_diff/ttbar_pT", mode, false , true);
-//f_EFT->run_extraction( 8, bins_ytt,"data", "files/Norm/DiffXS_HypTTBarRapidity_source.root", "CMS_dilepton_diff/ttbar_y",mode, false , true);
-//f_EFT->run_extraction( 8, bins_yt, "data","files/Norm/DiffXS_HypTopRapidity_source.root", "CMS_dilepton_diff/t_y", mode, false, true );
+        f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
+        f_EFT->run_extraction( 6, bins_ptt, "data_staterror_only","files/April20/Norm/DiffXS_HypToppT_source.root", "CMS_dilepton_diff/t_pT", mode, false , true );
     }
-    
 
     f_EFT->make_summary_plot(scans);
     if(debug) std::cout <<" make_summary_plot done "<< "\n";
@@ -61,9 +38,8 @@ f_EFT->run_extraction( 6, bins_ptt, "data_staterror_only","files/April20/Norm/Di
 void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data, std::string filename_data,std::string histoname_pred,  std::string mode, bool closure_test, bool add_pwhg){
     
      tuple<TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>>  histos  = f_EFT->initialise(graphname_data, filename_data, histoname_pred, nbins, bins, mode, closure_test, add_pwhg, "nom");
-    
-  // f_EFT->toy_study( histos, 1);
-   f_EFT->scan_couplings("data", histoname_pred, histos ,mode, add_pwhg) ;
+        // f_EFT->toy_study( histos, 1);
+    f_EFT->scan_couplings("data", histoname_pred, histos ,mode, add_pwhg) ;
 }
 
 
@@ -71,7 +47,7 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     
     double test_statistic = 0.0;
     int nbins  = data->GetSize() - 2;
-    bool schmitt_fit = false;
+    bool schmitt_fit = true;
     vector<double> deltas;
     vector<double> errors;
 
@@ -81,14 +57,21 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     double chi2_bin = 0.0;
     double theory_error =0.0;
     double total_error =0.0;
+    
+    //Retrieve covariance matrix from text file
+    TFile *cov_file = new TFile("HypLLBarDPhi_totCovMtrxFile.root");
+    TH2D * cov = (TH2D*)cov_file->Get("inv_cov");
+   /// cov = Fitter::make_covariance_matrix("HypTTBarDeltaRapidity_totCovMtrxFile.txt");
 
     deltas.clear();
     errors.clear();
     
-    for (int i=1;i<=  data->GetSize() -2   ; i++){
+    for (int i=1;i <=  data->GetSize() -2; i++){
+        
         double data_bin = data->GetBinContent(i);
         double pred_bin = pred->GetBinContent(i);
         double delta = data_bin - pred_bin;
+    
         deltas.push_back(delta);
         
         if (data_errors_only){
@@ -111,10 +94,13 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     
     for (int i=1;i<=nbins; i++) {
         for (int j=1;j<=nbins; j++){
-            
-           // double corr_coff = cov->GetBinContent(i+1,j+1);
+            std::cout <<"  "<< std::endl;
+            double corr_coff = cov->GetBinContent(i,j);
             if (schmitt_fit){
-                chisq += deltas[i]*deltas[j]*corr_coff;
+                chisq += deltas[i-1]*deltas[j-1]*corr_coff;
+            std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
+
+                
             }
             else {
                 if(i == j){
@@ -131,6 +117,8 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
         }
     }
 // std::cout <<"chi2 final "<< chisq << "\n";
+    
+    cov_file->Close();
 
     return chisq;
 }
@@ -182,7 +170,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
 
     }
     
-
     TCanvas * all_relscans_c = new TCanvas();
     TLegend *leg_rel = new TLegend(0.5,0.6,0.8,0.8);
     
@@ -375,5 +362,8 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     
     cout <<"MEAN = "<<  p1  <<"  SIGMA = "<< p2<< endl;
 
-
 }
+
+
+
+
