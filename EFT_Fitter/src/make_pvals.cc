@@ -383,16 +383,16 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         "#eta #bar{l}",
         "#eta l (leading)",
         "#eta l (sub-leading)",
-        "p_{T} l#bar{l}",
-        "M_{l#bar{l}}",
-        "#Delta #Phi l#bar{l}",
+        "p_{T} l #bar{l}",
+        "M_{l #bar{l}}",
+        "#Delta #Phi l #bar{l}",
         "N_{jets}",
         "p_{T} b-jet (leading)",
         "p_{T} b-jet (sub-leading)",
         "#eta b-jet (leading)",
         "#eta b-jet (sub-leading)",
-        "p_{T} b#bar{b}",
-        "M_{b#bar{b}}"
+        "p_{T} b #bar{b}",
+        "M_{b #bar{b}}"
     };
     
     
@@ -440,24 +440,30 @@ void summary_plot(string f1, string f2){
 
     TH1F * h_norm_parton_pwhg_p8 =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_p8;1");
     TH1F * h_norm_parton_pwhg_hpp =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_hpp;1");
-    
     TH1F * h_norm_particle_pwhg_p8 =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_p8;1");
     TH1F * h_norm_particle_pwhg_hpp =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_hpp;1");
+    
+    
+    
+    
     
     TFile * summary = new TFile("summary.root", "RECREATE");
     
     TCanvas *c = new TCanvas("c","c");
-    c->SetCanvasSize(1800, 600);
-    c->SetWindowSize(1800, 600);
+    c->SetCanvasSize(2200, 600);
+    c->SetWindowSize(2200, 600);
     
     if (h_norm_parton_pwhg_p8){
     h_norm_parton_pwhg_p8->SetMinimum(0.0000000000000000000001);
     h_norm_parton_pwhg_p8->SetMaximum(1.1);
-    h_norm_parton_pwhg_p8->GetXaxis()->SetLabelSize(0.03);
+    h_norm_parton_pwhg_p8->GetXaxis()->SetLabelSize(0.08);
     h_norm_parton_pwhg_p8->GetXaxis()->CenterLabels(kTRUE);
     h_norm_parton_pwhg_p8->GetXaxis()->SetNdivisions(32, kFALSE);
-    h_norm_parton_pwhg_p8->GetYaxis()->SetTickLength(0.01);
+    h_norm_parton_pwhg_p8->GetXaxis()->SetLabelOffset(0.01);
+    //h_norm_parton_pwhg_p8->GetXaxis()->LabelsOption("u");
 
+    h_norm_parton_pwhg_p8->GetYaxis()->SetTickLength(0.01);
+    h_norm_parton_pwhg_p8->GetYaxis()->SetTitleOffset(0.5);
     h_norm_parton_pwhg_p8->SetYTitle("p-value");
 
         
@@ -471,6 +477,13 @@ void summary_plot(string f1, string f2){
     h_norm_parton_pwhg_hpp->SetMarkerStyle(21);
     h_norm_particle_pwhg_p8->SetMarkerStyle(22);
     h_norm_particle_pwhg_hpp->SetMarkerStyle(22);
+        
+        
+    h_norm_parton_pwhg_p8->SetMarkerSize(3.0);
+    h_norm_parton_pwhg_hpp->SetMarkerSize(3.0);
+    h_norm_particle_pwhg_p8->SetMarkerSize(3.0);
+    h_norm_particle_pwhg_hpp->SetMarkerSize(3.0);
+        
     
     h_norm_parton_pwhg_p8->SetMarkerColor(kRed);
     h_norm_parton_pwhg_hpp->SetMarkerColor(kViolet);
@@ -478,7 +491,7 @@ void summary_plot(string f1, string f2){
     h_norm_particle_pwhg_hpp->SetMarkerColor(kViolet);
     }
     
-    auto legend = new TLegend(0.78,0.15,0.98,0.45);
+    auto legend = new TLegend(0.78,0.2,0.98,0.5);
     legend->AddEntry(h_norm_parton_pwhg_p8,"Powheg + Pythia (parton level) ","p");
     legend->AddEntry(h_norm_particle_pwhg_p8,"Powheg + Pythia (particle level)","p");
     legend->AddEntry(h_norm_parton_pwhg_hpp,"Powheg + Herwig++ (parton level)","p");
@@ -489,10 +502,10 @@ void summary_plot(string f1, string f2){
     c->SetLogy();
     c->SetGridx();
     c->SetFrameLineColor(0);
-    c->SetLeftMargin(0.07);
-    c->SetRightMargin(0.02);
+    c->SetLeftMargin(0.035);
+    c->SetRightMargin(0.01);
     c->SetTopMargin(0.06);
-    c->SetBottomMargin(0.1);
+    c->SetBottomMargin(0.26);
 
     //TFrame *fr = (TFrame*)gPad->GetFrame();
     //fr->SetLineColor(kWhite);
