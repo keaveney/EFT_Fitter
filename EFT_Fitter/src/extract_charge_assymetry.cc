@@ -221,9 +221,9 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
     }
     
     else if(write == "normparticle.root"){
-        g_CA_68->SetPoint(0, CA, 1.0);
-        g_CA_95->SetPoint(0, CA, 1.0);
-        g_CA_central->SetPoint(0, CA, 1.0);
+        g_CA_68->SetPoint(0, CA, 0.5);
+        g_CA_95->SetPoint(0, CA, 0.5);
+        g_CA_central->SetPoint(0, CA, 0.5);
         g_CA_68->SetPointEXhigh(0, CA_sd);
         g_CA_68->SetPointEXlow(0, CA_sd);
         g_CA_95->SetPointEXhigh(0, CA_sd_95);
@@ -335,7 +335,7 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         line_pwhgp8_parton->SetLineStyle(2);
         line_pwhgp8_parton->Draw();
         
-        TLine *line_pwhgp8_particle = new TLine(0.001551,0.8,0.001551,1.2);
+        TLine *line_pwhgp8_particle = new TLine(0.001551,0.3,0.001551,0.7);
         line_pwhgp8_particle->SetLineColor(kBlue);
         line_pwhgp8_particle->SetLineStyle(2);
         line_pwhgp8_particle->Draw();
@@ -346,27 +346,31 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         Tl.SetTextSize(0.03);
         Tl.DrawLatex(-0.025, 0.0,"parton level");
     //    Tl.DrawLatex(-0.14, 1.0,"absolute parton level");
-        Tl.DrawLatex(-0.025, 1.0,"particle level");
+        Tl.DrawLatex(-0.025, 0.5,"particle level");
      //   Tl.DrawLatex(-0.14, 3.0,"absolute particle level");
         
         auto legend = new TLegend(0.69,0.45,0.99,0.75);
         legend->AddEntry(line_mg5h6_parton,"MG5_aMC@NLO+HERWIG6","E1");
         legend->AddEntry(line_pwhgp8_parton,"POWHEGv2+PYTHIA8","E1");
-        legend->AddEntry(gr_68,"Data","E1p");
+        legend->AddEntry(gr_68,"Data","E1");
         legend->SetTextSize(0.028);
         legend->Draw();
         
         gStyle->SetOptStat(00000);
         
         TFile * f_results_summary = new TFile("results_summary.root", "RECREATE");
-        c_results->SetFillColor(0);
-        c_results->SetFillStyle(4000);
-        c_results->SetBorderSize(2);
-        c_results->SetFrameFillStyle(0);
+       // c_results->SetFillColor(0);
+       // c_results->SetFillStyle(4000);
+        //c_results->SetBorderSize(2);
+       // c_results->SetFrameFillStyle(0);
         c_results->SetFrameLineColor(0);
-        c_results->SetFrameFillStyle(0);
-        c_results->SetFrameLineColor(0);
-        c_results->SetFrameBorderMode(0);
+       // c_results->SetFrameFillStyle(0);
+        
+      //  c_results->SetLeftMargin(0.07);
+      //  c_results->SetRightMargin(0.02);
+      //  c_results->SetTopMargin(0.06);
+      //  c_results->SetBottomMargin(0.16);
+
         c_results->SaveAs("CA_results.pdf");
         c_results->Write();
 

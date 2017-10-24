@@ -181,7 +181,7 @@ int main(int argc, const char * argv[]){
         "Y \\ttbar\\",
         "M_{\\ttbar}",
         "\\Delta\\ Y \\ttbar\\",
-    //    "\\Delta\\ \\Phi\\ \\ttbar\\",
+    //   "\\Delta\\ \\Phi\\ \\ttbar\\",
         "\\pt^{l}",
         "\\pt^{\\lbar}",
         "\\pt^{l (leading)}",
@@ -287,9 +287,7 @@ std::tuple <float, int, float > process_result(string modelname, string filename
         e_data = g_data->GetErrorY(bin);
         
         cout <<" data  =  "<<  bin_data << "  data error = "<< e_data  <<"  model " <<  bin_model <<endl;
-
         //Extact term in covariance matrix here (need extra loop also)
-        
         chisq_running += pow(bin_data - bin_model, 2.0) / (  pow(e_data, 2.0 ) ) ;
         
     }
@@ -307,9 +305,6 @@ std::tuple <float, int, float > process_result(string modelname, string filename
     return results;
     
 }
-
-
-
 
 
 void write_latex(string mode, vector<string> model, vector<string> vars, float chisq[2][32], int ndof[2][32], float pval[2][32]){
@@ -334,13 +329,14 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
     myfile << "\\multirow{2}{*}{} &"<<endl;
     myfile << "\\multicolumn{2}{c}{"<<  model[0] <<"} &" <<endl;
     myfile << "\\multicolumn{2}{c|}{"<<  model[1] <<"} \\\\"  <<endl;
-    myfile << " &  	$\\chi^{2}$ / ndof      & p-value &   $\\chi^{2}$ / ndof &   p-value \\\\"<<endl;
+    myfile << " &  	$\\chi^{2}$ / ndof  & p-value &   $\\chi^{2}$ / ndof &   p-value \\\\"<<endl;
     myfile << "\\hline"<<endl;
 
     TFile * f_summary = new TFile(mode_rootfile.c_str(), "RECREATE");
-    TH1F * h_summary;
+    TH1F * h_summary_A;
+    TH1F * h_summary_B ;
     vector<TH1F*> h_summaries;
-  //  vector<TFile*> f_summaries;
+    int nhist;
 
     std::string summary_tag;
     
@@ -352,12 +348,27 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
             summary_tag = "pwhg_hpp";
         }
 
-        std::string summary_name = mode + summary_tag;
+        std::string summary_name_A = mode + summary_tag + "_A";
+        std::string summary_name_B = mode + summary_tag + "_B";
         
-        h_summary = new TH1F(summary_name.c_str(),summary_name.c_str(), vars.size(), 0, 100);
-        h_summaries.push_back(h_summary);
+        h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 14, 0, 14);
+        h_summary_B = new TH1F(summary_name_B.c_str(), summary_name_B.c_str(), vars.size() - 14, 0, vars.size() - 14);
+        
+        if (mode == "norm_particle"){
+            nhist= 4;
+        h_summaries.push_back(h_summary_A);
+        h_summaries.push_back(h_summary_B);
+        } else{
+            nhist = 2;
+            h_summaries.push_back(h_summary_A);
+        }
+        
+        
+        
     }
     
+    cout <<"Histograms created... "<<endl;
+
     
     vector<string> vars_root = {
         "p_{T} top",
@@ -395,26 +406,56 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         "M_{b #bar{b}}"
     };
     
+    vector<string> vars_A, vars_B ;
     
+    for (int i  = 0; i< vars.size() ; i++ ){
+        if (i < 14) {
+            vars_A.push_back(vars[i]);
+        }
+        else{
+            vars_B.push_back(vars[i]);
+        }
+    }
+
     
-    for (int i  = 0; i< vars.size() ; i++ ) {
+    if (mode == "norm_particle"){
+    for (int i  = 0; i< vars_A.size() ; i++ ){
+        h_summaries[0]->SetBinContent(i+1, pval[0][i]);
+        h_summaries[2]->SetBinContent(i+1, pval[1][i]);
+        h_summaries[0]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());
+        h_summaries[2]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());
+    }
+    for (int i  = 0; i< vars_B.size() ; i++ ){
+        h_summaries[1]->SetBinContent(i+1, pval[0][i+14]);
+        h_summaries[3]->SetBinContent(i+1, pval[1][i+14]);
+        h_summaries[1]->GetXaxis()->SetBinLabel(i+1,vars_root[i+14].c_str());;
+        h_summaries[3]->GetXaxis()->SetBinLabel(i+1,vars_root[i+14].c_str());;
+    }
+    } else{
+        for (int i  = 0; i< vars_A.size() ; i++ ){
+            h_summaries[0]->SetBinContent(i+1, pval[0][i]);
+            h_summaries[1]->SetBinContent(i+1, pval[1][i]);
+            h_summaries[0]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());
+            h_summaries[1]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());
+        }
+    }
+    
+    for (int i  = 0; i< vars.size() ; i++ ){
         
         myfile<<vars[i] <<" & "<<chisq[0][i]<<"/"<< ndof[0][i]<<"& "<<pval[0][i]<<" & "<<chisq[1][i]<<"/"<<ndof[1][i]<<" & "<<pval[1][i]<<" \\\\"<<endl;
-    
-        h_summaries[0]->SetBinContent(i+1, pval[0][i]);
-        h_summaries[1]->SetBinContent(i+1, pval[1][i]);
-        h_summaries[0]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());;
-        h_summaries[1]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());;
 
-        
     }
     myfile << "\\hline"<<endl;
     myfile << "\\end{tabular}"<<endl;
     myfile << "\\caption{The \\chi^{2}/ndof$ and p values quantifying the agreement between theoretical predictions and data for "<< mode_string <<" measurements are shown.}"<< endl;
-   myfile << "\\label{tab:"<< mode << "}" << endl;
+    myfile << "\\label{tab:"<< mode << "}" << endl;
 
-    h_summaries[0]->Write();
-    h_summaries[1]->Write();
+    for (int hist = 0; hist< nhist ;hist++){
+    h_summaries[hist]->Write();
+    }
+    
+    
+    
     f_summary->Close();
     
     //myfile << "\\hfill"<<endl;
@@ -431,81 +472,97 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
 
 void summary_plot(string f1, string f2){
 
-    gStyle->SetOptStat(00000);
+    TCanvas * c_master = new TCanvas("c_master","c_master");
+    c_master->Divide(1,2);
 
+    c_master->cd(1);
+
+    gPad->SetCanvasSize(2200, 1800);
+   // gPad->SetWindowSize(2200, 1800);
+    gPad->SetLogy();
+    gPad->SetGridx();
+    gPad->SetFrameLineColor(0);
+    gPad->SetLeftMargin(0.085);
+    gPad->SetRightMargin(0.045);
+    gPad->SetTopMargin(0.02);
+    gPad->SetBottomMargin(0.25);
+    
+    gStyle->SetOptStat(00000);
+    
     cout <<"in summary plot routine"<< endl;
     
     TFile * f_norm_parton = new TFile("norm_parton.root");
     TFile * f_norm_particle = new TFile("norm_particle.root");
 
-    TH1F * h_norm_parton_pwhg_p8 =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_p8;1");
-    TH1F * h_norm_parton_pwhg_hpp =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_hpp;1");
-    TH1F * h_norm_particle_pwhg_p8 =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_p8;1");
-    TH1F * h_norm_particle_pwhg_hpp =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_hpp;1");
-    
-    
-    
-    
+    //pwhg_p8
+    TH1F * h_norm_parton_pwhg_p8_A =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_p8_A;1");
+    TH1F * h_norm_particle_pwhg_p8_A =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_p8_A;1");
+    TH1F * h_norm_particle_pwhg_p8_B =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_p8_B;1");
+
+    //pwhg_hpp
+    TH1F * h_norm_parton_pwhg_hpp_A =  (TH1F*)f_norm_parton->Get("norm_partonpwhg_hpp_A;1");
+    TH1F * h_norm_particle_pwhg_hpp_A =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_hpp_A;1");
+    TH1F * h_norm_particle_pwhg_hpp_B =  (TH1F*)f_norm_particle->Get("norm_particlepwhg_hpp_B;1");
     
     TFile * summary = new TFile("summary.root", "RECREATE");
     
-    TCanvas *c = new TCanvas("c","c");
-    c->SetCanvasSize(2200, 600);
-    c->SetWindowSize(2200, 600);
+    //TCanvas *c_A = new TCanvas("c_A","c_A");
+    //c_A->SetCanvasSize(2200, 600);
+   // c_A->SetWindowSize(2200, 600);
     
-    if (h_norm_parton_pwhg_p8){
-    h_norm_parton_pwhg_p8->SetMinimum(0.0000000000000000000001);
-    h_norm_parton_pwhg_p8->SetMaximum(1.1);
-    h_norm_parton_pwhg_p8->GetXaxis()->SetLabelSize(0.08);
-    h_norm_parton_pwhg_p8->GetXaxis()->CenterLabels(kTRUE);
-    h_norm_parton_pwhg_p8->GetXaxis()->SetNdivisions(32, kFALSE);
-    h_norm_parton_pwhg_p8->GetXaxis()->SetLabelOffset(0.01);
-    //h_norm_parton_pwhg_p8->GetXaxis()->LabelsOption("u");
+    if (h_norm_particle_pwhg_p8_A){
+    h_norm_particle_pwhg_p8_A->SetMinimum(0.0000000000000000000001);
+    h_norm_particle_pwhg_p8_A->SetMaximum(1.1);
+    h_norm_particle_pwhg_p8_A->GetXaxis()->SetLabelSize(0.06);
+    h_norm_particle_pwhg_p8_A->GetXaxis()->CenterLabels(kTRUE);
+    h_norm_particle_pwhg_p8_A->GetXaxis()->SetNdivisions(32, kFALSE);
+    h_norm_particle_pwhg_p8_A->GetXaxis()->SetLabelOffset(0.02);
+    //h_norm_particle_pwhg_p8_A->GetXaxis()->LabelsOption("u");
 
-    h_norm_parton_pwhg_p8->GetYaxis()->SetTickLength(0.01);
-    h_norm_parton_pwhg_p8->GetYaxis()->SetTitleOffset(0.5);
-    h_norm_parton_pwhg_p8->SetYTitle("p-value");
+    h_norm_particle_pwhg_p8_A->GetYaxis()->SetTickLength(0.01);
+    h_norm_particle_pwhg_p8_A->GetYaxis()->SetTitleOffset(0.6);
+    h_norm_particle_pwhg_p8_A->GetYaxis()->SetTitleSize(0.06);
 
-        
-    h_norm_parton_pwhg_p8->SetTitle(" ");
-    h_norm_parton_pwhg_p8->Draw("p");
-    h_norm_parton_pwhg_hpp->Draw("psame");
-    h_norm_particle_pwhg_p8->Draw("psame");
-    h_norm_particle_pwhg_hpp->Draw("psame");
+    h_norm_particle_pwhg_p8_A->SetYTitle("p-value");
+
+    h_norm_particle_pwhg_p8_A->SetTitle(" ");
+    h_norm_particle_pwhg_p8_A->Draw("p");
+    h_norm_parton_pwhg_hpp_A->Draw("psame");
+    h_norm_particle_pwhg_p8_A->Draw("psame");
+    //h_norm_particle_pwhg_hpp_B->Draw("psame");
     
-    h_norm_parton_pwhg_p8->SetMarkerStyle(21);
-    h_norm_parton_pwhg_hpp->SetMarkerStyle(21);
-    h_norm_particle_pwhg_p8->SetMarkerStyle(22);
-    h_norm_particle_pwhg_hpp->SetMarkerStyle(22);
+    h_norm_parton_pwhg_p8_A->SetMarkerStyle(21);
+    h_norm_parton_pwhg_hpp_A->SetMarkerStyle(21);
+    h_norm_particle_pwhg_p8_A->SetMarkerStyle(22);
+    h_norm_particle_pwhg_hpp_A->SetMarkerStyle(22);
         
+    h_norm_parton_pwhg_p8_A->SetMarkerSize(3.0);
+    h_norm_parton_pwhg_hpp_A->SetMarkerSize(3.0);
+    h_norm_particle_pwhg_p8_A->SetMarkerSize(3.0);
+    h_norm_particle_pwhg_hpp_A->SetMarkerSize(3.0);
         
-    h_norm_parton_pwhg_p8->SetMarkerSize(3.0);
-    h_norm_parton_pwhg_hpp->SetMarkerSize(3.0);
-    h_norm_particle_pwhg_p8->SetMarkerSize(3.0);
-    h_norm_particle_pwhg_hpp->SetMarkerSize(3.0);
+    h_norm_parton_pwhg_p8_A->SetMarkerColor(kRed);
+    h_norm_parton_pwhg_hpp_A->SetMarkerColor(kViolet);
+    h_norm_particle_pwhg_p8_A->SetMarkerColor(kRed);
+    h_norm_particle_pwhg_hpp_A->SetMarkerColor(kViolet);
         
-    
-    h_norm_parton_pwhg_p8->SetMarkerColor(kRed);
-    h_norm_parton_pwhg_hpp->SetMarkerColor(kViolet);
-    h_norm_particle_pwhg_p8->SetMarkerColor(kRed);
-    h_norm_particle_pwhg_hpp->SetMarkerColor(kViolet);
     }
     
-    auto legend = new TLegend(0.78,0.2,0.98,0.5);
-    legend->AddEntry(h_norm_parton_pwhg_p8,"Powheg + Pythia (parton level) ","p");
-    legend->AddEntry(h_norm_particle_pwhg_p8,"Powheg + Pythia (particle level)","p");
-    legend->AddEntry(h_norm_parton_pwhg_hpp,"Powheg + Herwig++ (parton level)","p");
-    legend->AddEntry(h_norm_particle_pwhg_hpp,"Powheg + Herwig++ (particle level)","p");
+    auto legend_A = new TLegend(0.6,0.33,0.95,0.69);
+    legend_A->AddEntry(h_norm_parton_pwhg_p8_A,"Powheg + Pythia (parton level) ","p");
+    legend_A->AddEntry(h_norm_particle_pwhg_p8_A,"Powheg + Pythia (particle level)","p");
+    legend_A->AddEntry(h_norm_parton_pwhg_hpp_A,"Powheg + Herwig++ (parton level)","p");
+    legend_A->AddEntry(h_norm_particle_pwhg_hpp_A,"Powheg + Herwig++ (particle level)","p");
 
-    legend->SetTextSize(0.028);
-    legend->Draw();
-    c->SetLogy();
-    c->SetGridx();
-    c->SetFrameLineColor(0);
-    c->SetLeftMargin(0.035);
-    c->SetRightMargin(0.01);
-    c->SetTopMargin(0.06);
-    c->SetBottomMargin(0.26);
+    legend_A->SetTextSize(0.035);
+    legend_A->Draw();
+   // c_A->SetLogy();
+   // c_A->SetGridx();
+   // c_A->SetFrameLineColor(0);
+   // c_A->SetLeftMargin(0.035);
+    //c_A->SetRightMargin(0.01);
+    //c_A->SetTopMargin(0.06);
+    //c_A->SetBottomMargin(0.26);
 
     //TFrame *fr = (TFrame*)gPad->GetFrame();
     //fr->SetLineColor(kWhite);
@@ -516,8 +573,83 @@ void summary_plot(string f1, string f2){
 //    TFrame *frame = (TFrame*)c->GetPrimitive("TFrame");
  //   frame->SetLineWidth(0);
     
-    c->SaveAs("GOF_summary.pdf");
-    c->Write();
+    //c_A->SaveAs("GOF_summary_A.pdf");
+   // c_A->Write();
+    
+
+    
+   // TCanvas *c_B = new TCanvas("c_B","c_B");
+   // c_B->SetCanvasSize(2200, 600);
+   // c_B->SetWindowSize(2200, 600);
+    
+    c_master->cd(2);
+    gPad->SetCanvasSize(2200, 1800);
+    gPad->SetLogy();
+    gPad->SetGridx();
+    gPad->SetFrameLineColor(0);
+    gPad->SetLeftMargin(0.085);
+    gPad->SetRightMargin(0.045);
+    gPad->SetTopMargin(0.02);
+    gPad->SetBottomMargin(0.2);
+    
+    if (h_norm_particle_pwhg_p8_B){
+        h_norm_particle_pwhg_p8_B->SetMinimum(0.0000000000000000000001);
+        h_norm_particle_pwhg_p8_B->SetMaximum(1.1);
+        h_norm_particle_pwhg_p8_B->GetXaxis()->SetLabelSize(0.06);
+        h_norm_particle_pwhg_p8_B->GetXaxis()->CenterLabels(kTRUE);
+        h_norm_particle_pwhg_p8_B->GetXaxis()->SetNdivisions(32, kFALSE);
+        h_norm_particle_pwhg_p8_B->GetXaxis()->SetLabelOffset(0.01);
+        //h_norm_particle_pwhg_p8_B->GetXaxis()->LabelsOption("u");
+        
+        h_norm_particle_pwhg_p8_B->GetYaxis()->SetTickLength(0.01);
+        h_norm_particle_pwhg_p8_B->GetYaxis()->SetTitleOffset(0.6);
+        h_norm_particle_pwhg_p8_B->GetYaxis()->SetTitleSize(0.06);
+
+        h_norm_particle_pwhg_p8_B->SetYTitle("p-value");
+        
+        h_norm_particle_pwhg_p8_B->SetTitle(" ");
+        h_norm_particle_pwhg_p8_B->Draw("p");
+        h_norm_particle_pwhg_hpp_B->Draw("psame");
+        
+        h_norm_particle_pwhg_p8_B->SetMarkerStyle(22);
+        h_norm_particle_pwhg_hpp_B->SetMarkerStyle(22);
+        
+        h_norm_particle_pwhg_p8_B->SetMarkerSize(3.0);
+        h_norm_particle_pwhg_hpp_B->SetMarkerSize(3.0);
+        
+        h_norm_particle_pwhg_p8_B->SetMarkerColor(kRed);
+        h_norm_particle_pwhg_hpp_B->SetMarkerColor(kViolet);
+        
+    }
+    
+   // auto legend_B = new TLegend(0.78,0.25,0.98,0.55);
+  //  legend_B->AddEntry(h_norm_particle_pwhg_p8_B,"Powheg + Pythia (particle level)","p");
+  //  legend_B->AddEntry(h_norm_particle_pwhg_hpp_B,"Powheg + Herwig++ (particle level)","p");
+    
+  //  legend_B->SetTextSize(0.028);
+  //  legend_B->Draw();
+  //  c_B->SetLogy();
+  //  c_B->SetGridx();
+  //  c_B->SetFrameLineColor(0);
+  //  c_B->SetLeftMargin(0.035);
+  ///  c_B->SetRightMargin(0.01);
+   // c_B->SetTopMargin(0.06);
+   // c_B->SetBottomMargin(0.26);
+    
+    //TFrame *fr = (TFrame*)gPad->GetFrame();
+    //fr->SetLineColor(kWhite);
+    //gPad->Modified();
+    
+    
+    
+    //    TFrame *frame = (TFrame*)c->GetPrimitive("TFrame");
+    //   frame->SetLineWidth(0);
+    
+   // c_B->SaveAs("GOF_summary_B.pdf");
+   // c_B->Write();
+    
+    c_master->SaveAs("GOF_summary_master.pdf");
+    
     return;
     
 }

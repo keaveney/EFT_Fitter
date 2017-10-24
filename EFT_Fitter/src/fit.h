@@ -36,10 +36,10 @@
 using namespace std;
 using namespace RooFit ;
 
-bool debug = true;
+bool debug = false;
 //const int n_preds = 501;
 
-const int n_preds = 301;
+const int n_preds = 3;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
@@ -104,14 +104,17 @@ float bins_costhetastar[] = {-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5 , 0.75, 1.
 //double sigma_CtG_pos2_nlo = 975.0;
 //double k_factor = 831.76/674.0;
 
-
 double sigma_sm_nlo = 687.14;
 double sigma_CtG_neg2_nlo = 404.48;
 double sigma_CtG_pos2_nlo = 1270.204;
 double k_factor = 831.76/687.14;
 
-//double BR = 0.045;
-double BR = 0.0493;
+double BR = 0.046; //prompt only
+//double BR = 0.0493; //number from Madspin (but doesnt change if taus are included)
+//double BR = 0.0568; // Using PDG values (not assuming lepton universality)
+
+//double BR = 0.0644; // Using PDG values (assuming lepton universality)
+
 
 //acceptances (to be re-checked with higher stats)
 //double acc_sm_nlo = 0.3785;
@@ -199,13 +202,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         TGraphAsymmErrors* g_data = (TGraphAsymmErrors*) f_data->Get(graphname_data.c_str() );
         
         data_histo = new TH1F("n","t", nbins, bins);
-        double bin_centre, bin_height;
+        double bin_centre, bin_height, bin_width;
         
         for (int point = 0; point < nbins; point ++){
             g_data->GetPoint(point, bin_centre, bin_height);
             double bin_error = (g_data->GetErrorYhigh(point) + g_data->GetErrorYlow(point))/2.0 ;
             double bin_error_down = g_data->GetErrorYlow(point);
             double bin_error_up   = g_data->GetErrorYhigh(point);
+            bin_width = (bins[point+1] -  bins[point]);
             
             //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
             
@@ -220,19 +224,19 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             data_histo->SetBinError(point+1, bin_error);
              // cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
 
-            running_total = running_total + bin_height;
+            running_total = running_total + (bin_height*bin_width);
         }
 //        data_histo->Scale(running_total/data_histo->Integral());
 
     }
     
-    if(debug)    cout << "Running total for data histo  =" <<  running_total  <<"\n";
+      cout << "Running total for data histo  =" <<  running_total  <<"\n";
     
     //v3 = unweighted, v6 = weigted
     
-    string filename_neg2 = "files/CtG_-2_nominal_v8.root";
-    string filename_pos2 = "files/CtG_0_nominal_v8.root";
-    string filename_0 = "files/CtG_2_nominal_v8.root";
+    string filename_neg2 = "files/CtG_-2_nominal_v10.root";
+    string filename_pos2 = "files/CtG_2_nominal_v10.root";
+    string filename_0 = "files/CtG_0_nominal_v10.root";
     
     //nominal files
    // string filename_neg2 = "files/CtG_-2_scaledown_v2.root";
@@ -246,14 +250,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
    // string filename_0 = "files/CtG_0_scaleup_v2.root";
     
     //scale down files
-    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v7.root";
-    string filename_pos2_scaledown = "files/CtG_0_scaledown_v7.root";
-    string filename_0_scaledown = "files/CtG_2_scaledown_v7.root";
+    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v10.root";
+    string filename_pos2_scaledown = "files/CtG_2_scaledown_v10.root";
+    string filename_0_scaledown = "files/CtG_0_scaledown_v10.root";
     
     //scale up files
-    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v7.root";
-    string filename_pos2_scaleup = "files/CtG_0_scaleup_v7.root";
-    string filename_0_scaleup = "files/CtG_2_scaleup_v7.root";
+    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v10.root";
+    string filename_pos2_scaleup = "files/CtG_2_scaleup_v10.root";
+    string filename_0_scaleup = "files/CtG_0_scaleup_v10.root";
     
     TFile * f_neg2 = new TFile(filename_neg2.c_str());
     TFile * f_0 = new TFile(filename_0.c_str());
@@ -298,8 +302,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
 
     c_2d->SaveAs("tpt_delphi.pdf");
     
-    
-    
+
     TH1F* mc_histo_pwhg;
     TFile * f_pwhg = new TFile("files/test_2M.root");
     if (add_pwhg) mc_histo_pwhg = (TH1F*)f_pwhg->Get(histoname_pred.c_str());
@@ -376,6 +379,10 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
 
 
         mc_histo_0->Scale(sigma_sm_fid/running_fid_xs_0);
+    
+        cout <<"Nominal SM prediction integral   = "<< mc_histo_0->Integral() << endl;
+ 
+    
         mc_histo_neg2->Scale(sigma_CtG_neg2_fid/running_fid_xs_neg2);
         mc_histo_pos2->Scale(sigma_CtG_pos2_fid/running_fid_xs_pos2);
     
@@ -387,13 +394,13 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         mc_histo_neg2_scaleup->Scale(sigma_CtG_neg2_scaleup_fid/running_fid_xs_neg2_scaleup);
         mc_histo_pos2_scaleup->Scale(sigma_CtG_pos2_scaleup_fid/running_fid_xs_pos2_scaleup);
     
-       TFile * f_rivet = new TFile("rawrivet.root", "RECREATE");
-       mc_histo_0->Write("0");
-       mc_histo_neg2->Write("neg2");
-       mc_histo_pos2->Write("pos2");
-       f_rivet->Close();
+        TFile * f_rivet = new TFile("rawrivet.root", "RECREATE");
+        mc_histo_0->Write("0");
+        mc_histo_neg2->Write("neg2");
+        mc_histo_pos2->Write("pos2");
+        f_rivet->Close();
     
-       if (add_pwhg)    mc_histo_pwhg->Scale(sigma_sm_fid/running_fid_xs_pwhg);
+        if (add_pwhg)    mc_histo_pwhg->Scale(sigma_sm_fid/running_fid_xs_pwhg);
     
     
        //make histo of pure CtG contribution
@@ -616,14 +623,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     mc_temp_neg->SetMarkerStyle(21);
     mc_temp_neg->SetMarkerColor(kGreen);
     mc_temp_neg->SetLineColor(kGreen);
-    mc_temp_neg->GetYaxis()->SetRangeUser(0.3, 2.5);
+    mc_temp_neg->GetYaxis()->SetRangeUser(0.5, 1.5);
     mc_temp_neg->GetYaxis()->SetLabelSize(0.1);
     mc_temp_neg->GetXaxis()->SetLabelSize(0.1);
     mc_temp_neg->GetXaxis()->SetTitleSize(0.16);
     mc_temp_neg->GetXaxis()->SetTitleOffset(0.8);
     mc_temp_neg->GetYaxis()->SetTitleOffset(0.2);
     mc_temp_neg->GetYaxis()->SetTitleSize(0.12);
-    mc_temp_neg->SetYTitle("THEORY/DATA");
+    mc_temp_neg->SetYTitle("#frac{Theory}{Data}");
     
     
     TH1F* mc_temp_pos = (TH1F*)  mc_histo_pos2->Clone();
@@ -681,9 +688,13 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     
     TGraphErrors * g = new TGraphErrors();
-    TCanvas * c_compare_dists = new TCanvas();
+    TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",600,600);
     TPad *pad1 = new TPad("pad1","pad1",0,0.45,1,1);
     pad1->SetBottomMargin(0);
+    pad1->SetTopMargin(0.02);
+    pad1->SetLeftMargin(0.18);
+    pad1->SetRightMargin(0.02);
+
     pad1->Draw();
     pad1->cd();
     //pad1->SetLogy();
@@ -709,11 +720,11 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             
 //            if (debug) cout << "Fitter::scan_couplings:: pred integral " << std::get<1>(histos)[weight]->Integral()   <<endl;
 
-            std::get<1>(histos)[weight]->SetLineColor(weight+1);
-            std::get<1>(histos)[weight]->SetLineWidth(1.0);
-            std::get<2>(histos)[weight]->SetLineColor(weight+1);
-            std::get<2>(histos)[weight]->SetFillColor(weight+1);
-            std::get<2>(histos)[weight]->SetFillStyle(3001);
+            std::get<1>(histos)[weight]->SetLineColor(weight+2);
+            std::get<1>(histos)[weight]->SetLineWidth(2.0);
+            std::get<2>(histos)[weight]->SetLineColor(weight+2);
+            std::get<2>(histos)[weight]->SetFillColor(weight+2);
+            std::get<2>(histos)[weight]->SetFillStyle(3002);
             
             //             std::get<2>(histos)[weight]->SetFillStyle(3001);
             //histos.second[weight]->SetFillColor(weight+1);
@@ -721,19 +732,20 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             
             if (weight == 0) {
                 std::get<1>(histos)[weight]->SetStats(kFALSE);
-                std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.09);
-                std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.35);
-                std::get<1>(histos)[weight]->SetYTitle("#frac{1}{#sigma} #frac{#delta(#sigma_tt)}{#delta(x)}");
+                std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.07);
+                std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.85);
+                std::get<1>(histos)[weight]->GetYaxis()->SetLabelSize(0.04);
+                std::get<1>(histos)[weight]->SetYTitle("#frac{#delta(#sigma_{ t#bar{t}} )}{#delta( #Delta #Phi_{l#bar{l}} )} [pb]");
                 std::get<1>(histos)[weight]->Draw("HIST");
                 //                  std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(-0.008, 0.6);
                 //std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(0.16, 0.5);
-                std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(0.06, 0.1);
+                std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(0.5, 7.0);
 
-                std::get<2>(histos)[weight]->Draw("E2SAME");
+               // std::get<2>(histos)[weight]->Draw("E2SAME");
                 
             }else {
                 std::get<1>(histos)[weight]->Draw("HISTSAME");
-                std::get<2>(histos)[weight]->Draw("E2SAME");
+               // std::get<2>(histos)[weight]->Draw("E2SAME");
                 
            //    if (debug) cout << "Drawing histo # " << weight  <<endl;
                 
@@ -773,22 +785,22 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     
     if (  std::get<0>(histos)) {
-        std::get<0>(histos)->SetMarkerSize(0.5);
+        gStyle->SetErrorX(0);
+        std::get<0>(histos)->SetMarkerSize(0.7);
         std::get<0>(histos)->SetMarkerStyle(20);
-        std::get<0>(histos)->SetFillColor(kRed);
-        std::get<0>(histos)->SetFillStyle(3010);
-        std::get<0>(histos)->Draw("E1psame");
+        std::get<0>(histos)->SetLineColor(1);
+        std::get<0>(histos)->Draw("E0psame");
     }
     
-    TLegend *leg = new TLegend(0.7,0.1,0.85,0.45);
+    TLegend *leg = new TLegend(0.24,0.6,0.51,0.95);
     //leg->SetTextFont(65);
-    leg->AddEntry(   std::get<0>(histos) ,"DATA","E1p");
+    leg->AddEntry(   std::get<0>(histos) ,"Data","E0p");
     for (int ctg = 0; ctg < n_preds;  ctg++){
         float ctg_val =CtG_vals[ctg];
-        std::string pred_name_leg = "CtG = " +  std::to_string(ctg_val).substr(0,4);
+        std::string pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1}";
         //    leg->AddEntry( std::get<1>(histos)[ctg], pred_name_leg.c_str(),"l");
         
-        leg->AddEntry( std::get<2>(histos)[ctg], pred_name_leg.c_str(),"lf");
+        leg->AddEntry( std::get<2>(histos)[ctg], pred_name_leg.c_str(),"l");
         
     }
     
@@ -800,8 +812,12 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     pad2->SetTopMargin(0);
     pad2->Draw();
     pad2->cd();
-    pad2->SetBottomMargin(0.3);
+    pad2->SetBottomMargin(0.29);
     pad2->SetTopMargin(0.0);
+    pad2->SetLeftMargin(0.18);
+    pad2->SetRightMargin(0.02);
+    pad2->SetGridy();
+
     
     if (debug) cout << "Fitter::scan_couplings::making ratio plot" << endl;
     
@@ -809,28 +825,33 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::making ratio plot, looping" << endl;
         
         TH1F* mc_temp = (TH1F*)  std::get<1>(histos)[histo]->Clone();
+
         mc_temp->Sumw2();
         mc_temp->SetStats(0);
         mc_temp->Divide(std::get<0>(histos));
+        
+        
         if (debug) cout << "Fitter::scan_couplings::making ratio plot" <<  ", Nbins data = "   << std::get<0>(histos)->GetNbinsX() << ", Nbins pred = "   <<  mc_temp->GetNbinsX() <<endl;
         
         //mc_temp->SetMarkerStyle(21);
         //  mc_temp->SetMarkerColor(histo+1);
         //  mc_temp->SetLineColor(histo+1);
 //        mc_temp->GetYaxis()->SetRangeUser(0.75, 1.4);
-        mc_temp->GetYaxis()->SetRangeUser(0.9, 1.2);
-        mc_temp->GetYaxis()->SetLabelSize(0.05);
+        mc_temp->GetYaxis()->SetNdivisions(5);
+
+        mc_temp->GetYaxis()->SetRangeUser(0.2, 1.8);
+        mc_temp->GetYaxis()->SetLabelSize(0.06);
         mc_temp->GetXaxis()->SetLabelSize(0.1);
         mc_temp->GetXaxis()->SetTitleSize(0.16);
         if (debug) cout << "Fitter::scan_couplings::here 1 " <<  endl;
 
         
         mc_temp->GetXaxis()->SetTitleOffset(0.8);
-        mc_temp->GetYaxis()->SetTitleOffset(0.35);
+        mc_temp->GetYaxis()->SetTitleOffset(0.75);
         mc_temp->GetYaxis()->SetTitleSize(0.09);
-        mc_temp->SetYTitle("THEORY/DATA");
-//        mc_temp->SetXTitle("#Delta#Phi(l^{+}l^{-})");
-        mc_temp->SetXTitle("Cos #theta *");
+        mc_temp->SetYTitle("#frac{Theory}{Data}");
+        mc_temp->SetXTitle("#Delta #Phi_{l#bar{l}}");
+
       
         if (debug) cout << "Fitter::scan_couplings::here 2 " <<  endl;
 
@@ -848,7 +869,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::here 3 " <<  endl;
 
         std::string xtitle =seglist[1] + "  (GeV)";
-         mc_temp->SetXTitle(xtitle.c_str());
+        // mc_temp->SetXTitle(xtitle.c_str());
         
         if (add_pwhg) {
         if(histo == std::get<1>(histos).size() -2) {
@@ -864,12 +885,62 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         }else{
             mc_temp->Draw("HISTSAME");
         }
+        
+
         if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
 
         
     }
     
     
+    TGraphAsymmErrors* data_temp = new  TGraphAsymmErrors();
+    TGraphAsymmErrors* data_temp_stat = new  TGraphAsymmErrors();
+
+    data_temp->SetLineWidth(0);
+    data_temp_stat->SetLineWidth(0);
+
+    
+    double data_stat_unc[10] = {0.0171327, 0.0192746,0.0229979,0.0238145, 0.0254806, 0.0269672, 0.0276772, 0.0280034, 0.0288118, 0.0282408};
+    
+    for (int i = 0; i < std::get<1>(histos)[0]->GetNbinsX(); i++){
+        
+        double ratio = 1.0;
+        double ratio_unc = (std::get<0>(histos)->GetBinError(i+1)) / (std::get<0>(histos)->GetBinContent(i+1));
+        TAxis *xaxis = std::get<0>(histos)->GetXaxis();
+        Double_t binCenter = xaxis->GetBinCenter(i+1);
+        Double_t binWidth = std::get<0>(histos)->GetBinWidth(i+1);
+
+        
+        cout <<  (std::get<0>(histos)->GetBinError(i+1))  <<  endl;
+        
+        data_temp->SetPoint(i, binCenter, ratio);
+        data_temp->SetPointEYhigh(i, ratio_unc);
+        data_temp->SetPointEYlow(i, ratio_unc);
+        data_temp->SetPointEXhigh(i, binWidth/2.0);
+        data_temp->SetPointEXlow(i, binWidth/2.0);
+        
+        data_temp_stat->SetPoint(i, binCenter, ratio);
+        data_temp_stat->SetPointEYhigh(i,data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)) );
+        data_temp_stat->SetPointEYlow(i, data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)));
+        data_temp_stat->SetPointEXhigh(i, binWidth/2.0);
+        data_temp_stat->SetPointEXlow(i, binWidth/2.0);
+    
+    }
+
+    data_temp->SetFillColor(kOrange-2);
+    data_temp_stat->SetFillColor(kGray);
+
+    data_temp->Draw("E2SAME");
+    data_temp_stat->Draw("E2SAME");
+
+    TLegend *leg_2 = new TLegend(0.24,0.82,0.51,0.99);
+    leg_2->SetBorderSize(0);
+    //leg_2->SetTextFont(72);
+    leg_2->AddEntry( data_temp   ,"Stat. #oplus Syst.","f");
+    leg_2->AddEntry( data_temp_stat   ,"Stat. only","f");
+    leg_2->Draw();
+
+
     if (debug) cout << "Fitter::scan_couplings::here 4 " <<  endl;
 
     

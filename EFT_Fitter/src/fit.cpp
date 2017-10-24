@@ -22,7 +22,7 @@ int main(int argc, const char * argv[]){
 
     if (mode == "abs_only"){
        make_covariance_matrix("HypLLBarDPhi_totCovMtrxFile.txt", "files/Oct4/DiffXS_HypLLBarDPhi_source.root");
-       f_EFT->run_extraction(10, bins_delphill, "data_staterror_only", "files/Oct4/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
+       f_EFT->run_extraction(10, bins_delphill, "data", "files/Oct4/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
         f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
@@ -94,11 +94,11 @@ double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmError
     
     for (int i=1;i<=nbins; i++) {
         for (int j=1;j<=nbins; j++){
-            std::cout <<"  "<< std::endl;
+         //   std::cout <<"  "<< std::endl;
             double corr_coff = cov->GetBinContent(i,j);
             if (schmitt_fit){
                 chisq += deltas[i-1]*deltas[j-1]*corr_coff;
-            std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
+            //std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
 
                 
             }
