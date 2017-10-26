@@ -1,2 +1,11 @@
-g++ -o bin/fitter src/fit.cpp `root-config --cflags --glibs`
-./bin/fitter
+clang++ -o bin/fit src/fit.cpp `root-config --cflags --libs` -lRooFit -lRooFitCore
+./bin/fit
+
+There are two methods to accommodat the systematic uncertainties of the data:
+
+1) The data is varied within its systematic uncertainties by changing the error_mode flag in
+the initalise routine from "nom" to "down" or "up".
+
+2) The systematic uncertainties of the data are included in the chi^2 calculation. This
+is done by setting the "schmitt_fit" flag in the calculate_test_statistic routine to
+true.
