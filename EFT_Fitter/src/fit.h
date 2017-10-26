@@ -9,7 +9,8 @@
 #include "TProfile.h"
 #include "TStyle.h"
 #include "TLatex.h"
-#include "TMatrixD.h"
+
+#include "TMath.h"
 
 #include "TGraphAsymmErrors.h"
 #include "TCanvas.h"
@@ -32,6 +33,8 @@
 #include <RooMCStudy.h>
 #include <RooBinning.h>
 
+#include "helper_tools.h"
+
 
 using namespace std;
 using namespace RooFit ;
@@ -39,13 +42,12 @@ using namespace RooFit ;
 bool debug = false;
 //const int n_preds = 501;
 
-const int n_preds = 3;
+const int n_preds = 501;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
 
 
-TRandom3 * gRand = new TRandom3();
 
 
 class Fitter {
@@ -57,13 +59,11 @@ class Fitter {
         std::tuple < double, double > scan_couplings(std::string, std::string, std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  std::string mode , bool add_pwhg );
         void make_summary_plot(vector <TGraphErrors*>);
         void toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  int  );
-        TH1* make_poisson_toy(TH1*,TH1*, int, double);
         void create_dummy_fiducial_measurement(double, double);
-    TH2D* make_covariance_matrix(std::string, std::string);
+    
 
 
     private:
-        double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*);
 
 };
 
@@ -688,17 +688,19 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     
     TGraphErrors * g = new TGraphErrors();
-    TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",600,600);
+    TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",800,600);
+
+
     TPad *pad1 = new TPad("pad1","pad1",0,0.45,1,1);
     pad1->SetBottomMargin(0);
-    pad1->SetTopMargin(0.02);
-    pad1->SetLeftMargin(0.18);
+    pad1->SetTopMargin(0.19);
+    pad1->SetLeftMargin(0.15);
     pad1->SetRightMargin(0.02);
 
     pad1->Draw();
     pad1->cd();
     //pad1->SetLogy();
- 
+    
     
     int n_hists;
     if (add_pwhg){
@@ -733,8 +735,8 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             if (weight == 0) {
                 std::get<1>(histos)[weight]->SetStats(kFALSE);
                 std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.07);
-                std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.85);
-                std::get<1>(histos)[weight]->GetYaxis()->SetLabelSize(0.04);
+                std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.75);
+                std::get<1>(histos)[weight]->GetYaxis()->SetLabelSize(0.08);
                 std::get<1>(histos)[weight]->SetYTitle("#frac{#delta(#sigma_{ t#bar{t}} )}{#delta( #Delta #Phi_{l#bar{l}} )} [pb]");
                 std::get<1>(histos)[weight]->Draw("HIST");
                 //                  std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(-0.008, 0.6);
@@ -753,12 +755,12 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             double chi2 = -1.0;
             
             if (mode=="norm_only" || mode=="abs_only") {
-                chi2 = this->calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight]);
+                chi2 = calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight]);
               //  cout << "Fitter::scan_couplings:: chi2 " << chi2 << endl;
 
             }
             else if(mode=="norm_fid"){
-                chi2 = (this->calculate_test_statistic( std::get<0>(histos),  std::get<1>(histos)[weight], std::get<2>(histos)[weight]) + this->calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight]  ));
+                chi2 = (calculate_test_statistic( std::get<0>(histos),  std::get<1>(histos)[weight], std::get<2>(histos)[weight]) + calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight]  ));
             }
             
             g->SetPoint(weight, CtG_vals[weight], chi2);
@@ -792,7 +794,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         std::get<0>(histos)->Draw("E0psame");
     }
     
-    TLegend *leg = new TLegend(0.24,0.6,0.51,0.95);
+    TLegend *leg = new TLegend(0.22,0.5,0.51,0.78);
     //leg->SetTextFont(65);
     leg->AddEntry(   std::get<0>(histos) ,"Data","E0p");
     for (int ctg = 0; ctg < n_preds;  ctg++){
@@ -812,9 +814,9 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     pad2->SetTopMargin(0);
     pad2->Draw();
     pad2->cd();
-    pad2->SetBottomMargin(0.29);
+    pad2->SetBottomMargin(0.25);
     pad2->SetTopMargin(0.0);
-    pad2->SetLeftMargin(0.18);
+    pad2->SetLeftMargin(0.15);
     pad2->SetRightMargin(0.02);
     pad2->SetGridy();
 
@@ -840,15 +842,15 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         mc_temp->GetYaxis()->SetNdivisions(5);
 
         mc_temp->GetYaxis()->SetRangeUser(0.2, 1.8);
-        mc_temp->GetYaxis()->SetLabelSize(0.06);
+        mc_temp->GetYaxis()->SetLabelSize(0.09);
         mc_temp->GetXaxis()->SetLabelSize(0.1);
-        mc_temp->GetXaxis()->SetTitleSize(0.16);
+        mc_temp->GetXaxis()->SetTitleSize(0.11);
         if (debug) cout << "Fitter::scan_couplings::here 1 " <<  endl;
 
-        
-        mc_temp->GetXaxis()->SetTitleOffset(0.8);
-        mc_temp->GetYaxis()->SetTitleOffset(0.75);
-        mc_temp->GetYaxis()->SetTitleSize(0.09);
+        mc_temp->GetXaxis()->SetTitleOffset(1.0);
+        mc_temp->GetYaxis()->SetTitleOffset(0.63);
+        mc_temp->GetYaxis()->SetTitleSize(0.1);
+
         mc_temp->SetYTitle("#frac{Theory}{Data}");
         mc_temp->SetXTitle("#Delta #Phi_{l#bar{l}}");
 
@@ -939,13 +941,46 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     leg_2->AddEntry( data_temp   ,"Stat. #oplus Syst.","f");
     leg_2->AddEntry( data_temp_stat   ,"Stat. only","f");
     leg_2->Draw();
-
+    
+    
 
     if (debug) cout << "Fitter::scan_couplings::here 4 " <<  endl;
 
     
     c_compare_dists->cd();
     //  pad1->SetLogy();
+    
+    c_compare_dists->SetTopMargin(0.06);
+    
+    float H = c_compare_dists->GetWh();
+    float W = c_compare_dists->GetWw();
+    float l = c_compare_dists->GetLeftMargin();
+    float t = c_compare_dists->GetTopMargin();
+    float r = c_compare_dists->GetRightMargin();
+    float b = c_compare_dists->GetBottomMargin();
+    float extraOverCmsTextSize  = 0.76;
+    
+    TString cmsText, extraText, lumiText;
+    cmsText += "CMS";
+    extraText += "Preliminary";
+    lumiText += "35.9 fb^{-1} (13 TeV)";
+    TLatex latex;
+    latex.SetNDC();
+    latex.SetTextAngle(0);
+    latex.SetTextSize(0.75*t);
+    latex.SetTextColor(kBlack);
+    latex.SetTextFont(61);
+    latex.SetTextAlign(31);
+    latex.DrawLatex(0.22,0.905,cmsText);
+    
+    latex.SetTextFont(52);
+    latex.SetTextSize(0.75*t*extraOverCmsTextSize);
+    latex.DrawLatex(0.35,0.905,extraText);
+
+    latex.SetTextFont(42);
+    latex.SetTextSize(0.6*t);
+    latex.DrawLatex(0.98,0.905,lumiText);
+
     
     std::stringstream ss;
     ss << var_name;
@@ -1059,14 +1094,14 @@ void Fitter::toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErr
         cout <<" Running toy number  =   "<<  itoy << " of "<<  ntoys << endl;
 
         
-        toy = (TH1F*)this->make_poisson_toy(ref_pred_clone, data_clone, 256196, ref_data->Integral());
+        toy = (TH1F*)make_poisson_toy(ref_pred_clone, data_clone, 256196, ref_data->Integral());
         
         std::tuple<TH1F*, vector<TH1F*>, vector<TGraphAsymmErrors * >>  toy_histos (toy, std::get<1>(histos), std::get<2>(histos));
         std::tuple<double, double> toy_results  = this->scan_couplings("toy","toy/ll_delphi_abs", toy_histos ,"abs_only", false);
         injection->Fill(std::get<0>(toy_results));
 
         
-        double chi2 = this->calculate_test_statistic(toy, ref_pred, dummy_gr);
+        double chi2 = calculate_test_statistic(toy, ref_pred, dummy_gr);
         h_chi2->Fill(chi2);
         h_chi2_ndof->Fill(chi2/ndof);
         signal_injection->Fill(ctg, chi2/ndof);
@@ -1140,238 +1175,10 @@ void Fitter::toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErr
 }
 
 
-TH1* Fitter::make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integral){
-    
-    //cout <<"making poisson toy " << endl;
-    
-    std::string opt = "manual";
-    
-    //double n_toys = 523850.625;
-    
-    //This function make a Poisson toy for a given prediction at particle level
-    // corresponding to the same number of events as observed in data.
-    
-    //Histos to contain raw distributions for prediction and data.
-
-    // TH1F* hh_t = new TH1F("","", hh->GetNbinsX() , 0.0, 3.15);
-    // TH1F* hh_data = new TH1F("","", hh->GetNbinsX() , 0.0, 3.15);
-    
-    //TH1F* hh_t = (TH1F*)hh->Clone();
-    //TH1F* hh_data = (TH1F*)hh->Clone();
-    
-    TH1 * hh_f;
-    hh_f =(TH1F*)hh->Clone();
-    hh_f->Reset();
-    
-    
-    //hh_t->Reset();
-    //hh_data->Reset();
-    double bin_height_pred;
-    double bin_height_data;
-    
-
-    
-    if (opt == "manual"){
-        for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
-            double mean = hh->GetBinContent(bin);
-            double width = data->GetBinError(bin);
-            double toy_bin_height = gRand->Gaus(mean,width);
-            double toy_bin_error = width;
-          //  cout <<"TOY =  "<< "mean " << mean <<" width  "<<width<< " toy height " <<  toy_bin_height <<endl;
-            hh_f->SetBinContent(bin, toy_bin_height);
-            hh_f->SetBinError(bin, toy_bin_error);
-            //hh_t->SetBinContent(bin, bin_height_pred);
-            //hh_data->SetBinContent(bin, bin_height_data);
-        }
-    }
-    else if (opt=="roofit"){
-    //Multiply back by bin widths to get cross sections as bin heights
-    for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
-        if (bin == hh->GetNbinsX() ){
-         bin_height_pred = (0.24)*hh->GetBinContent(bin);
-         bin_height_data = (0.24)*data->GetBinContent(bin);
-        }else{
-            bin_height_pred = (0.25)*hh->GetBinContent(bin);
-            bin_height_data = (0.25)*data->GetBinContent(bin);
-        }
-        //hh_t->SetBinContent(bin, bin_height_pred);
-   //     hh_data->SetBinContent(bin, bin_height_data);
-    }
-    
-    
-    //now scale by integrated lumi
-    //double scaling = hh->Integral() / hh_t->Integral();
-
-//    double int_lumi = 37500000.0;
-     //double int_lumi = 3750.0;
-
-    double int_lumi = 6000.0;
-    
-    //hh_t->Scale(int_lumi);
-
-    //TH1F* h_forPDF = new TH1F("","", hh->GetNbinsX() , -1.0,1.0);
-    TH1F* h_forPDF = (TH1F*)hh->Clone();
-    h_forPDF->Reset();
-    
-    
-    //fill histo with raw event counts for this prediction
-   // for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
-   //     h_forPDF->SetBinContent(bin, int_lumi *  hh_t->GetBinContent(bin));
-   // }
 
 
-    //some neccessary Roofit declarations
-    RooRealVar x("x","x",0,3.15);
-    x.setBins(hh->GetNbinsX());
-
-    
-    //convert raw prediction into pdf
-    RooDataHist dh("hh_t","hh_t",x,Import(*h_forPDF)) ;
-    RooHistPdf histpdf1("histpdf1","histpdf1",x,dh,0) ;
-    
-    //generate toy event count
-    TRandom * r = new TRandom();
-    double n_expected = r->Poisson(h_forPDF->Integral());
-    
-    //generate binned toys according the PDF with Poisson errors
-    RooDataHist* toy_data = histpdf1.generateBinned(x,n_expected);
-
-    //convert it back to a TH1
-    hh_f = toy_data->createHistogram("toy", x);
-    
-    
-    double bbin;
-    double bbin_error;
-    
-    //convert back to 'cross section result' histo
-    //divide by bin width
-    for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
-
-        if (bin == hh->GetNbinsX() ){
-             bbin = hh_f->GetBinContent(bin)/(0.24);
-            // bbin_error = hh_f->GetBinError(bin)/(0.24);
-            bbin_error = bbin *(0.01);
-
-        }else{
-             bbin = hh_f->GetBinContent(bin)/(0.25);
-            // bbin_error = hh_f->GetBinError(bin)/(0.25);
-            bbin_error = bbin *(0.01);
-
-        }
-        
-        hh_f->SetBinContent(bin,bbin);
-        hh_f->SetBinError(bin,bbin_error);
-    }
-
-    //divide by lumi
-    hh_f->Scale(1.0/int_lumi);
-    
-    
-    
-   // double scaling_2 = data_integral/hh_f->Integral();
-     double scaling_2 = hh->Integral()/hh_f->Integral();
-
-    //hh_f->Scale(scaling_2);
-    
-}
-   //cout <<" toy integral  = "<<  hh_f->Integral()<< endl;
-
-    return hh_f;
-}
 
 
-TH2D* make_covariance_matrix(std::string filename, std::string data_file){
-
-    cout <<" Making covariance matrix..."<< endl;
-
-    ifstream readFile(filename.c_str());
-
-    vector<vector<string>> matrix;
-    vector<string> tokens;
-    
-    std::string line;
-    std::string delimiter = " ";
-    
-    while(getline(readFile,line)){
-        tokens.clear();
-        istringstream iss(line);
-        
-        //copy(istream_iterator<string>(iss),istream_iterator<string>(), back_inserter(tokens));
-        size_t pos = 0;
-        std::string token;
-        
-        //std::cout <<" " << std::endl;
-        //std::cout <<"line: " << std::endl;
-
-        while ((pos = line.find(delimiter)) != std::string::npos){
-            token = line.substr(0, pos);
-         //   std::cout <<" mini-loop token "<< token << std::endl;
-            line.erase(0, pos + delimiter.length());
-            tokens.push_back(token);
-        }
-        //std::cout <<" mini-loop token "<< line << std::endl;
-
-        tokens.push_back(line);
-
-        matrix.push_back(tokens);
-       // cout <<"line-- = "<< line << " " <<  matrix[0][0] <<endl;
-    }
-    
-    readFile.close();
-    
-    cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<endl;
-    
-    TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
-    
-    TH2D* cov = new TH2D("cov","cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
-    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
-
-    TFile * f_data = new TFile(data_file.c_str());
-    
-    TGraphAsymmErrors * g_data = (TGraphAsymmErrors*)f_data->Get("data");
-    double point_i_x,point_i_y, point_j_x, point_j_y;
-    
-    
-    for (int x = 0; x < matrix.size(); x++){
-        for (int y = 0; y < matrix[x].size(); y++){
-            std::string::size_type sz;
-            std::string cov_elem_str = matrix[x][y];
-            double cov_elem = std::stod(cov_elem_str, &sz);
-
-            g_data->GetPoint(x, point_i_x, point_i_y );
-            g_data->GetPoint(y, point_j_x, point_j_y );
-            cov_elem = (cov_elem)*(point_i_y)*(point_j_y);
-            
-            cout <<" x = "<< x <<"  y "<< y <<"  "<<  cov_elem_str <<endl;
-            cov->SetBinContent(x+1, y+1, cov_elem);
-            mat[x][y] = cov_elem;
-        }
-    }
-    
-    std::string rootfile_name = filename.substr(0, filename.length() - 3) + "root";
-    cout <<" rootfile name " << rootfile_name <<endl;
-    
-    //invert convariance matrix and write
-    Double_t det2;
-    mat.Invert(&det2);
-    
-    for (int x = 0; x < matrix.size(); x++){
-        for (int y = 0; y < matrix[x].size(); y++){
-                    inv_cov->SetBinContent(x+1, y+1, mat[x][y]);
-        }
-    }
-    
-    
-    TFile * file = new TFile(rootfile_name.c_str(), "RECREATE");
-    cov->Write();
-    inv_cov->Write();
-    mat.Write();
-
-    file->Close();
-    
-    return cov;
-
-}
 
 
 

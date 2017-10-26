@@ -38,10 +38,13 @@ int main(int argc, const char * argv[]) {
     gStyle->SetOptStat(0);
 
     
-    run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_norm.root");
-    run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_abs.root");
-    run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_normparticle.root");
-    run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_absparticle.root");
+  //  run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_norm.root");
+  //  run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_abs.root");
+  //  run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_normparticle.root");
+  //  run_extraction("files/July3/DiffXS_HypTTBarDeltaRapidity_source_absparticle.root");
+    
+    run_extraction("files/Oct11/DiffXS_HypLLBarDEta_source_normparticlell.root");
+
     summary_plot();
 }
 
@@ -61,25 +64,46 @@ void run_extraction(std::string filename){
     std::cout <<"*********************************************"<< std::endl;
     std::cout <<" filename  = "<< filename  << std::endl;
 
-    bool mc = false;
+    std::string mc = "none";
+    
     double x, y;
+    double bin_pred;
     TFile * f_CA = new TFile(filename.c_str());
     TGraphAsymmErrors * toppt_delphi = (TGraphAsymmErrors*)f_CA->Get("data");
     TH1F * toppt_delphi_mc = (TH1F*)f_CA->Get("mc");
+    TCanvas * c_result = (TCanvas*)f_CA->Get("canvas;1");
+    TH1F * h_amCNLO = (TH1F*)c_result->GetPrimitive("POWHEGplot");
     
-    if (mc == true){
+    
+    if (c_result) std::cout <<" got canvas  "<< std::endl;
+    if (h_amCNLO) std::cout <<" got primitive  "<< std::endl;
+    
+        
+        
+        
+    std::cout <<" waMC pred  "<< bin_pred <<std::endl;
+
+    
+    if (mc == "pwg"){
         for (int bin = 1; bin <= toppt_delphi_mc->GetNbinsX(); bin++ ){
             toppt_delphi->GetPoint(bin-1, x, y);
             toppt_delphi->SetPoint(bin-1, x, toppt_delphi_mc->GetBinContent(bin));
         }
     }
-    
-    
+    else if (mc == "aMC"){
+        for (int bin = 1; bin <= toppt_delphi_mc->GetNbinsX(); bin++ ){
+            toppt_delphi->GetPoint(bin-1, x, y);
+            bin_pred = h_amCNLO->GetBinContent(bin);
+            toppt_delphi->SetPoint(bin-1,x, bin_pred);
+            std::cout <<" waMC pred  "<< bin_pred <<std::endl;
+
+        }
+    }
+
     std::vector<std::string> results;
     boost::split(results, filename, [](char c){return c == '_';});
     calculate_CA(toppt_delphi, results[3] );
 }
-
 
 
 
@@ -166,7 +190,7 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         // CA_errup =  ( xsec_pos_errup - xsec_neg_errup   ) / ( xsec_pos_errup + xsec_neg_errup );
         // CA_errdown =( xsec_pos_errdown - xsec_neg_errdown   ) / ( xsec_pos_errdown + xsec_neg_errdown );
     
-        //'Antogonistic' errors
+        //'Antogonistic' errors (max shape deviation, probably overconservative)
         CA_errup =  ( xsec_pos_errup - xsec_neg_errdown   ) / ( xsec_pos_errup + xsec_neg_errdown );
         CA_errdown = ( xsec_pos_errdown - xsec_neg_errup   ) / ( xsec_pos_errdown + xsec_neg_errup );
     
@@ -238,7 +262,15 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         g_CA_95->SetPointEXhigh(0, CA_sd_95);
         g_CA_95->SetPointEXlow(0, CA_sd_95);
     }
-    
+    else if(write == "normparticlell.root"){
+        g_CA_68->SetPoint(0, CA, 1.0);
+        g_CA_95->SetPoint(0, CA, 1.0);
+        g_CA_central->SetPoint(0, CA, 1.0);
+        g_CA_68->SetPointEXhigh(0, CA_sd);
+        g_CA_68->SetPointEXlow(0, CA_sd);
+        g_CA_95->SetPointEXhigh(0, CA_sd_95);
+        g_CA_95->SetPointEXlow(0, CA_sd_95);
+    }
     
         g_CA_central->SetPointEXhigh(0, 0.0);
         g_CA_central->SetPointEXlow(0, 0.0);
@@ -271,7 +303,7 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
 
       // vector<std::string> runs = {"norm.root", "abs.root", "normparticle.root","absparticle.root" };
         
-        vector<std::string> runs = {"norm.root", "normparticle.root" };
+        vector<std::string> runs = {"norm.root", "normparticle.root", "normparticlell.root" };
 
        // vector<std::string> runs = {"norm.root"};
 
@@ -283,16 +315,15 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         TGraphAsymmErrors * gr_central;
         
         TH1F * h_base = new TH1F("","", 1, -0.03, 0.05);
+        
         h_base->SetLineWidth(0.0);
-        //h_base->GetXaxis()->SetRangeUser(-0.07, 0.07);
-
+        h_base->GetXaxis()->SetRangeUser(-0.07, 0.07);
         h_base->GetYaxis()->SetRangeUser(-0.5, 1.5);
         h_base->GetYaxis()->SetTickLength(0.);
         h_base->GetYaxis()->SetLabelSize(0.);
-        h_base->GetXaxis()->SetTitle("A_{C}");
+        h_base->GetXaxis()->SetTitle("A_{C}^{X}");
         h_base->GetYaxis()->SetLabelOffset(999);
-        h_base->GetYaxis()->SetLabelSize(0);
-        h_base->GetYaxis()->SetAxisColor(0);
+        h_base->GetYaxis()->SetAxisColor(0,100.0);
         h_base->Draw();
         
         for(int r =0 ;  r < runs.size(); r++){
@@ -340,18 +371,30 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
         line_pwhgp8_particle->SetLineStyle(2);
         line_pwhgp8_particle->Draw();
         
+        TLine *line_pwhgp8_particle_ll = new TLine(-0.0018,0.8,-0.0018,1.2);
+        line_pwhgp8_particle_ll->SetLineColor(kBlue);
+        line_pwhgp8_particle_ll->SetLineStyle(2);
+        line_pwhgp8_particle_ll->Draw();
+    
+        
+        TLine *line_aMC_particle_ll = new TLine(-0.00148,0.8,-0.00148351,1.2);
+        line_aMC_particle_ll->SetLineColor(kViolet);
+        line_aMC_particle_ll->SetLineStyle(2);
+        line_aMC_particle_ll->Draw();
+        
         
         TLatex Tl;
         Tl.SetTextAlign(12);
         Tl.SetTextSize(0.03);
-        Tl.DrawLatex(-0.025, 0.0,"parton level");
-    //    Tl.DrawLatex(-0.14, 1.0,"absolute parton level");
-        Tl.DrawLatex(-0.025, 0.5,"particle level");
-     //   Tl.DrawLatex(-0.14, 3.0,"absolute particle level");
+        Tl.DrawLatex(-0.027, 0.0,"A_{c}^{tt} parton level");
+        Tl.DrawLatex(-0.027, 0.5,"A_{c}^{tt} particle level");
+        Tl.DrawLatex(-0.027, 1.0,"A_{c}^{ll}  particle level");
         
         auto legend = new TLegend(0.69,0.45,0.99,0.75);
         legend->AddEntry(line_mg5h6_parton,"MG5_aMC@NLO+HERWIG6","E1");
         legend->AddEntry(line_pwhgp8_parton,"POWHEGv2+PYTHIA8","E1");
+        legend->AddEntry(line_aMC_particle_ll,"MG5_aMC@NLO+PYTHIA8","E1");
+
         legend->AddEntry(gr_68,"Data","E1");
         legend->SetTextSize(0.028);
         legend->Draw();
@@ -363,13 +406,14 @@ void calculate_CA(TGraph * toppt_delphi, std::string write) {
        // c_results->SetFillStyle(4000);
         //c_results->SetBorderSize(2);
        // c_results->SetFrameFillStyle(0);
-        c_results->SetFrameLineColor(0);
+        //c_results->SetFrameLineColor(0);
        // c_results->SetFrameFillStyle(0);
         
       //  c_results->SetLeftMargin(0.07);
       //  c_results->SetRightMargin(0.02);
       //  c_results->SetTopMargin(0.06);
       //  c_results->SetBottomMargin(0.16);
+        gPad->RedrawAxis();
 
         c_results->SaveAs("CA_results.pdf");
         c_results->Write();

@@ -26,7 +26,7 @@
 
 using namespace std;
 
-void write_latex(string, vector<string>, vector<string>, float[2][32] , int[2][32], float[2][32]);
+void write_latex(string, vector<string>, vector<string>, float[2][33] , int[2][33], float[2][33]);
 void summary_plot(string, string);
 std::tuple <float, int, float > process_result(string,string);
 
@@ -37,7 +37,7 @@ ofstream myfile;
 
 int main(int argc, const char * argv[]){
     
-    string mode = "norm_particle";
+    string mode = "abs_parton";
     
     vector<string> filenames;
 
@@ -72,6 +72,7 @@ int main(int argc, const char * argv[]){
         "files/July3/norm_parton/DiffXS_HypTTBarRapidity_source.root",
         "files/July3/norm_parton/DiffXS_HypTTBarMass_source.root",
         "files/July3/norm_parton/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/July3/norm_parton/DiffXS_HypTTBarDeltaPhi_source.root"
     };
     } else if (mode == "abs_parton"){
         filenames = {
@@ -90,6 +91,7 @@ int main(int argc, const char * argv[]){
         "files/July3/abs_parton/DiffXS_HypTTBarRapidity_source.root",
         "files/July3/abs_parton/DiffXS_HypTTBarMass_source.root",
         "files/July3/abs_parton/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/July3/abs_parton/DiffXS_HypTTBarDeltaPhi_source.root"
         };
     }else if (mode == "norm_particle"){
         filenames = {
@@ -107,6 +109,8 @@ int main(int argc, const char * argv[]){
             "files/July3/norm_particle/DiffXS_HypTTBarRapidity_source.root",
             "files/July3/norm_particle/DiffXS_HypTTBarMass_source.root",
             "files/July3/norm_particle/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/July3/abs_particle/DiffXS_HypTTBarDeltaPhi_source.root",
+
             "files/July3/norm_particle/DiffXS_HypLeptonpT_source.root",
             "files/July3/norm_particle/DiffXS_HypAntiLeptonpT_source.root",
             "files/July3/norm_particle/DiffXS_HypLeptonpTLead_source.root",
@@ -124,7 +128,9 @@ int main(int argc, const char * argv[]){
             "files/July3/norm_particle/DiffXS_HypBJetEtaLead_source.root",
             "files/July3/norm_particle/DiffXS_HypBJetEtaNLead_source.root",
             "files/July3/norm_particle/DiffXS_HypBBBarpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypBBBarMass_source.root"
+            "files/July3/norm_particle/DiffXS_HypBBBarMass_source.root",
+            "files/July3/norm_particle/DiffXS_HypTTBarDeltaPhi_source.root"
+
         };
     }
     
@@ -144,6 +150,7 @@ int main(int argc, const char * argv[]){
                 "files/July3/abs_particle/DiffXS_HypTTBarRapidity_source.root",
                 "files/July3/abs_particle/DiffXS_HypTTBarMass_source.root",
                 "files/July3/abs_particle/DiffXS_HypTTBarDeltaRapidity_source.root",
+                "files/July3/abs_particle/DiffXS_HypTTBarDeltaPhi_source.root",
                 
                 "files/July3/abs_particle/DiffXS_HypLeptonpT_source.root",
                 "files/July3/abs_particle/DiffXS_HypAntiLeptonpT_source.root",
@@ -163,6 +170,7 @@ int main(int argc, const char * argv[]){
                 "files/July3/abs_particle/DiffXS_HypBJetEtaNLead_source.root",
                 "files/July3/abs_particle/DiffXS_HypBBBarpT_source.root",
                 "files/July3/abs_particle/DiffXS_HypBBBarMass_source.root"
+
             };
         }
     
@@ -181,7 +189,7 @@ int main(int argc, const char * argv[]){
         "Y \\ttbar\\",
         "M_{\\ttbar}",
         "\\Delta\\ Y \\ttbar\\",
-    //   "\\Delta\\ \\Phi\\ \\ttbar\\",
+        "\\Delta\\ \\Phi\\ \\ttbar\\",
         "\\pt^{l}",
         "\\pt^{\\lbar}",
         "\\pt^{l (leading)}",
@@ -207,9 +215,11 @@ int main(int argc, const char * argv[]){
    // vector<  vector<int>    > ndof;
    // vector<  vector<float>  > pval;
     int nvars = vars.size();
-    float   chisq[2][32];
-    int     ndof[2][32];
-    float   pval[2][32];
+    int nmodels = modelnames.size();
+
+    float   chisq[2][33];
+    int     ndof[2][33];
+    float   pval[2][33];
 
     
     std::tuple <float, int, float > gof;
@@ -307,7 +317,7 @@ std::tuple <float, int, float > process_result(string modelname, string filename
 }
 
 
-void write_latex(string mode, vector<string> model, vector<string> vars, float chisq[2][32], int ndof[2][32], float pval[2][32]){
+void write_latex(string mode, vector<string> model, vector<string> vars, float chisq[2][33], int ndof[2][33], float pval[2][33]){
 
     string mode_string;
     string mode_rootfile = mode + ".root";
@@ -385,7 +395,7 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         "Y tt",
         "M_{tt}",
         "#Delta Y tt",
-        //    "#Delta# #Phi# #ttbar#",
+        "#Delta #Phi tt",
         "p_{T} l ",
         "p_{T} #bar{l}",
         "p_{T} l (leading)",
