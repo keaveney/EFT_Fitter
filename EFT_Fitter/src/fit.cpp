@@ -12,6 +12,7 @@ using namespace std;
 int main(int argc, const char * argv[]){
 
     gStyle->SetOptStat(0);
+    
     f_EFT->create_dummy_fiducial_measurement(14.1649, 0.02);
 
     std::string mode = "abs_only";
@@ -43,85 +44,7 @@ void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data,
 }
 
 
-double Fitter::calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors){
-    
-    double test_statistic = 0.0;
-    int nbins  = data->GetSize() - 2;
-    bool schmitt_fit = true;
-    vector<double> deltas;
-    vector<double> errors;
 
-    double corr_coff = 1.0;
-    bool data_errors_only = true;
-    double chisq = 0.0;
-    double chi2_bin = 0.0;
-    double theory_error =0.0;
-    double total_error =0.0;
-    
-    //Retrieve covariance matrix from text file
-    TFile *cov_file = new TFile("HypLLBarDPhi_totCovMtrxFile.root");
-    TH2D * cov = (TH2D*)cov_file->Get("inv_cov");
-   /// cov = Fitter::make_covariance_matrix("HypTTBarDeltaRapidity_totCovMtrxFile.txt");
-
-    deltas.clear();
-    errors.clear();
-    
-    for (int i=1;i <=  data->GetSize() -2; i++){
-        
-        double data_bin = data->GetBinContent(i);
-        double pred_bin = pred->GetBinContent(i);
-        double delta = data_bin - pred_bin;
-    
-        deltas.push_back(delta);
-        
-        if (data_errors_only){
-       //std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  " chi2 in bin =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
-            errors.push_back(data->GetBinError(i));
-           // errors.push_back(pred_bin);
-
-        }else{
-        //implmement quadrature addition of data and pred errors
-            
-            if (data_bin > pred_bin ){
-            theory_error = gr_errors->GetErrorYhigh(i-1);//accroding to aMC@NLO manual, the scale uncertainty of the NLO predicitons is 10%
-            }else if (data_bin < pred_bin ){
-                theory_error = gr_errors->GetErrorYlow(i-1);
-            }
-            total_error =  pow(  pow( (theory_error +  data->GetBinError(i) ) ,2.0), 0.5);
-            errors.push_back( total_error);
-        }
-    }
-    
-    for (int i=1;i<=nbins; i++) {
-        for (int j=1;j<=nbins; j++){
-         //   std::cout <<"  "<< std::endl;
-            double corr_coff = cov->GetBinContent(i,j);
-            if (schmitt_fit){
-                chisq += deltas[i-1]*deltas[j-1]*corr_coff;
-            //std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
-
-                
-            }
-            else {
-                if(i == j){
-       //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
-                    double delta_sq = deltas[i-1]*deltas[i-1];
-                    //double chi2_bin = delta_sq/errors[i-1];
-//                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
-                    chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
-                  //  std::cout <<"chi2 "<< chisq << "\n";
-
-                    chisq += chi2_bin;
-                }
-            }
-        }
-    }
-// std::cout <<"chi2 final "<< chisq << "\n";
-    
-    cov_file->Close();
-
-    return chisq;
-}
 
 
 void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
@@ -155,44 +78,187 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         min_vals.push_back(min_y);
     }
     
+    TGraphErrors * gr_pval = new TGraphErrors();
+    double min_relchi =999999.9, best_fit, cl_68_lo, cl_95_lo , cl_68_hi, cl_95_hi;
+    bool  hi_68 =true , lo_68= true , lo_95 = true, hi_95 =true;
 
     for (int scan = 0; scan< scans.size(); scan ++){
         TGraphErrors * gr_rel = new TGraphErrors();
+
         for(Int_t i=0; i < scans[scan]->GetN(); i++) {
             scans[scan]->GetPoint(i,x,y);
+            double pval = TMath::Prob(y, 9);
+            
             double rel_y  = y - min_vals[scan];
             gr_rel->SetPoint(i,x,rel_y);
+            gr_pval->SetPoint(i,x,pval);
+            
+            if (rel_y < min_relchi){
+                min_relchi = rel_y;
+                best_fit = x;
+            }
+            
+            if (rel_y <= 3.84 && lo_95) {
+                cl_95_lo = x;
+                lo_95 = false;
+                cout <<"found lo 95"<< endl;
+
+            }
+        if (rel_y <= 1.0 && lo_68 && !(lo_95)) {
+                cl_68_lo = x;
+                lo_68 = false;
+                cout <<"found lo 68"<< endl;
+            }
+            if (rel_y >= 1.0 && hi_68 && !lo_95 && !lo_68) {
+                cl_68_hi = x;
+                hi_68 = false;
+                cout <<"found hi 68"<< endl;
+
+
+            }
+            if (rel_y >= 3.84 && hi_95 && !lo_95 && !lo_68 && !hi_68) {
+                cl_95_hi = x;
+                hi_95 = false;
+                cout <<"found hi 95"<< endl;
+
+            }
+            
+            
+
           //  std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
-          //  std::cout <<" point " << i  <<" rel chi =   " <<rel_y<<"\n";
+          //  std::cout <<" point " << i  <<", x = "<< x  <<" rel chi =   " <<rel_y<<"\n";
         }
         rel_scans.push_back(gr_rel);
         if (debug) std::cout <<" added graph "<<"\n";
 
+        std::cout <<" BEST fit  =  " << best_fit <<" with rel chi =   " << min_relchi  <<"\n";
+        std::cout << "CLs = "<<cl_95_lo<< "  "  <<  cl_68_lo <<"  "<< cl_68_hi << "  "  <<  cl_95_hi<< endl;
+        std::cout << "Unc = "<<fabs(best_fit - cl_95_lo) << "  "  <<  fabs( best_fit - cl_68_lo) <<"  "<< fabs( best_fit - cl_68_hi) << "  "  << fabs( best_fit -  cl_95_hi)<< endl;
+
     }
     
-    TCanvas * all_relscans_c = new TCanvas();
-    TLegend *leg_rel = new TLegend(0.5,0.6,0.8,0.8);
-    
-    // TLine *line_lower = new TLine(-0.42,0,-0.42,2.7);
-    // TLine *line_upper = new TLine(0.3,0,0.3,2.7);
-    TLine *line_lower = new TLine(-0.32,0,-0.32,2.7);
-    TLine *line_upper = new TLine(0.3,0,0.3,2.7);
-    
-    line_lower->SetLineColor(kGreen);
-    line_upper->SetLineColor(kGreen);
-    line_lower->SetLineStyle(4);
-    line_upper->SetLineStyle(4);
-    line_lower->SetLineWidth(3);
-    line_upper->SetLineWidth(3);
+    TCanvas * all_pvalscans_c = new TCanvas();
+    gr_pval->Draw("AC");
+    all_pvalscans_c->SaveAs("pvals_scan.pdf");
 
+    
+    TCanvas * all_relscans_c = new TCanvas("all_relscans","",800,600);
+    
+    
+
+    TH1F * base_histo = new TH1F("","", 1000, -10.0, 10.0);
+    base_histo->GetYaxis()->SetRangeUser(0.0, 5.0);
+    base_histo->GetXaxis()->SetRangeUser(-0.5, 0.5);
+    
+    base_histo->GetYaxis()->SetTitle("#Delta #chi^{2}");
+    base_histo->GetXaxis()->SetTitle("CtG/#Lambda^{2}");
+    
+    base_histo->GetYaxis()->SetLabelSize(0.04);
+    base_histo->GetXaxis()->SetLabelSize(0.04);
+    base_histo->GetXaxis()->SetTitleSize(0.04);
+    base_histo->GetYaxis()->SetTitleSize(0.04);
+    base_histo->GetXaxis()->SetTitleOffset(0.95);
+    base_histo->GetYaxis()->SetTitleOffset(0.95);
+    
+    base_histo->Draw();
+    
+
+    all_relscans_c->SetTopMargin(0.11);
+    all_relscans_c->SetBottomMargin(0.15);
+
+    float H = all_relscans_c->GetWh();
+    float W = all_relscans_c->GetWw();
+    float l = all_relscans_c->GetLeftMargin();
+    float t = all_relscans_c->GetTopMargin();
+    float r = all_relscans_c->GetRightMargin();
+    float b = all_relscans_c->GetBottomMargin();
+    float extraOverCmsTextSize  = 0.76;
+    
+    TString cmsText, extraText, lumiText;
+    cmsText += "CMS";
+    extraText += "Preliminary";
+    lumiText += "35.9 fb^{-1} (13 TeV)";
+    TLatex latex;
+    latex.SetNDC();
+    latex.SetTextAngle(0);
+    latex.SetTextSize(0.4*t);
+    latex.SetTextColor(kBlack);
+    latex.SetTextFont(61);
+    latex.SetTextAlign(31);
+    latex.DrawLatex(0.17,0.9,cmsText);
+    
+    latex.SetTextFont(52);
+    latex.SetTextSize(0.4*t*extraOverCmsTextSize);
+    latex.DrawLatex(0.3,0.9,extraText);
+    
+    latex.SetTextFont(42);
+    latex.SetTextSize(0.3*t);
+    latex.DrawLatex(0.9,0.9,lumiText);
+    
+    
+    TGraphAsymmErrors * g_68 = new TGraphAsymmErrors();
+    TGraphAsymmErrors * g_95 = new TGraphAsymmErrors();
+    TGraphAsymmErrors * g_central = new TGraphAsymmErrors();
+    
+    
+    g_68->SetPoint(0, 0.216, 2.42);
+    g_95->SetPoint(0, 0.216, 2.42);
+    g_central->SetPoint(0, 0.216, 2.42);
+    g_68->SetPointEXhigh(0, 0.116);
+    g_68->SetPointEXlow(0, 0.112);
+    g_95->SetPointEXhigh(0, 0.224);
+    g_95->SetPointEXlow(0, 0.22);
+    
+    g_central->SetPointEXhigh(0, 0.0);
+    g_central->SetPointEXlow(0, 0.0);
+    g_central->SetPointEYhigh(0, 1.42);
+    g_central->SetPointEYlow(0, 2.42);
+    
+    g_68->SetPointEYhigh(0, 1.42);
+    g_68->SetPointEYlow(0, 2.42);
+    g_95->SetPointEYhigh(0, 1.42);
+    g_95->SetPointEYlow(0, 2.42);
+    
+    g_68->SetFillColor(kGreen);
+    g_95->SetFillColor(kYellow);
+    
+    g_68->SetLineWidth(0);
+    g_95->SetLineWidth(0);
+    
+   // g_68->SetFillColorAlpha(kGreen, 0.35);
+   // g_95->SetFillColorAlpha(kYellow, 0.35);
+
+    g_95->Draw("SAME2");
+    g_68->Draw("SAME2");
+    g_central->Draw("SAMEE1Z");
+    
+    TLine *line_68 = new TLine(-0.5,1.0,0.332,1.0);
+    line_68->SetLineColor(kGreen);
+    line_68->SetLineStyle(4);
+    line_68->SetLineWidth(3);
+    
+    TLine *line_95 = new TLine(-0.5,3.84,0.44,3.84);
+    line_95->SetLineColor(kYellow);
+    line_95->SetLineStyle(4);
+    line_95->SetLineWidth(3);
+    
+    line_68->Draw();
+    line_95->Draw();
+    
+
+    TLegend *leg_rel = new TLegend(0.15,0.33,0.4,0.63);
     
     for (int scan = 0; scan< rel_scans.size(); scan ++){
         if (debug) std::cout <<" looping relscans "<<"\n";
 
         rel_scans[scan]->SetLineColor(scan+1);
         rel_scans[scan]->SetLineWidth(2);
-        rel_scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(-1.0, 10.0);
-        rel_scans[0]->GetHistogram()->GetXaxis()->SetRangeUser(-0.5, 0.5);
+        rel_scans[scan]->SetLineStyle(2);
+
+        //rel_scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(0.0, 5.0);
+        //rel_scans[0]->GetHistogram()->GetXaxis()->SetRangeUser(-0.2, 0.5);
+
+
         rel_scans[scan]->SetMarkerSize(1);
         rel_scans[scan]->SetMarkerColor(scan+1);
         rel_scans[scan]->SetMarkerStyle(22);
@@ -207,7 +273,7 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         s->SetLineColor(scan+1);
         
         if (scan ==0){
-            rel_scans[scan]->Draw("AC");
+            rel_scans[scan]->Draw("CSAME");
             // use a cubic spline to smooth the graph
            // s->Draw("same");
         }else{
@@ -215,17 +281,24 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
            // s->Draw("same");
 
         }
-        leg_rel->AddEntry( rel_scans[scan], obs_names[scan].c_str(),"l");
+        leg_rel->AddEntry( rel_scans[scan], "#Delta#chi^{2} vs. CtG/#Lambda^{2} ","l");
     }
+
     
-    leg_rel->AddEntry( line_lower , "ar#Chiiv:1503.08841" ,"l");
+    leg_rel->AddEntry( g_central, "Best-fit value","E1");
+    leg_rel->AddEntry( g_68, "68% CI","f");
+    leg_rel->AddEntry( g_95, "95% CI","f");
+    leg_rel->SetBorderSize(0);
+    
+    
+    //leg_rel->AddEntry( line_lower , "ar#Chiiv:1503.08841" ,"l");
 
     
     //all_relscans_c->SetLogy();
     leg_rel->Draw();
     
-    line_lower->Draw();
-    line_upper->Draw();
+    
+    all_relscans_c->RedrawAxis();
     
     all_relscans_c->SaveAs("all_relscans.pdf");
 
