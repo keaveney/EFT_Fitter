@@ -22,7 +22,7 @@ int main(int argc, const char * argv[]){
     }
 
     if (mode == "abs_only"){
-       make_covariance_matrix("HypLLBarDPhi_totCovMtrxFile.txt", "files/Oct4/DiffXS_HypLLBarDPhi_source.root");
+       make_covariance_matrix("files/Oct11/HypLLBarDPhi_totCovMtrxFile.txt", "files/Oct4/DiffXS_HypLLBarDPhi_source.root");
        f_EFT->run_extraction(10, bins_delphill, "data", "files/Oct4/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){

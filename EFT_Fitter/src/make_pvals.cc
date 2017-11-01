@@ -58,118 +58,118 @@ int main(int argc, const char * argv[]){
 
     if (mode == "norm_parton"){
     filenames = {
-        "files/July3/norm_parton/DiffXS_HypToppT_source.root",
-        "files/July3/norm_parton/DiffXS_HypAntiToppT_source.root",
-        "files/July3/norm_parton/DiffXS_HypToppTLead_source.root",
-        "files/July3/norm_parton/DiffXS_HypToppTNLead_source.root",
-        "files/July3/norm_parton/DiffXS_HypToppTTTRestFrame_source.root",
-        "files/July3/norm_parton/DiffXS_HypAntiToppTTTRestFrame_source.root",
-        "files/July3/norm_parton/DiffXS_HypTopRapidity_source.root",
-        "files/July3/norm_parton/DiffXS_HypAntiTopRapidity_source.root",
-        "files/July3/norm_parton/DiffXS_HypTopRapidityLead_source.root",
-        "files/July3/norm_parton/DiffXS_HypTopRapidityNLead_source.root",
-        "files/July3/norm_parton/DiffXS_HypTTBarpT_source.root",
-        "files/July3/norm_parton/DiffXS_HypTTBarRapidity_source.root",
-        "files/July3/norm_parton/DiffXS_HypTTBarMass_source.root",
-        "files/July3/norm_parton/DiffXS_HypTTBarDeltaRapidity_source.root",
-        "files/July3/norm_parton/DiffXS_HypTTBarDeltaPhi_source.root"
+        "files/Nov1/parton/normalised/results/DiffXS_HypToppT_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypAntiToppT_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypToppTLead_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypToppTNLead_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypToppTTTRestFrame_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypAntiToppTTTRestFrame_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTopRapidity_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypAntiTopRapidity_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTopRapidityLead_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTopRapidityNLead_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTTBarpT_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTTBarRapidity_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTTBarMass_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/Nov1/parton/normalised/results/DiffXS_HypTTBarDeltaPhi_source.root"
     };
     } else if (mode == "abs_parton"){
         filenames = {
 
-        "files/July3/abs_parton/DiffXS_HypToppT_source.root",
-        "files/July3/abs_parton/DiffXS_HypAntiToppT_source.root",
-        "files/July3/abs_parton/DiffXS_HypToppTLead_source.root",
-        "files/July3/abs_parton/DiffXS_HypToppTNLead_source.root",
-        "files/July3/abs_parton/DiffXS_HypToppTTTRestFrame_source.root",
-        "files/July3/abs_parton/DiffXS_HypAntiToppTTTRestFrame_source.root",
-        "files/July3/abs_parton/DiffXS_HypTopRapidity_source.root",
-        "files/July3/abs_parton/DiffXS_HypAntiTopRapidity_source.root",
-        "files/July3/abs_parton/DiffXS_HypTopRapidityLead_source.root",
-        "files/July3/abs_parton/DiffXS_HypTopRapidityNLead_source.root",
-        "files/July3/abs_parton/DiffXS_HypTTBarpT_source.root",
-        "files/July3/abs_parton/DiffXS_HypTTBarRapidity_source.root",
-        "files/July3/abs_parton/DiffXS_HypTTBarMass_source.root",
-        "files/July3/abs_parton/DiffXS_HypTTBarDeltaRapidity_source.root",
-        "files/July3/abs_parton/DiffXS_HypTTBarDeltaPhi_source.root"
+        "files/Nov1/parton/absolute/DiffXS_HypToppT_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypAntiToppT_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypToppTLead_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypToppTNLead_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypToppTTTRestFrame_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypAntiToppTTTRestFrame_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTopRapidity_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypAntiTopRapidity_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTopRapidityLead_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTopRapidityNLead_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTTBarpT_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTTBarRapidity_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTTBarMass_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/Nov1/parton/absolute/DiffXS_HypTTBarDeltaPhi_source.root"
         };
     }else if (mode == "norm_particle"){
         filenames = {
-            "files/July3/norm_particle/DiffXS_HypToppT_source.root",
-            "files/July3/norm_particle/DiffXS_HypAntiToppT_source.root",
-            "files/July3/norm_particle/DiffXS_HypToppTLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypToppTNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypToppTTTRestFrame_source.root",
-            "files/July3/norm_particle/DiffXS_HypAntiToppTTTRestFrame_source.root",
-            "files/July3/norm_particle/DiffXS_HypTopRapidity_source.root",
-            "files/July3/norm_particle/DiffXS_HypAntiTopRapidity_source.root",
-            "files/July3/norm_particle/DiffXS_HypTopRapidityLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypTopRapidityNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypTTBarpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypTTBarRapidity_source.root",
-            "files/July3/norm_particle/DiffXS_HypTTBarMass_source.root",
-            "files/July3/norm_particle/DiffXS_HypTTBarDeltaRapidity_source.root",
-            "files/July3/abs_particle/DiffXS_HypTTBarDeltaPhi_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypToppT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypAntiToppT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypToppTLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypToppTNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypToppTTTRestFrame_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypAntiToppTTTRestFrame_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTopRapidity_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTopRapidityLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarpT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarRapidity_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarMass_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarDeltaPhi_source.root",
 
-            "files/July3/norm_particle/DiffXS_HypLeptonpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypAntiLeptonpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypLeptonpTLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypLeptonpTNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypLeptonEta_source.root",
-            "files/July3/norm_particle/DiffXS_HypAntiLeptonEta_source.root",
-            "files/July3/norm_particle/DiffXS_HypLeptonEtaLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypLeptonEtaNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypLLBarpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypLLBarMass_source.root",
-            "files/July3/norm_particle/DiffXS_HypLLBarDPhi_source.root",
-            "files/July3/norm_particle/DiffXS_HypJetMultpt30_source.root",
-            "files/July3/norm_particle/DiffXS_HypBJetpTLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypBJetpTNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypBJetEtaLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypBJetEtaNLead_source.root",
-            "files/July3/norm_particle/DiffXS_HypBBBarpT_source.root",
-            "files/July3/norm_particle/DiffXS_HypBBBarMass_source.root",
-            "files/July3/norm_particle/DiffXS_HypTTBarDeltaPhi_source.root"
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonpT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypAntiLeptonpT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonpTLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonpTNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonEta_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypAntiLeptonEta_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonEtaLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLeptonEtaNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLLBarpT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLLBarMass_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypLLBarDPhi_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypJetMultpt30_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBJetpTLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBJetpTNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBJetEtaLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBJetEtaNLead_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBBBarpT_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypBBBarMass_source.root",
+            "files/Nov1/particle/normalised/DiffXS_HypTTBarDeltaPhi_source.root"
 
         };
     }
     
         else if (mode == "abs_particle"){
             filenames = {
-                "files/July3/abs_particle/DiffXS_HypToppT_source.root",
-                "files/July3/abs_particle/DiffXS_HypAntiToppT_source.root",
-                "files/July3/abs_particle/DiffXS_HypToppTLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypToppTNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypToppTTTRestFrame_source.root",
-                "files/July3/abs_particle/DiffXS_HypAntiToppTTTRestFrame_source.root",
-                "files/July3/abs_particle/DiffXS_HypTopRapidity_source.root",
-                "files/July3/abs_particle/DiffXS_HypAntiTopRapidity_source.root",
-                "files/July3/abs_particle/DiffXS_HypTopRapidityLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypTopRapidityNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypTTBarpT_source.root",
-                "files/July3/abs_particle/DiffXS_HypTTBarRapidity_source.root",
-                "files/July3/abs_particle/DiffXS_HypTTBarMass_source.root",
-                "files/July3/abs_particle/DiffXS_HypTTBarDeltaRapidity_source.root",
-                "files/July3/abs_particle/DiffXS_HypTTBarDeltaPhi_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypToppT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypAntiToppT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypToppTLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypToppTNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypToppTTTRestFrame_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypAntiToppTTTRestFrame_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTopRapidity_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypAntiTopRapidity_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTopRapidityLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTopRapidityNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTTBarpT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTTBarRapidity_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTTBarMass_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypTTBarDeltaPhi_source.root",
                 
-                "files/July3/abs_particle/DiffXS_HypLeptonpT_source.root",
-                "files/July3/abs_particle/DiffXS_HypAntiLeptonpT_source.root",
-                "files/July3/abs_particle/DiffXS_HypLeptonpTLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypLeptonpTNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypLeptonEta_source.root",
-                "files/July3/abs_particle/DiffXS_HypAntiLeptonEta_source.root",
-                "files/July3/abs_particle/DiffXS_HypLeptonEtaLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypLeptonEtaNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypLLBarpT_source.root",
-                "files/July3/abs_particle/DiffXS_HypLLBarMass_source.root",
-                "files/July3/abs_particle/DiffXS_HypLLBarDPhi_source.root",
-                "files/July3/abs_particle/DiffXS_HypJetMultpt30_source.root",
-                "files/July3/abs_particle/DiffXS_HypBJetpTLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypBJetpTNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypBJetEtaLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypBJetEtaNLead_source.root",
-                "files/July3/abs_particle/DiffXS_HypBBBarpT_source.root",
-                "files/July3/abs_particle/DiffXS_HypBBBarMass_source.root"
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonpT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypAntiLeptonpT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonpTLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonpTNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonEta_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypAntiLeptonEta_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonEtaLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLeptonEtaNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLLBarpT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLLBarMass_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypLLBarDPhi_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypJetMultpt30_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBJetpTLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBJetpTNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBJetEtaLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBJetEtaNLead_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBBBarpT_source.root",
+                "files/Nov1/particle/absolute/DiffXS_HypBBBarMass_source.root"
 
             };
         }
@@ -286,21 +286,19 @@ std::tuple <float, int, float > process_result(string modelname, string filename
     if (g_data) cout <<" got data graph"<<endl;
     if (h_model) cout <<" got model histo"<<endl;
 
-    
     cout <<"  "<<endl;
     
+//    for (int bin = 0; bin < h_model->GetNbinsX(); bin++){
+//        double bin_model = h_model->GetBinContent(bin+1);
+//        g_data->GetPoint(bin, bin_x, bin_data);
+//        e_data = g_data->GetErrorY(bin);
+//        cout <<" data  =  "<<  bin_data << "  data error = "<< e_data  <<"  model " <<  bin_model <<endl;
+//        //Extact term in covariance matrix here (need extra loop also)
+//        chisq_running += pow(bin_data - bin_model, 2.0) / (  pow(e_data, 2.0 ) ) ;
+//    }
+
     
-    for (int bin = 0; bin < h_model->GetNbinsX(); bin++){
-        
-        double bin_model = h_model->GetBinContent(bin+1);
-        g_data->GetPoint(bin, bin_x, bin_data);
-        e_data = g_data->GetErrorY(bin);
-        
-        cout <<" data  =  "<<  bin_data << "  data error = "<< e_data  <<"  model " <<  bin_model <<endl;
-        //Extact term in covariance matrix here (need extra loop also)
-        chisq_running += pow(bin_data - bin_model, 2.0) / (  pow(e_data, 2.0 ) ) ;
-        
-    }
+    chisq_running = calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * g_data, std::string cov_file)
     
     ndof = (h_model->GetNbinsX() -1); //need to reduce this by 1 for normalised results
     pval = TMath::Prob(chisq_running, ndof);
@@ -396,7 +394,7 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         "M_{tt}",
         "#Delta Y tt",
         "#Delta #Phi tt",
-        "p_{T} l ",
+        "p_{T} l",
         "p_{T} #bar{l}",
         "p_{T} l (leading)",
         "p_{T} l (sub-leading)",

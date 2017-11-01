@@ -39,7 +39,7 @@
 using namespace std;
 using namespace RooFit ;
 
-bool debug = false;
+bool debug = true;
 //const int n_preds = 501;
 
 const int n_preds = 501;
@@ -133,12 +133,16 @@ double acc_CtG_pos2_nlo = 0.28672;
 //this is the effect of the scale variations on the inclusive
 // cross sections at NNLO+NNLL
 //double effect_SM_scaleup_nlo = 1.023;
+
 double effect_SM_scaleup_nlo = 0.977;
 double effect_SM_scaledown_nlo = 1.035;
+
+
 
 double sigma_sm_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo;
 double sigma_CtG_neg2_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo;
 double sigma_CtG_pos2_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo;
+
 
 double sigma_sm_scaledown_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo * effect_SM_scaledown_nlo ;
 double sigma_CtG_neg2_scaledown_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_scaledown_nlo;
@@ -212,6 +216,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             bin_width = (bins[point+1] -  bins[point]);
             
             //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
+            //this step seems obselete now that data unceetainties
+            // are accommodated with the covariance matrix
             
             if (error_mode == "nom"){
                 data_histo->SetBinContent(point+1, bin_height);
@@ -681,26 +687,19 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
 std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::string var_name, std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *>> histos, std::string mode, bool add_pwhg){
     
     if (debug) cout << "Fitter::scan_couplings, in mode " << run_name << endl;
-    
     if (!std::get<0>(histos)) cout << "data histo not found" << endl;
-    
     if (debug) cout << "N histos = " <<  std::get<1>(histos).size()  <<endl;
-    
     
     TGraphErrors * g = new TGraphErrors();
     TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",800,600);
-
 
     TPad *pad1 = new TPad("pad1","pad1",0,0.45,1,1);
     pad1->SetBottomMargin(0);
     pad1->SetTopMargin(0.19);
     pad1->SetLeftMargin(0.15);
     pad1->SetRightMargin(0.02);
-
     pad1->Draw();
     pad1->cd();
-    //pad1->SetLogy();
-    
     
     int n_hists;
     if (add_pwhg){
@@ -709,7 +708,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     else{
         n_hists = std::get<1>(histos).size();
     }
-    
     
    // if (debug) cout << "Fitter::scan_couplings:: data integral " << std::get<0>(histos)->Integral()   <<endl;
 
@@ -776,15 +774,11 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
 
    // cout << "   " << endl;
    // cout << "Fitter::scan_couplings:: min chi2 " << minchi2 << endl;
-    
-    
-    
    // TH1F * chi_sq = new TH1F("chi_sq","chi_sq", 45, 0.0, 7.0 );
    // chi_sq->Fill(minchi2);
     
     if (add_pwhg)std::get<1>(histos)[std::get<1>(histos).size()-1]->SetLineStyle(2);
     //std::get<1>(histos)[std::get<1>(histos).size()-1]->Draw("HISTSAME");
-    
     
     if (  std::get<0>(histos)) {
         gStyle->SetErrorX(0);
@@ -819,7 +813,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     pad2->SetLeftMargin(0.15);
     pad2->SetRightMargin(0.02);
     pad2->SetGridy();
-
     
     if (debug) cout << "Fitter::scan_couplings::making ratio plot" << endl;
     
@@ -840,27 +833,22 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         //  mc_temp->SetLineColor(histo+1);
 //        mc_temp->GetYaxis()->SetRangeUser(0.75, 1.4);
         mc_temp->GetYaxis()->SetNdivisions(5);
-
         mc_temp->GetYaxis()->SetRangeUser(0.2, 1.8);
         mc_temp->GetYaxis()->SetLabelSize(0.09);
         mc_temp->GetXaxis()->SetLabelSize(0.1);
         mc_temp->GetXaxis()->SetTitleSize(0.11);
         if (debug) cout << "Fitter::scan_couplings::here 1 " <<  endl;
-
         mc_temp->GetXaxis()->SetTitleOffset(1.0);
         mc_temp->GetYaxis()->SetTitleOffset(0.63);
         mc_temp->GetYaxis()->SetTitleSize(0.1);
-
         mc_temp->SetYTitle("#frac{Theory}{Data}");
         mc_temp->SetXTitle("#Delta #Phi_{l#bar{l}}");
-
       
         if (debug) cout << "Fitter::scan_couplings::here 2 " <<  endl;
 
-        
+
         std::stringstream ss;
         ss << var_name;
-        
         std::string segment;
         std::vector<std::string> seglist;
         
@@ -881,17 +869,14 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         
         if (debug) cout << "Fitter::scan_couplings::here 3 5" <<  endl;
 
-        
         if(histo == 0){
             mc_temp->Draw("HIST");
         }else{
             mc_temp->Draw("HISTSAME");
         }
-        
-
+    
         if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
 
-        
     }
     
     
@@ -900,8 +885,9 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
 
     data_temp->SetLineWidth(0);
     data_temp_stat->SetLineWidth(0);
-
     
+    
+    //need to get this auotmatically from the data graph
     double data_stat_unc[10] = {0.0171327, 0.0192746,0.0229979,0.0238145, 0.0254806, 0.0269672, 0.0276772, 0.0280034, 0.0288118, 0.0282408};
     
     for (int i = 0; i < std::get<1>(histos)[0]->GetNbinsX(); i++){

@@ -15,8 +15,89 @@
 
 TH2D* make_covariance_matrix(std::string, std::string);
 TH1* make_poisson_toy(TH1*,TH1*, int, double);
-double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*);
+double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*,std::string);
 
+
+double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors, std::string cov_file){
+    
+    double test_statistic = 0.0;
+    int nbins  = data->GetSize() - 2;
+    bool schmitt_fit = true;
+    std::vector<double> deltas;
+    std::vector<double> errors;
+    
+    double corr_coff = 1.0;
+    bool data_errors_only = true;
+    double chisq = 0.0;
+    double chi2_bin = 0.0;
+    double theory_error =0.0;
+    double total_error =0.0;
+    TH2D * cov;
+    
+    //Retrieve covariance matrix from text file
+    //TFile *cov_file = new TFile("HypLLBarDPhi_totCovMtrxFile.root");
+    //TH2D * cov = (TH2D*)cov_file->Get("inv_cov");
+    cov = make_covariance_matrix(cov_file.c_str());
+    
+    deltas.clear();
+    errors.clear();
+    
+    for (int i=1;i <=  data->GetSize() -2; i++){
+        
+        double data_bin = data->GetBinContent(i);
+        double pred_bin = pred->GetBinContent(i);
+        double delta = data_bin - pred_bin;
+        
+        deltas.push_back(delta);
+        
+        if (data_errors_only){
+            //std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  " chi2 in bin =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
+            errors.push_back(data->GetBinError(i));
+            // errors.push_back(pred_bin);
+            
+        }else{
+            //implmement quadrature addition of data and pred errors
+            
+            if (data_bin > pred_bin ){
+                theory_error = gr_errors->GetErrorYhigh(i-1);//accroding to aMC@NLO manual, the scale uncertainty of the NLO predicitons is 10%
+            }else if (data_bin < pred_bin ){
+                theory_error = gr_errors->GetErrorYlow(i-1);
+            }
+            total_error =  pow(  pow( (theory_error +  data->GetBinError(i) ) ,2.0), 0.5);
+            errors.push_back( total_error);
+        }
+    }
+    
+    for (int i=1;i<=nbins; i++) {
+        for (int j=1;j<=nbins; j++){
+            //   std::cout <<"  "<< std::endl;
+            double corr_coff = cov->GetBinContent(i,j);
+            if (schmitt_fit){
+                chisq += deltas[i-1]*deltas[j-1]*corr_coff;
+                //std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
+                
+                
+            }
+            else {
+                if(i == j){
+                    //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
+                    double delta_sq = deltas[i-1]*deltas[i-1];
+                    //double chi2_bin = delta_sq/errors[i-1];
+                    //                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+                    chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
+                    //  std::cout <<"chi2 "<< chisq << "\n";
+                    
+                    chisq += chi2_bin;
+                }
+            }
+        }
+    }
+    // std::cout <<"chi2 final "<< chisq << "\n";
+    
+    cov_file->Close();
+    
+    return chisq;
+}
 
 
 
@@ -74,6 +155,8 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_file){
     
     for (int x = 0; x < matrix.size(); x++){
         for (int y = 0; y < matrix[x].size(); y++){
+            std::cout <<" xm "<< matrix[x][y] <<std::endl;
+
             std::string::size_type sz;
             std::string cov_elem_str = matrix[x][y];
             double cov_elem = std::stod(cov_elem_str, &sz);
@@ -82,7 +165,7 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_file){
             g_data->GetPoint(y, point_j_x, point_j_y );
             cov_elem = (cov_elem)*(point_i_y)*(point_j_y);
             
-           // std::cout <<" x = "<< x <<"  y "<< y <<"  "<<  cov_elem_str <<std::endl;
+           std::cout <<" x = "<< x <<"  y "<< y <<"  "<<  cov_elem_str <<std::endl;
             cov->SetBinContent(x+1, y+1, cov_elem);
             mat[x][y] = cov_elem;
         }
@@ -252,89 +335,6 @@ TH1* make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integral){
     //cout <<" toy integral  = "<<  hh_f->Integral()<< endl;
     
     return hh_f;
-}
-
-
-
-
-double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors){
-    
-    double test_statistic = 0.0;
-    int nbins  = data->GetSize() - 2;
-    bool schmitt_fit = true;
-    std::vector<double> deltas;
-    std::vector<double> errors;
-    
-    double corr_coff = 1.0;
-    bool data_errors_only = true;
-    double chisq = 0.0;
-    double chi2_bin = 0.0;
-    double theory_error =0.0;
-    double total_error =0.0;
-    
-    //Retrieve covariance matrix from text file
-    TFile *cov_file = new TFile("HypLLBarDPhi_totCovMtrxFile.root");
-    TH2D * cov = (TH2D*)cov_file->Get("inv_cov");
-    /// cov = Fitter::make_covariance_matrix("HypTTBarDeltaRapidity_totCovMtrxFile.txt");
-    
-    deltas.clear();
-    errors.clear();
-    
-    for (int i=1;i <=  data->GetSize() -2; i++){
-        
-        double data_bin = data->GetBinContent(i);
-        double pred_bin = pred->GetBinContent(i);
-        double delta = data_bin - pred_bin;
-        
-        deltas.push_back(delta);
-        
-        if (data_errors_only){
-            //std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  " chi2 in bin =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
-            errors.push_back(data->GetBinError(i));
-            // errors.push_back(pred_bin);
-            
-        }else{
-            //implmement quadrature addition of data and pred errors
-            
-            if (data_bin > pred_bin ){
-                theory_error = gr_errors->GetErrorYhigh(i-1);//accroding to aMC@NLO manual, the scale uncertainty of the NLO predicitons is 10%
-            }else if (data_bin < pred_bin ){
-                theory_error = gr_errors->GetErrorYlow(i-1);
-            }
-            total_error =  pow(  pow( (theory_error +  data->GetBinError(i) ) ,2.0), 0.5);
-            errors.push_back( total_error);
-        }
-    }
-    
-    for (int i=1;i<=nbins; i++) {
-        for (int j=1;j<=nbins; j++){
-            //   std::cout <<"  "<< std::endl;
-            double corr_coff = cov->GetBinContent(i,j);
-            if (schmitt_fit){
-                chisq += deltas[i-1]*deltas[j-1]*corr_coff;
-                //std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
-                
-                
-            }
-            else {
-                if(i == j){
-                    //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
-                    double delta_sq = deltas[i-1]*deltas[i-1];
-                    //double chi2_bin = delta_sq/errors[i-1];
-                    //                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
-                    chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
-                    //  std::cout <<"chi2 "<< chisq << "\n";
-                    
-                    chisq += chi2_bin;
-                }
-            }
-        }
-    }
-    // std::cout <<"chi2 final "<< chisq << "\n";
-    
-    cov_file->Close();
-    
-    return chisq;
 }
 
 
