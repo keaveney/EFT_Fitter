@@ -25,13 +25,13 @@
 #include "TLegendEntry.h"
 #include <utility>
 #include <tuple>
-#include <RooRealVar.h>
-#include <RooDataSet.h>
-#include <RooDataHist.h>
-#include <RooHistPdf.h>
-#include <RooPlot.h>
-#include <RooMCStudy.h>
-#include <RooBinning.h>
+//#include <RooRealVar.h>
+//#include <RooDataSet.h>
+//#include <RooDataHist.h>
+//#include <RooHistPdf.h>
+//#include <RooPlot.h>
+//#include <RooMCStudy.h>
+//#include <RooBinning.h>
 
 #include "helper_tools.h"
 
@@ -39,15 +39,11 @@
 using namespace std;
 using namespace RooFit ;
 
-bool debug = true;
-//const int n_preds = 501;
-
+bool debug = false;
 const int n_preds = 501;
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
-
-
 
 
 class Fitter {
@@ -215,6 +211,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             double bin_error_up   = g_data->GetErrorYhigh(point);
             bin_width = (bins[point+1] -  bins[point]);
             
+          cout << "looping on graph points, "<< point <<", bin xsec  " << bin_height  <<"  bin error up  "<< bin_error_up   << " bin error down "<< bin_error_down <<" running_total " << running_total  <<"\n";
+            
             //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
             //this step seems obselete now that data unceetainties
             // are accommodated with the covariance matrix
@@ -228,14 +226,13 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             }
             
             data_histo->SetBinError(point+1, bin_error);
-             // cout << "looping on graph points, "<< point <<  "  "<<  bin_height  <<"  bin error "<<bin_error   << " running_total " << running_total  <<"\n";
+
 
             running_total = running_total + (bin_height*bin_width);
         }
 //        data_histo->Scale(running_total/data_histo->Integral());
 
     }
-    
       cout << "Running total for data histo  =" <<  running_total  <<"\n";
     
     //v3 = unweighted, v6 = weigted
@@ -509,7 +506,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             for ( int bin = 1 ; bin <= nbins; bin++){
                  double bin_width = bins[bin] - bins[bin-1];
                  double bin_centre = bins[bin-1] + (( bins[bin] - bins[bin-1] ) /2.0);
-                gr_errors->SetPoint(bin-1,    bin_centre ,  h_CtG_pred->GetBinContent(bin) );
+                gr_errors->SetPoint(bin-1, bin_centre,  h_CtG_pred->GetBinContent(bin) );
                 
                 //unflipped
                 if (h_CtG_pred_scaleup->GetBinContent(bin) > h_CtG_pred->GetBinContent(bin) &&  h_CtG_pred->GetBinContent(bin) > h_CtG_pred_scaledown->GetBinContent(bin) ){
@@ -652,10 +649,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     mc_temp_pos->Draw("SAME");
     pad2->SetGridy();
 
-    
-    
     c_basis->SaveAs(basis_canvas_name.c_str());
-
     
     TFile * f_basis = new TFile(basis_name.c_str(), "RECREATE");
     mc_histo_neg2->SetName("Neg2");
@@ -752,13 +746,14 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             }
             double chi2 = -1.0;
             
+            //define name of covariance text file
+            std::string cov_string =  "files/Nov1/particle/absolute/covariance/HypLLBarDPhi_totCovEnvMtrxFile.root";
+            
             if (mode=="norm_only" || mode=="abs_only") {
-                chi2 = calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight]);
-              //  cout << "Fitter::scan_couplings:: chi2 " << chi2 << endl;
-
+                chi2 = calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight],cov_string);
             }
             else if(mode=="norm_fid"){
-                chi2 = (calculate_test_statistic( std::get<0>(histos),  std::get<1>(histos)[weight], std::get<2>(histos)[weight]) + calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight]  ));
+            chi2 = (calculate_test_statistic(std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight], cov_string) + calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight], cov_string  ));
             }
             
             g->SetPoint(weight, CtG_vals[weight], chi2);
@@ -789,19 +784,14 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     }
     
     TLegend *leg = new TLegend(0.22,0.5,0.51,0.78);
-    //leg->SetTextFont(65);
     leg->AddEntry(   std::get<0>(histos) ,"Data","E0p");
     for (int ctg = 0; ctg < n_preds;  ctg++){
         float ctg_val =CtG_vals[ctg];
         std::string pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1}";
-        //    leg->AddEntry( std::get<1>(histos)[ctg], pred_name_leg.c_str(),"l");
-        
         leg->AddEntry( std::get<2>(histos)[ctg], pred_name_leg.c_str(),"l");
-        
     }
-    
-   if (add_pwhg) leg->AddEntry( std::get<1>(histos)[std::get<1>(histos).size()-1], "PWHG+P8","fl");
     leg->Draw();
+    
     
     c_compare_dists->cd();
     TPad *pad2 = new TPad("pad2","pad2",0,0.05,1,0.45);
@@ -816,6 +806,59 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     if (debug) cout << "Fitter::scan_couplings::making ratio plot" << endl;
     
+    //Making ratio plot
+    TGraphAsymmErrors* data_temp = new  TGraphAsymmErrors();
+    TGraphAsymmErrors* data_temp_stat = new  TGraphAsymmErrors();
+    data_temp->SetLineWidth(0);
+    data_temp_stat->SetLineWidth(0);
+    
+    //need to get this auotmatically from the data graph (maybe add the stat only graph to the data tuple?)
+    double data_stat_unc[10] = {0.0171327, 0.0192746,0.0229979,0.0238145, 0.0254806, 0.0269672, 0.0276772, 0.0280034, 0.0288118, 0.0282408};
+    
+    for (int i = 0; i <= std::get<1>(histos)[0]->GetNbinsX(); i++){
+        
+        double ratio = 1.0;
+        double ratio_unc = (std::get<0>(histos)->GetBinError(i+1)) / (std::get<0>(histos)->GetBinContent(i+1));
+        TAxis *xaxis = std::get<0>(histos)->GetXaxis();
+        Double_t binCenter = xaxis->GetBinCenter(i+1);
+        Double_t binWidth = std::get<0>(histos)->GetBinWidth(i+1);
+        
+        data_temp->SetPoint(i, binCenter, ratio);
+        data_temp->SetPointEYhigh(i, ratio_unc);
+        data_temp->SetPointEYlow(i, ratio_unc);
+        data_temp->SetPointEXhigh(i, binWidth/2.0);
+        data_temp->SetPointEXlow(i, binWidth/2.0);
+        
+        data_temp_stat->SetPoint(i, binCenter, ratio);
+        data_temp_stat->SetPointEYhigh(i,data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)) );
+        data_temp_stat->SetPointEYlow(i, data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)));
+        data_temp_stat->SetPointEXhigh(i, binWidth/2.0);
+        data_temp_stat->SetPointEXlow(i, binWidth/2.0);
+    }
+    
+    data_temp->SetFillColor(kOrange-2);
+    data_temp_stat->SetFillColor(kGray);
+    
+    TH1F * histo_base = new TH1F("","", 1, 0.0, 3.14);
+    
+    histo_base->GetYaxis()->SetNdivisions(5);
+    histo_base->GetYaxis()->SetRangeUser(0.2, 1.8);
+    histo_base->GetXaxis()->SetRangeUser(0.0, 3.12);
+    histo_base->GetYaxis()->SetLabelSize(0.09);
+    histo_base->GetXaxis()->SetLabelSize(0.1);
+    histo_base->GetXaxis()->SetTitleSize(0.11);
+    histo_base->GetXaxis()->SetTitleOffset(1.0);
+    histo_base->GetYaxis()->SetTitleOffset(0.63);
+    histo_base->GetYaxis()->SetTitleSize(0.1);
+    histo_base->SetYTitle("#frac{Theory}{Data}");
+    histo_base->SetXTitle("#Delta #Phi_{l#bar{l}}");
+    
+    
+    histo_base->Draw();
+    data_temp->Draw("E2SAME");
+    data_temp_stat->Draw("E2SAME");
+    
+    
     for (int histo = 0; histo < std::get<1>(histos).size(); histo++){
         if (debug) cout << "Fitter::scan_couplings::making ratio plot, looping" << endl;
         
@@ -824,26 +867,9 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         mc_temp->Sumw2();
         mc_temp->SetStats(0);
         mc_temp->Divide(std::get<0>(histos));
-        
-        
+    
         if (debug) cout << "Fitter::scan_couplings::making ratio plot" <<  ", Nbins data = "   << std::get<0>(histos)->GetNbinsX() << ", Nbins pred = "   <<  mc_temp->GetNbinsX() <<endl;
         
-        //mc_temp->SetMarkerStyle(21);
-        //  mc_temp->SetMarkerColor(histo+1);
-        //  mc_temp->SetLineColor(histo+1);
-//        mc_temp->GetYaxis()->SetRangeUser(0.75, 1.4);
-        mc_temp->GetYaxis()->SetNdivisions(5);
-        mc_temp->GetYaxis()->SetRangeUser(0.2, 1.8);
-        mc_temp->GetYaxis()->SetLabelSize(0.09);
-        mc_temp->GetXaxis()->SetLabelSize(0.1);
-        mc_temp->GetXaxis()->SetTitleSize(0.11);
-        if (debug) cout << "Fitter::scan_couplings::here 1 " <<  endl;
-        mc_temp->GetXaxis()->SetTitleOffset(1.0);
-        mc_temp->GetYaxis()->SetTitleOffset(0.63);
-        mc_temp->GetYaxis()->SetTitleSize(0.1);
-        mc_temp->SetYTitle("#frac{Theory}{Data}");
-        mc_temp->SetXTitle("#Delta #Phi_{l#bar{l}}");
-      
         if (debug) cout << "Fitter::scan_couplings::here 2 " <<  endl;
 
 
@@ -870,7 +896,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::here 3 5" <<  endl;
 
         if(histo == 0){
-            mc_temp->Draw("HIST");
+            mc_temp->Draw("HISTSAME");
         }else{
             mc_temp->Draw("HISTSAME");
         }
@@ -879,48 +905,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
 
     }
     
-    
-    TGraphAsymmErrors* data_temp = new  TGraphAsymmErrors();
-    TGraphAsymmErrors* data_temp_stat = new  TGraphAsymmErrors();
-
-    data_temp->SetLineWidth(0);
-    data_temp_stat->SetLineWidth(0);
-    
-    
-    //need to get this auotmatically from the data graph
-    double data_stat_unc[10] = {0.0171327, 0.0192746,0.0229979,0.0238145, 0.0254806, 0.0269672, 0.0276772, 0.0280034, 0.0288118, 0.0282408};
-    
-    for (int i = 0; i < std::get<1>(histos)[0]->GetNbinsX(); i++){
-        
-        double ratio = 1.0;
-        double ratio_unc = (std::get<0>(histos)->GetBinError(i+1)) / (std::get<0>(histos)->GetBinContent(i+1));
-        TAxis *xaxis = std::get<0>(histos)->GetXaxis();
-        Double_t binCenter = xaxis->GetBinCenter(i+1);
-        Double_t binWidth = std::get<0>(histos)->GetBinWidth(i+1);
-
-        
-        cout <<  (std::get<0>(histos)->GetBinError(i+1))  <<  endl;
-        
-        data_temp->SetPoint(i, binCenter, ratio);
-        data_temp->SetPointEYhigh(i, ratio_unc);
-        data_temp->SetPointEYlow(i, ratio_unc);
-        data_temp->SetPointEXhigh(i, binWidth/2.0);
-        data_temp->SetPointEXlow(i, binWidth/2.0);
-        
-        data_temp_stat->SetPoint(i, binCenter, ratio);
-        data_temp_stat->SetPointEYhigh(i,data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)) );
-        data_temp_stat->SetPointEYlow(i, data_stat_unc[i]/(std::get<0>(histos)->GetBinContent(i+1)));
-        data_temp_stat->SetPointEXhigh(i, binWidth/2.0);
-        data_temp_stat->SetPointEXlow(i, binWidth/2.0);
-    
-    }
-
-    data_temp->SetFillColor(kOrange-2);
-    data_temp_stat->SetFillColor(kGray);
-
-    data_temp->Draw("E2SAME");
-    data_temp_stat->Draw("E2SAME");
-
     TLegend *leg_2 = new TLegend(0.24,0.82,0.51,0.99);
     leg_2->SetBorderSize(0);
     //leg_2->SetTextFont(72);
@@ -928,14 +912,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     leg_2->AddEntry( data_temp_stat   ,"Stat. only","f");
     leg_2->Draw();
     
-    
-
-    if (debug) cout << "Fitter::scan_couplings::here 4 " <<  endl;
-
-    
     c_compare_dists->cd();
-    //  pad1->SetLogy();
-    
     c_compare_dists->SetTopMargin(0.06);
     
     float H = c_compare_dists->GetWh();
@@ -1085,9 +1062,8 @@ void Fitter::toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErr
         std::tuple<TH1F*, vector<TH1F*>, vector<TGraphAsymmErrors * >>  toy_histos (toy, std::get<1>(histos), std::get<2>(histos));
         std::tuple<double, double> toy_results  = this->scan_couplings("toy","toy/ll_delphi_abs", toy_histos ,"abs_only", false);
         injection->Fill(std::get<0>(toy_results));
-
         
-        double chi2 = calculate_test_statistic(toy, ref_pred, dummy_gr);
+double chi2 = calculate_test_statistic(toy,ref_pred,dummy_gr,"files/Nov1/particle/absolute/covariance/HypLLBarDPhi_totCovEnvMtrxFile.root");
         h_chi2->Fill(chi2);
         h_chi2_ndof->Fill(chi2/ndof);
         signal_injection->Fill(ctg, chi2/ndof);

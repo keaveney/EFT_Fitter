@@ -22,8 +22,9 @@ int main(int argc, const char * argv[]){
     }
 
     if (mode == "abs_only"){
-       make_covariance_matrix("files/Oct11/HypLLBarDPhi_totCovMtrxFile.txt", "files/Oct4/DiffXS_HypLLBarDPhi_source.root");
-       f_EFT->run_extraction(10, bins_delphill, "data", "files/Oct4/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
+           //make_covariance_matrix("files/Oct11/HypLLBarDPhi_totCovMtrxFile.txt", "files/Nov1/particle/absolute/results/DiffXS_HypLLBarDPhi_source.root");
+       make_covariance_matrix("files/Nov1/particle/absolute/covariance/HypLLBarDPhi_totCovEnvMtrxFile.txt", "files/Nov1/particle/absolute/results/DiffXS_HypLLBarDPhi_source.root");
+       f_EFT->run_extraction(10, bins_delphill, "data", "files/Nov1/particle/absolute/results/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
     }
     else if (mode == "norm_fid" || mode == "norm_only" || mode == "fid_only"){
         f_EFT->run_extraction( 13, bins_delphill,"data", "files/April20/Norm/DiffXS_HypLLBarDPhi_source.root", "CMS_dilepton_diff/ll_delphi_abs", mode, false , false);
@@ -48,7 +49,6 @@ void Fitter::run_extraction(int nbins, float bins[], std::string graphname_data,
 
 
 void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
-    
    if(debug) std::cout <<" make_summary_plot "<< "\n";
     TFile * all_scans = new TFile("all_scans.root", "RECREATE");
 
@@ -58,7 +58,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     min_vals.clear();
     
     vector<TGraphErrors*> rel_scans;
-
     //first find min chi2 of each var for sensitivity comparison
     for (int scan = 0; scan< scans.size(); scan ++){
         
@@ -68,7 +67,7 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         for(Int_t i=0; i< scans[scan]->GetN(); i++) {
             scans[scan]->GetPoint(i,x,y);
             if (y < min_y) min_y = y;
-           if (debug) std::cout <<" points   = = "<< y <<"\n";
+          // if (debug) std::cout <<" points   = = "<< y <<"\n";
         }
           if (debug) std::cout <<" "<<"\n";
           if (debug) std::cout <<" found min chi2,  var  "<< scan <<"  " <<min_y<<"\n";
@@ -102,7 +101,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
                 cl_95_lo = x;
                 lo_95 = false;
                 cout <<"found lo 95"<< endl;
-
             }
         if (rel_y <= 1.0 && lo_68 && !(lo_95)) {
                 cl_68_lo = x;
@@ -113,18 +111,13 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
                 cl_68_hi = x;
                 hi_68 = false;
                 cout <<"found hi 68"<< endl;
-
-
             }
             if (rel_y >= 3.84 && hi_95 && !lo_95 && !lo_68 && !hi_68) {
                 cl_95_hi = x;
                 hi_95 = false;
                 cout <<"found hi 95"<< endl;
-
             }
             
-            
-
           //  std::cout <<" point " << i  <<" min val =   " << min_vals[scan] <<"\n";
           //  std::cout <<" point " << i  <<", x = "<< x  <<" rel chi =   " <<rel_y<<"\n";
         }
@@ -141,10 +134,7 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     gr_pval->Draw("AC");
     all_pvalscans_c->SaveAs("pvals_scan.pdf");
 
-    
     TCanvas * all_relscans_c = new TCanvas("all_relscans","",800,600);
-    
-    
 
     TH1F * base_histo = new TH1F("","", 1000, -10.0, 10.0);
     base_histo->GetYaxis()->SetRangeUser(0.0, 5.0);
@@ -201,13 +191,19 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     TGraphAsymmErrors * g_central = new TGraphAsymmErrors();
     
     
-    g_68->SetPoint(0, 0.216, 2.42);
-    g_95->SetPoint(0, 0.216, 2.42);
-    g_central->SetPoint(0, 0.216, 2.42);
-    g_68->SetPointEXhigh(0, 0.116);
-    g_68->SetPointEXlow(0, 0.112);
-    g_95->SetPointEXhigh(0, 0.224);
-    g_95->SetPointEXlow(0, 0.22);
+    g_68->SetPoint(0, 0.124, 2.42);
+    g_95->SetPoint(0, 0.124, 2.42);
+    g_central->SetPoint(0, 0.124, 2.42);
+    
+    g_68->SetPointEXhigh(0, 0.032);
+    g_68->SetPointEXlow(0, 0.032);
+    g_95->SetPointEXhigh(0, 0.06);
+    g_95->SetPointEXlow(0, 0.06);
+    
+    //g_68->SetPointEXhigh(0, 0.116);
+    //g_68->SetPointEXlow(0, 0.112);
+    //g_95->SetPointEXhigh(0, 0.224);
+    //g_95->SetPointEXlow(0, 0.22);
     
     g_central->SetPointEXhigh(0, 0.0);
     g_central->SetPointEXlow(0, 0.0);
@@ -254,32 +250,19 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
         rel_scans[scan]->SetLineColor(scan+1);
         rel_scans[scan]->SetLineWidth(2);
         rel_scans[scan]->SetLineStyle(2);
-
-        //rel_scans[0]->GetHistogram()->GetYaxis()->SetRangeUser(0.0, 5.0);
-        //rel_scans[0]->GetHistogram()->GetXaxis()->SetRangeUser(-0.2, 0.5);
-
-
         rel_scans[scan]->SetMarkerSize(1);
         rel_scans[scan]->SetMarkerColor(scan+1);
         rel_scans[scan]->SetMarkerStyle(22);
         
-        
         std::string gr_name_rel = obs_names[scan] + "_relscan";
         rel_scans[scan]->Write(gr_name_rel.c_str());
         if (debug) std::cout <<" relscan written "<<"\n";
-
-        
-        TSpline3 *s = new TSpline3("grs",rel_scans[scan]);
-        s->SetLineColor(scan+1);
         
         if (scan ==0){
             rel_scans[scan]->Draw("CSAME");
-            // use a cubic spline to smooth the graph
-           // s->Draw("same");
+
         }else{
             rel_scans[scan]->Draw("CSAME");
-           // s->Draw("same");
-
         }
         leg_rel->AddEntry( rel_scans[scan], "#Delta#chi^{2} vs. CtG/#Lambda^{2} ","l");
     }
@@ -289,7 +272,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     leg_rel->AddEntry( g_68, "68% CI","f");
     leg_rel->AddEntry( g_95, "95% CI","f");
     leg_rel->SetBorderSize(0);
-    
     
     //leg_rel->AddEntry( line_lower , "ar#Chiiv:1503.08841" ,"l");
 

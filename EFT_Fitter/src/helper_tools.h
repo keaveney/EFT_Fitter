@@ -13,12 +13,22 @@
 #include "TRandom.h"
 #include "TRandom3.h"
 
+#include <RooRealVar.h>
+#include <RooDataSet.h>
+#include <RooDataHist.h>
+#include <RooHistPdf.h>
+#include <RooPlot.h>
+#include <RooMCStudy.h>
+#include <RooBinning.h>
+
+
 TH2D* make_covariance_matrix(std::string, std::string);
 TH1* make_poisson_toy(TH1*,TH1*, int, double);
-double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*,std::string);
-
+double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*, std::string);
 
 double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors, std::string cov_file){
+    
+    std::cout <<"***CALCULATING TEST STATISTIC***"<< std::endl;
     
     double test_statistic = 0.0;
     int nbins  = data->GetSize() - 2;
@@ -32,12 +42,13 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
     double chi2_bin = 0.0;
     double theory_error =0.0;
     double total_error =0.0;
-    TH2D * cov;
     
     //Retrieve covariance matrix from text file
-    //TFile *cov_file = new TFile("HypLLBarDPhi_totCovMtrxFile.root");
-    //TH2D * cov = (TH2D*)cov_file->Get("inv_cov");
-    cov = make_covariance_matrix(cov_file.c_str());
+    TFile *cov_rootfile = new TFile(cov_file.c_str());
+    TH2D * cov = (TH2D*)cov_rootfile->Get("inv_cov");
+    
+    //TH2D * cov;
+    //cov = make_covariance_matrix(cov_file.c_str(),data);
     
     deltas.clear();
     errors.clear();
@@ -74,10 +85,11 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
             double corr_coff = cov->GetBinContent(i,j);
             if (schmitt_fit){
                 chisq += deltas[i-1]*deltas[j-1]*corr_coff;
-                //std::cout <<"delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<"  corr coff "<< corr_coff <<"chi2 "<< chisq << "\n";
                 
-                
-            }
+                if (i==j){
+           // std::cout <<"data error = "<<errors[i-1] <<"  data error squared = "<< errors[i-1]*errors[j-1] << "    1/data error squared = "<< 1.0/(errors[i-1]*errors[j-1])  <<"  delta i "<< deltas[i-1]<< "    delta j    " <<  deltas[j-1] <<" corr coff    "<< corr_coff <<"  chi2   "<< chisq << "\n";
+                }
+                }
             else {
                 if(i == j){
                     //std::cout<<"Calc chi2 " << "bin  "<< i << " delta =  " << deltas[i] <<  ", error  = "<< errors[i]  <<"\n";
@@ -86,92 +98,83 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
                     //                    double chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
                     chi2_bin = delta_sq/(errors[i-1]*errors[i-1]);
                     //  std::cout <<"chi2 "<< chisq << "\n";
-                    
                     chisq += chi2_bin;
                 }
             }
         }
     }
-    // std::cout <<"chi2 final "<< chisq << "\n";
-    
-    cov_file->Close();
-    
+    cov_rootfile->Close();
+        
     return chisq;
 }
 
 
 
-TH2D* make_covariance_matrix(std::string filename, std::string data_file){
+TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
     
+    std::cout <<" make_covariance_matrix "<< filename  <<std::endl;
+
+    
+    //first fill vectors from text file
     std::ifstream readFile(filename.c_str());
-    
     std::vector<std::vector<std::string>> matrix;
     std::vector<std::string> tokens;
-    
     std::string line;
     std::string delimiter = " ";
     
     while(getline(readFile,line)){
         tokens.clear();
         std::istringstream iss(line);
-        
-        //copy(istream_iterator<string>(iss),istream_iterator<string>(), back_inserter(tokens));
         size_t pos = 0;
         std::string token;
-        
-        //std::cout <<" " << std::endl;
-        //std::cout <<"line: " << std::endl;
-        
+    
         while ((pos = line.find(delimiter)) != std::string::npos){
             token = line.substr(0, pos);
-            //   std::cout <<" mini-loop token "<< token << std::endl;
+            //std::cout <<" mini-loop token "<< token << std::endl;
             line.erase(0, pos + delimiter.length());
             tokens.push_back(token);
         }
-        //std::cout <<" mini-loop token "<< line << std::endl;
-        
-        tokens.push_back(line);
-        
+        //tokens.push_back(line);
         matrix.push_back(tokens);
-        // cout <<"line-- = "<< line << " " <<  matrix[0][0] <<endl;
     }
-    
     readFile.close();
     
-    std::cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<std::endl;
-    
-    TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
-    
-    TFile * f_data_file = new TFile(data_file.c_str());
-    TGraphAsymmErrors * g_data = (TGraphAsymmErrors*)f_data_file->Get("data");
-    
+   // std::cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<std::endl;
 
-    //make parameters of mth2d auto from graph
-    TH2D* cov = new TH2D("cov","cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
-    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size() , 0.0, 3.142, matrix.size() , 0.0, 3.142);
+    TFile * data_file = new TFile(data_filename.c_str());
+    TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
+    TH1F * h_template = (TH1F*)data_file->Get("mc");
+    TGraphAsymmErrors * data = (TGraphAsymmErrors*)data_file->Get("data");
     
+    int nbins = h_template->GetNbinsX();
+    double lower_range = h_template->GetBinLowEdge(1);
+    double upper_range = h_template->GetBinLowEdge(nbins) + h_template->GetBinWidth(nbins);
+
+    TH2D* cov = new TH2D("cov","cov", matrix.size(), lower_range, upper_range, matrix.size(), lower_range, upper_range);
+    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size(), lower_range, upper_range, matrix.size(), lower_range, upper_range);
+
     double point_i_x,point_i_y, point_j_x, point_j_y;
     
-    
     for (int x = 0; x < matrix.size(); x++){
+        data->GetPoint(x, point_i_x, point_i_y);
+        
         for (int y = 0; y < matrix[x].size(); y++){
-            std::cout <<" xm "<< matrix[x][y] <<std::endl;
-
+            //std::cout <<" xm "<< matrix[x][y] <<std::endl;
             std::string::size_type sz;
             std::string cov_elem_str = matrix[x][y];
+            
+            data->GetPoint(y, point_j_x, point_j_y);
+            
             double cov_elem = std::stod(cov_elem_str, &sz);
+            //double cov_elem = cov_elem_rel*point_i_y*point_j_y;
+            //cov_elem = matrix[x][y];
             
-            g_data->GetPoint(x, point_i_x, point_i_y );
-            g_data->GetPoint(y, point_j_x, point_j_y );
-            cov_elem = (cov_elem)*(point_i_y)*(point_j_y);
-            
-           std::cout <<" x = "<< x <<"  y "<< y <<"  "<<  cov_elem_str <<std::endl;
             cov->SetBinContent(x+1, y+1, cov_elem);
             mat[x][y] = cov_elem;
+           //
+            //std::cout <<" x = "<< x <<"  y "<< y <<"  "<< cov_elem_str <<std::endl;
         }
     }
-    
-    std::string rootfile_name = filename.substr(0, filename.length() - 3) + "root";
     
     //invert convariance matrix and write
     Double_t det2;
@@ -183,16 +186,15 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_file){
         }
     }
     
+    std::string rootfile_name = filename.substr(0, filename.length() - 3) + "root";
     
     TFile * file = new TFile(rootfile_name.c_str(), "RECREATE");
     cov->Write();
     inv_cov->Write();
     mat.Write();
-    
     file->Close();
     
-    return cov;
-    
+    return inv_cov;
 }
 
 
@@ -226,9 +228,6 @@ TH1* make_poisson_toy(TH1* hh, TH1* data, int nevents, double data_integral){
     double bin_height_data;
     TRandom3 * gRand = new TRandom3();
 
-    
-    
-    
     if (opt == "manual"){
         for (int bin = 1; bin <= hh->GetNbinsX(); bin++){
             double mean = hh->GetBinContent(bin);
