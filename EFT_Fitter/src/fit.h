@@ -9,38 +9,26 @@
 #include "TProfile.h"
 #include "TStyle.h"
 #include "TLatex.h"
-
 #include "TMath.h"
-
 #include "TGraphAsymmErrors.h"
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TLegend.h"
 #include "TRandom.h"
 #include "TRandom3.h"
-
 #include "TSpline.h"
 #include "TLine.h"
 #include "TF1.h"
 #include "TLegendEntry.h"
 #include <utility>
 #include <tuple>
-//#include <RooRealVar.h>
-//#include <RooDataSet.h>
-//#include <RooDataHist.h>
-//#include <RooHistPdf.h>
-//#include <RooPlot.h>
-//#include <RooMCStudy.h>
-//#include <RooBinning.h>
-
 #include "helper_tools.h"
-
 
 using namespace std;
 using namespace RooFit ;
 
 bool debug = false;
-const int n_preds = 501;
+const int n_preds = 3; //has to be an odd number such that you end up with a prediction for SM (CtG = 0)
 
 //double CtG_vals[n_preds] = {-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0};
 double CtG_vals[n_preds];
@@ -56,8 +44,6 @@ class Fitter {
         void make_summary_plot(vector <TGraphErrors*>);
         void toy_study(std::tuple <TH1F*, vector<TH1F *> , vector<TGraphAsymmErrors *> >,  int  );
         void create_dummy_fiducial_measurement(double, double);
-    
-
 
     private:
 
@@ -107,46 +93,58 @@ double k_factor = 831.76/687.14;
 
 double BR = 0.046; //prompt only
 //double BR = 0.0493; //number from Madspin (but doesnt change if taus are included)
-//double BR = 0.0568; // Using PDG values (not assuming lepton universality)
 
-//double BR = 0.0644; // Using PDG values (assuming lepton universality)
+//To apply the theory systematics you must chance (coherently)
+//1 input distributions scale up/down
+//2 ttbar cross sections (scale+pdf+mtop)
+//3 acceptance factors
 
+// Acceptances Nov 22
+//nominal
+double acc_sm_nlo = 0.28371;
+double acc_CtG_neg2_nlo = 0.29233;
+double acc_CtG_pos2_nlo = 0.28713;
 
-//acceptances (to be re-checked with higher stats)
-//double acc_sm_nlo = 0.3785;
-//double acc_CtG_neg2_nlo = 0.3899;
-//double acc_CtG_pos2_nlo = 0.3854;
+//scaledown
+double acc_sm_nlo_scaledown = 0.28253;
+double acc_CtG_neg2_nlo_scaledown = 0.29109;
+double acc_CtG_pos2_nlo_scaledown = 0.28594;
 
-double acc_sm_nlo = 0.28415;
-double acc_CtG_neg2_nlo = 0.28777;
-double acc_CtG_pos2_nlo = 0.28672;
+//scaleup
+double acc_sm_nlo_scaleup = 0.28472;
+double acc_CtG_neg2_nlo_scaleup = 0.29311;
+double acc_CtG_pos2_nlo_scaleup = 0.28791;
 
-//double acc_sm_nlo = 0.297;
-//double acc_CtG_neg2_nlo = 0.297;
-//double acc_CtG_pos2_nlo = 0.297;
-
-
-//this is the effect of the scale variations on the inclusive
+//this is the effect of the scale variations only on the inclusive
 // cross sections at NNLO+NNLL
-//double effect_SM_scaleup_nlo = 1.023;
+//double effect_SM_scaleup_nlo = 0.977;
+//double effect_SM_scaledown_nlo = 1.035;
 
-double effect_SM_scaleup_nlo = 0.977;
-double effect_SM_scaledown_nlo = 1.035;
+//this is the effect of the scale+pdf+mtop variations on the inclusive
+// cross sections at NNLO+NNLL
+double effect_SM_sysdown_nnlo = 0.93886;
+double effect_SM_sysup_nnlo = 1.0584;
 
+//scaledown
+//acc_sm_nlo = acc_sm_nlo_scaledown * effect_SM_scaledown_nlo;
+//acc_CtG_neg2_nlo = acc_CtG_neg2_nlo_scaledown * effect_SM_scaledown_nlo;
+//acc_CtG_pos2_nlo = acc_CtG_pos2_nlo_scaledown * effect_SM_scaledown_nlo;
 
+//acc_sm_nlo = acc_sm_nlo_scaleup * effect_SM_scaleup_nlo;
+//acc_CtG_neg2_nlo = acc_CtG_neg2_nlo_scaleup * effect_SM_scaleup_nlo;
+//acc_CtG_pos2_nlo = acc_CtG_pos2_nlo_scaleup * effect_SM_scaleup_nlo;
 
 double sigma_sm_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo;
-double sigma_CtG_neg2_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo;
-double sigma_CtG_pos2_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo;
+double sigma_CtG_neg2_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_sm_nlo;
+double sigma_CtG_pos2_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_sm_nlo;
 
+double sigma_sm_scaledown_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo * effect_SM_sysdown_nnlo ;
+double sigma_CtG_neg2_scaledown_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_sysdown_nnlo;
+double sigma_CtG_pos2_scaledown_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_sysdown_nnlo;
 
-double sigma_sm_scaledown_fid = sigma_sm_nlo * k_factor * BR * acc_sm_nlo * effect_SM_scaledown_nlo ;
-double sigma_CtG_neg2_scaledown_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_scaledown_nlo;
-double sigma_CtG_pos2_scaledown_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_scaledown_nlo;
-
-double sigma_sm_scaleup_fid = sigma_sm_nlo * k_factor * BR *acc_sm_nlo * effect_SM_scaleup_nlo;
-double sigma_CtG_neg2_scaleup_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_scaleup_nlo;
-double sigma_CtG_pos2_scaleup_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_scaleup_nlo;
+double sigma_sm_scaleup_fid = sigma_sm_nlo * k_factor * BR *acc_sm_nlo * effect_SM_sysup_nnlo;
+double sigma_CtG_neg2_scaleup_fid = sigma_CtG_neg2_nlo * k_factor * BR * acc_CtG_neg2_nlo * effect_SM_sysup_nnlo;
+double sigma_CtG_pos2_scaleup_fid = sigma_CtG_pos2_nlo * k_factor * BR * acc_CtG_pos2_nlo * effect_SM_sysup_nnlo;
 
 
 void Fitter::create_dummy_fiducial_measurement(double result, double rel_uncertainty){
@@ -226,8 +224,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             }
             
             data_histo->SetBinError(point+1, bin_error);
-
-
             running_total = running_total + (bin_height*bin_width);
         }
 //        data_histo->Scale(running_total/data_histo->Integral());
@@ -235,7 +231,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     }
       cout << "Running total for data histo  =" <<  running_total  <<"\n";
     
-    //v3 = unweighted, v6 = weigted
+    //v3 = unweighted, v6 = weigted, last version = v10
     
     string filename_neg2 = "files/CtG_-2_nominal_v10.root";
     string filename_pos2 = "files/CtG_2_nominal_v10.root";
@@ -253,14 +249,14 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
    // string filename_0 = "files/CtG_0_scaleup_v2.root";
     
     //scale down files
-    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v10.root";
-    string filename_pos2_scaledown = "files/CtG_2_scaledown_v10.root";
-    string filename_0_scaledown = "files/CtG_0_scaledown_v10.root";
+    string filename_neg2_scaledown = "files/CtG_-2_scaledown_v6.root";
+    string filename_pos2_scaledown = "files/CtG_2_scaledown_v6.root";
+    string filename_0_scaledown = "files/CtG_0_scaledown_v6.root";
     
     //scale up files
-    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v10.root";
-    string filename_pos2_scaleup = "files/CtG_2_scaleup_v10.root";
-    string filename_0_scaleup = "files/CtG_0_scaleup_v10.root";
+    string filename_neg2_scaleup = "files/CtG_-2_scaleup_v6.root";
+    string filename_pos2_scaleup = "files/CtG_2_scaleup_v6.root";
+    string filename_0_scaleup = "files/CtG_0_scaleup_v6.root";
     
     TFile * f_neg2 = new TFile(filename_neg2.c_str());
     TFile * f_0 = new TFile(filename_0.c_str());
@@ -310,10 +306,8 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     TFile * f_pwhg = new TFile("files/test_2M.root");
     if (add_pwhg) mc_histo_pwhg = (TH1F*)f_pwhg->Get(histoname_pred.c_str());
 
-    
     if (!mc_histo_neg2) cout << "mc histo: "<<  filename_neg2  <<" not found" << endl;
 
-    
     double running_fid_xs_neg2 = 0.0;
     double running_fid_xs_0 = 0.0;
     double running_fid_xs_pos2 = 0.0;
@@ -713,7 +707,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (  std::get<0>(histos) && std::get<1>(histos)[weight] ){
             
 //            if (debug) cout << "Fitter::scan_couplings:: pred integral " << std::get<1>(histos)[weight]->Integral()   <<endl;
-
             std::get<1>(histos)[weight]->SetLineColor(weight+2);
             std::get<1>(histos)[weight]->SetLineWidth(2.0);
             std::get<2>(histos)[weight]->SetLineColor(weight+2);
@@ -729,7 +722,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
                 std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.07);
                 std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.75);
                 std::get<1>(histos)[weight]->GetYaxis()->SetLabelSize(0.08);
-                std::get<1>(histos)[weight]->SetYTitle("#frac{#delta(#sigma_{ t#bar{t}} )}{#delta( #Delta #Phi_{l#bar{l}} )} [pb]");
+                std::get<1>(histos)[weight]->SetYTitle("#frac{d(#sigma_{ t#bar{t}} )}{d( #Delta #Phi_{l#bar{l}} )} [pb]");
                 std::get<1>(histos)[weight]->Draw("HIST");
                 //                  std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(-0.008, 0.6);
                 //std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(0.16, 0.5);
@@ -747,7 +740,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             double chi2 = -1.0;
             
             //define name of covariance text file
-            std::string cov_string =  "files/Nov1/particle/absolute/covariance/HypLLBarDPhi_totCovEnvMtrxFile.root";
+            std::string cov_string =  "files/Nov1/particle/absolute/covariance/HypLLBarDPhi_totCovEnvXSMtrxFile.root ";
             
             if (mode=="norm_only" || mode=="abs_only") {
                 chi2 = calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight],cov_string);
@@ -759,23 +752,17 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             g->SetPoint(weight, CtG_vals[weight], chi2);
             
             if ( chi2 < minchi2){
-            
                 minchi2 = chi2;
                 best_val = CtG_vals[weight];
                 best_unc = fabs(CtG_vals[1] - CtG_vals[0]);
             }
         }
     }
-
-   // cout << "   " << endl;
-   // cout << "Fitter::scan_couplings:: min chi2 " << minchi2 << endl;
-   // TH1F * chi_sq = new TH1F("chi_sq","chi_sq", 45, 0.0, 7.0 );
-   // chi_sq->Fill(minchi2);
     
     if (add_pwhg)std::get<1>(histos)[std::get<1>(histos).size()-1]->SetLineStyle(2);
     //std::get<1>(histos)[std::get<1>(histos).size()-1]->Draw("HISTSAME");
     
-    if (  std::get<0>(histos)) {
+    if (std::get<0>(histos)) {
         gStyle->SetErrorX(0);
         std::get<0>(histos)->SetMarkerSize(0.7);
         std::get<0>(histos)->SetMarkerStyle(20);
@@ -783,11 +770,16 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         std::get<0>(histos)->Draw("E0psame");
     }
     
-    TLegend *leg = new TLegend(0.22,0.5,0.51,0.78);
-    leg->AddEntry(   std::get<0>(histos) ,"Data","E0p");
+    TLegend *leg = new TLegend(0.22,0.5,0.53,0.78);
+    std::string pred_name_leg;
+    leg->AddEntry(std::get<0>(histos) ,"Data","E0p");
     for (int ctg = 0; ctg < n_preds;  ctg++){
-        float ctg_val =CtG_vals[ctg];
-        std::string pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1}";
+        int ctg_val = (int)CtG_vals[ctg];
+        if (ctg == ((n_preds - 1)/2)){
+            pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1} (SM)";
+        }else{
+            pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1}";
+        }
         leg->AddEntry( std::get<2>(histos)[ctg], pred_name_leg.c_str(),"l");
     }
     leg->Draw();
@@ -853,7 +845,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     histo_base->SetYTitle("#frac{Theory}{Data}");
     histo_base->SetXTitle("#Delta #Phi_{l#bar{l}}");
     
-    
     histo_base->Draw();
     data_temp->Draw("E2SAME");
     data_temp_stat->Draw("E2SAME");
@@ -863,7 +854,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::making ratio plot, looping" << endl;
         
         TH1F* mc_temp = (TH1F*)  std::get<1>(histos)[histo]->Clone();
-
         mc_temp->Sumw2();
         mc_temp->SetStats(0);
         mc_temp->Divide(std::get<0>(histos));
@@ -902,7 +892,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         }
     
         if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
-
     }
     
     TLegend *leg_2 = new TLegend(0.24,0.82,0.51,0.99);
@@ -925,7 +914,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "Preliminary";
+    extraText += "";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     TLatex latex;
     latex.SetNDC();
@@ -957,17 +946,12 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     }
     
     std::string compare_canvas_name = "compare_" +  seglist[1] + "_.pdf";
-    
-    //TFile * f_compare = new TFile("compare.root", "RECREATE");
-    //c_compare_dists->Write();
     c_compare_dists->SaveAs(compare_canvas_name.c_str());
     
     if (debug) cout << "Fitter::scan_couplings::making canvas" <<  endl;
 
     
     TCanvas * c1 = new TCanvas();
-    // g->SetMinimum(0.002);
-    // g->SetMaximum(0.0026);
     g->GetHistogram()->GetXaxis()->SetTitle("CtG");
     g->GetHistogram()->GetYaxis()->SetTitle("#chi^{2} (DATA-THEORY)");
     g->GetHistogram()->GetXaxis()->SetRangeUser(-5.0, 5.0);
@@ -998,7 +982,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     if (debug) cout << "Fitter::scan_couplings::end of function" <<  endl;
 
-    
     std::tuple<double, double >  fit_results (best_val, best_unc);
 
     return fit_results;

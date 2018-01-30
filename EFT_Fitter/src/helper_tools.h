@@ -8,11 +8,12 @@
 #include <sstream>
 #include <fstream>
 
+#include "TH1F.h"
+#include "TLatex.h"
 #include "TMatrixD.h"
-
 #include "TRandom.h"
 #include "TRandom3.h"
-
+#include "TCanvas.h"
 #include <RooRealVar.h>
 #include <RooDataSet.h>
 #include <RooDataHist.h>
@@ -20,15 +21,129 @@
 #include <RooPlot.h>
 #include <RooMCStudy.h>
 #include <RooBinning.h>
+using namespace std;
 
 
-TH2D* make_covariance_matrix(std::string, std::string);
+TH2D* make_covariance_matrix(std::string, std::string, std::string);
 TH1* make_poisson_toy(TH1*,TH1*, int, double);
 double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*, std::string);
+TCanvas* make_results_canvas(TH1F*,vector<double>);
+vector<double> get_CL_boundaries(TGraphErrors* gr);
+
+vector<double> get_bestfit_CL_boundaries(TGraphErrors* gr){
+    
+    double min_relchi =999999.9, best_fit, cl_68_lo, cl_95_lo , cl_68_hi, cl_95_hi;
+    bool  hi_68 =true , lo_68= true , lo_95 = true, hi_95 =true;
+    double x, y;
+    vector<double> boundaries;
+    boundaries.clear();
+    
+    for(Int_t i=0; i < gr->GetN(); i++){
+        gr->GetPoint(i,x,y);
+        
+        if(y < min_relchi){
+            min_relchi = y;
+            best_fit = x;
+        }
+        
+        if(y <= 3.84 && lo_95){
+            cl_95_lo = x;
+            lo_95 = false;
+            cout <<"found lo 95"<< endl;
+        }
+        if(y <= 1.0 && lo_68 && !(lo_95)){
+            cl_68_lo = x;
+            lo_68 = false;
+            cout <<"found lo 68"<< endl;
+        }
+        if(y >= 1.0 && hi_68 && !lo_95 && !lo_68){
+            cl_68_hi = x;
+            hi_68 = false;
+            cout <<"found hi 68" <<endl;
+        }
+        if(y >= 3.84 && hi_95 && !lo_95 && !lo_68 && !hi_68){
+            cl_95_hi = x;
+            hi_95 = false;
+            cout <<"found hi 95"<< endl;
+        }
+    }
+    
+    cout <<"boundaries: "<< cl_95_lo  <<" "<< cl_68_lo << " " << best_fit << "  "<< cl_68_hi <<" "<<cl_95_hi << endl;
+    cout <<"uncertainties : "<< fabs(best_fit - cl_95_lo )  <<" "<< fabs(best_fit - cl_68_lo ) << " " << best_fit << "  "<< fabs(best_fit - cl_68_hi )  <<" "<< fabs(best_fit - cl_95_hi )  << endl;
+
+    if ((fabs(best_fit - cl_68_lo ) !=  fabs(best_fit - cl_68_hi )) || (fabs(best_fit - cl_95_lo ) !=  fabs(best_fit - cl_95_hi ))) std::cout <<" boudaries not symmetric around best-fit value -  proceed with caution "<< std::endl;
+    
+    boundaries.push_back(cl_95_lo);
+    boundaries.push_back(cl_68_lo);
+    boundaries.push_back(best_fit);
+    boundaries.push_back(cl_68_hi);
+    boundaries.push_back(cl_95_hi);
+    return boundaries;
+
+}
+
+
+TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
+    
+    base_histo->GetYaxis()->SetRangeUser(0.0, 5.0);
+    base_histo->GetXaxis()->SetRangeUser(-0.5, 0.5);
+    base_histo->GetYaxis()->SetTitle("#Delta #chi^{2}");
+    base_histo->GetXaxis()->SetTitle("CtG/#Lambda^{2}");
+    base_histo->GetYaxis()->SetLabelSize(0.04);
+    base_histo->GetXaxis()->SetLabelSize(0.04);
+    base_histo->GetXaxis()->SetTitleSize(0.04);
+    base_histo->GetYaxis()->SetTitleSize(0.04);
+    base_histo->GetXaxis()->SetTitleOffset(0.95);
+    base_histo->GetYaxis()->SetTitleOffset(0.95);
+    
+    TCanvas * all_relscans_c = new TCanvas("","",800,600);
+    base_histo->Draw();
+    all_relscans_c->SetTopMargin(0.11);
+    all_relscans_c->SetBottomMargin(0.15);
+    
+    float H = all_relscans_c->GetWh();
+    float W = all_relscans_c->GetWw();
+    float l = all_relscans_c->GetLeftMargin();
+    float t = all_relscans_c->GetTopMargin();
+    float r = all_relscans_c->GetRightMargin();
+    float b = all_relscans_c->GetBottomMargin();
+    float extraOverCmsTextSize  = 0.76;
+    
+    TString cmsText, extraText, lumiText;
+    cmsText += "CMS";
+    extraText += "";
+    lumiText += "35.9 fb^{-1} (13 TeV)";
+    
+    TLatex latex;
+    latex.SetNDC();
+    latex.SetTextAngle(0);
+    latex.SetTextSize(0.4*t);
+    latex.SetTextColor(kBlack);
+    latex.SetTextFont(61);
+    latex.SetTextAlign(31);
+    latex.DrawLatex(0.17,0.9,cmsText);
+    
+    latex.SetTextFont(52);
+    latex.SetTextSize(0.4*t*extraOverCmsTextSize);
+    latex.DrawLatex(0.3,0.9,extraText);
+    
+    latex.SetTextFont(42);
+    latex.SetTextSize(0.3*t);
+    latex.DrawLatex(0.9,0.9,lumiText);
+        
+
+    
+    return all_relscans_c;
+
+}
+
+
+
+
 
 double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors, std::string cov_file){
     
-    std::cout <<"***CALCULATING TEST STATISTIC***"<< std::endl;
+    //std::cout <<"***CALCULATING TEST STATISTIC***   "<<  cov_file  << std::endl;
     
     double test_statistic = 0.0;
     int nbins  = data->GetSize() - 2;
@@ -53,16 +168,22 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
     deltas.clear();
     errors.clear();
     
+    double cumul_chi2 = 0;
+    //std::cout <<" "<< endl;
+
+
     for (int i=1;i <=  data->GetSize() -2; i++){
         
         double data_bin = data->GetBinContent(i);
         double pred_bin = pred->GetBinContent(i);
         double delta = data_bin - pred_bin;
-        
         deltas.push_back(delta);
         
+        cumul_chi2 = cumul_chi2 + (delta*delta) / ( data->GetBinError(i) * data->GetBinError(i));
+        
         if (data_errors_only){
-            //std::cout << "bin  "<< i<<", data_bin "<< data_bin <<", pred_bin = "<< pred_bin <<  " delta =  " << delta << " delta_sq  " << delta*delta <<  ", error  = "<< data->GetBinError(i)  <<  " chi2 in bin =  " <<  ((delta)*(delta)) /  data->GetBinError(i)  <<"\n";
+            
+   // if (cov_file == "files/Nov1/particle/normalised/covariance/HypJetMultpt30_totCovEnvXSMtrxFile.root") std::cout <<"data " <<data_bin <<", pred_bin "<< pred_bin <<" delta " << delta<< " delta/error = "<< delta/data->GetBinError(i) << " delta_sq " << delta*delta <<", data error squared  = "<< data->GetBinError(i)* data->GetBinError(i) <<  " chi2 in bin =  " <<  (delta*delta)/(data->GetBinError(i)*data->GetBinError(i))<< " cumul. chi2 = " << cumul_chi2 <<"\n";
             errors.push_back(data->GetBinError(i));
             // errors.push_back(pred_bin);
             
@@ -79,16 +200,42 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
         }
     }
     
+
+    //TMatrixD mat_inv_cov =  TMatrixD(matrix.size(), matrix.size());
+    //TMatrixD mat_deltas =  TMatrixD(matrix.size(), matrix.size());
+    
+    TMatrixD mat_cov = TMatrixD(nbins,nbins);
+    TMatrixD mat_inv_cov(nbins,nbins);
+    TMatrixD mat_deltas_tp(1, nbins);
+    TMatrixD mat_deltas(nbins, 1);
+    TMatrixD mat_chi(1, 1);
+
+    
     for (int i=1;i<=nbins; i++) {
+        std::cout <<"  "<< std::endl;
+        mat_deltas[i-1][0] = deltas[i-1];
+        mat_deltas_tp[0][i-1] = deltas[i-1];
+
+        
         for (int j=1;j<=nbins; j++){
-            //   std::cout <<"  "<< std::endl;
+            
+            
+            if (i==j){
+                mat_cov[i-1][j-1] = (errors[i-1]*errors[j-1]);
+            }
+            else if ((i<4) &&(j<4) && (fabs(i-j) ==1.0)){
+                mat_cov[i-1][j-1] = (errors[i-1]*errors[j-1])*(0.5);
+            }
+            else{
+                mat_cov[i-1][j-1] = 0.0;
+            }
+            
             double corr_coff = cov->GetBinContent(i,j);
             if (schmitt_fit){
-                chisq += deltas[i-1]*deltas[j-1]*corr_coff;
-                
-                if (i==j){
-           // std::cout <<"data error = "<<errors[i-1] <<"  data error squared = "<< errors[i-1]*errors[j-1] << "    1/data error squared = "<< 1.0/(errors[i-1]*errors[j-1])  <<"  delta i "<< deltas[i-1]<< "    delta j    " <<  deltas[j-1] <<" corr coff    "<< corr_coff <<"  chi2   "<< chisq << "\n";
-                }
+                mat_inv_cov[i-1][j-1] = corr_coff;
+                chi2_bin = deltas[i-1]*deltas[j-1]*corr_coff;
+                chisq += chi2_bin;
+          // if (cov_file == "files/Nov1/particle/normalised/covariance/HypJetMultpt30_totCovEnvXSMtrxFile.root")std::cout <<"data "<<data->GetBinContent(i) <<" data error "<<errors[i-1] <<"  delta/unc  "<< deltas[i-1]/errors[i-1]  <<"  data error sq "<< errors[i-1]*errors[j-1]  <<" delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<" corr coff "<< corr_coff  <<" chi2 bin "<<chi2_bin <<" chi2 "<< chisq << "\n";
                 }
             else {
                 if(i == j){
@@ -103,6 +250,22 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
             }
         }
     }
+    
+    mat_cov.Invert();
+    
+    if (cov_file == "files/Nov1/particle/normalised/covariance/HypJetMultpt30_totCovEnvXSMtrxFile.root"){
+        
+    mat_chi = mat_deltas_tp * mat_cov * mat_deltas;
+    //std::cout <<"chi2_xcheck "<< mat_deltas_tp.Print() << endl;
+   // mat_deltas_tp.Print();
+   // mat_inv_cov.Print();
+   // mat_deltas.Print();
+    mat_chi.Print();
+    mat_cov.Print();
+
+
+    }
+    
     cov_rootfile->Close();
         
     return chisq;
@@ -110,11 +273,10 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
 
 
 
-TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
+TH2D* make_covariance_matrix(std::string filename, std::string data_filename, std::string varname){
     
-    std::cout <<" make_covariance_matrix "<< filename  <<std::endl;
+    //std::cout <<" make_covariance_matrix "<< filename  <<std::endl;
 
-    
     //first fill vectors from text file
     std::ifstream readFile(filename.c_str());
     std::vector<std::vector<std::string>> matrix;
@@ -139,7 +301,7 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
     }
     readFile.close();
     
-   // std::cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<std::endl;
+    //std::cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<std::endl;
 
     TFile * data_file = new TFile(data_filename.c_str());
     TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
@@ -150,9 +312,20 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
     double lower_range = h_template->GetBinLowEdge(1);
     double upper_range = h_template->GetBinLowEdge(nbins) + h_template->GetBinWidth(nbins);
 
-    TH2D* cov = new TH2D("cov","cov", matrix.size(), lower_range, upper_range, matrix.size(), lower_range, upper_range);
-    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size(), lower_range, upper_range, matrix.size(), lower_range, upper_range);
-
+    TH2D* cov = new TH2D("cov","cov", matrix.size(), 1.0, matrix.size() +1.0 , matrix.size(), 1.0, matrix.size() + 1.0);
+    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size(), 1.0, matrix.size() +1.0, matrix.size(), 1.0, matrix.size() + 1.0);
+    
+    cov->GetXaxis()->SetNdivisions(matrix.size());
+    cov->GetYaxis()->SetNdivisions(matrix.size());
+    inv_cov->GetXaxis()->SetNdivisions(matrix.size());
+    inv_cov->GetYaxis()->SetNdivisions(matrix.size());
+    
+    cov->GetXaxis()->CenterLabels();
+    cov->GetYaxis()->CenterLabels();
+    inv_cov->GetXaxis()->CenterLabels();
+    inv_cov->GetYaxis()->CenterLabels();
+    
+    
     double point_i_x,point_i_y, point_j_x, point_j_y;
     
     for (int x = 0; x < matrix.size(); x++){
@@ -164,11 +337,9 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
             std::string cov_elem_str = matrix[x][y];
             
             data->GetPoint(y, point_j_x, point_j_y);
-            
             double cov_elem = std::stod(cov_elem_str, &sz);
             //double cov_elem = cov_elem_rel*point_i_y*point_j_y;
             //cov_elem = matrix[x][y];
-            
             cov->SetBinContent(x+1, y+1, cov_elem);
             mat[x][y] = cov_elem;
            //
@@ -176,7 +347,7 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
         }
     }
     
-    //invert convariance matrix and write
+    //invert covariance matrix and write
     Double_t det2;
     mat.Invert(&det2);
     
@@ -187,12 +358,26 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename){
     }
     
     std::string rootfile_name = filename.substr(0, filename.length() - 3) + "root";
+    std::string pdffile_name = filename.substr(0, filename.length() - 3) + "pdf";
+    std::string axis_title = varname + "   bin number";
+
+    cov->SetTitle("");
+    cov->SetXTitle(axis_title.c_str());
+    cov->SetYTitle(axis_title.c_str());
     
+    TCanvas * c = new TCanvas();
+    gStyle->SetOptStat(00000);
+    cov->Draw("COLZTEXT");
+
+    c->SaveAs(pdffile_name.c_str());
+
     TFile * file = new TFile(rootfile_name.c_str(), "RECREATE");
     cov->Write();
     inv_cov->Write();
     mat.Write();
     file->Close();
+    data_file->Close();
+
     
     return inv_cov;
 }

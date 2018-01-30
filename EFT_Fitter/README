@@ -9,3 +9,9 @@ the initalise routine from "nom" to "down" or "up".
 2) The systematic uncertainties of the data are included in the chi^2 calculation. This
 is done by setting the "schmitt_fit" flag in the calculate_test_statistic routine to
 true.
+
+
+
+
+//macro for plot editing and chi2 tables
+clang++ -o plot src/make_pvals.cc  `root-config --cflags --libs` -I /usr/local/include -I/usr/local/include -L/usr/local/lib -lboost_system -lRooFit -lRooFitCore
