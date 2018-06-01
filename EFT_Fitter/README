@@ -15,3 +15,40 @@ true.
 
 //macro for plot editing and chi2 tables
 clang++ -o plot src/make_pvals.cc  `root-config --cflags --libs` -I /usr/local/include -I/usr/local/include -L/usr/local/lib -lboost_system -lRooFit -lRooFitCore
+
+
+
+$\pt^{\text{t}}$ &
+$\pt^{\text{\tbar}}
+$\pt^{\text{t}}$ (l
+$\pt^{\text{t}}$ (t
+$\pt^{\text{t}}$ (\
+$\pt^{\text{\tbar}}
+$y_{\text{t}}$ & 6.
+$y_{\text{\tbar}}$
+$y_{\text{t}}$ (lea
+$y_{\text{t}}$ (tra
+$\pt^{\ttbar}$ & 34
+$y_{\ttbar}$ & 3.5/
+$m_{\ttbar}$ & 12/7
+$\Delta|y|$(t,\tbar
+$\Delta\phi$(t,\tba
+$\pt^{\text{l}}$ &
+$\pt^{\text{\lbar}}
+$\pt^{\text{l}}$ (l
+$\pt^{\text{l}}$ (t
+$\eta_{\text{l}}$&
+$\eta_{\text{\lbar}
+$\eta_{\text{l}}$ (
+$\eta_{\text{l}}$ (
+$\pt^{\llbar}$ & 14
+$m_{\llbar}$ & 37/8
+$\Delta\phi$(l,\lba
+$\Delta|\eta|$(l,$\
+\Nj\ & 14/6& 0.04 &
+$\pt^{\text{b}}$ (l
+$\pt^{\text{b}}$ (t
+$\eta_{\text{b}}$ (
+$\eta_{\text{b}}$ (
+$\pt^{\text{\bbbar}
+$m_{\text{\bbbar}}$

@@ -209,7 +209,6 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
             mat_cov[x][j] = cov_ij;
 
           //  cout <<"i = "<< x <<" j = "<< j <<" COR ij  = "<< h_cov->GetBinContent(x+2, j+2)  << endl;
-            
             rel_unc_corr = rel_unc_corr + pow((xsec_bin_errup / xsec_bin ), 2.0);
             
             bin_var = (dCA_dbinx)*(dCA_dbinj) * cov_ij;
@@ -434,6 +433,12 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         line_aMC_parton->SetLineWidth(2);
         line_aMC_parton->Draw();
         
+        TLine *line_bernreuther_parton = new TLine(0.0075,-0.2,0.0075,0.2);
+        line_bernreuther_parton->SetLineColor(kViolet);
+        line_bernreuther_parton->SetLineStyle(2);
+        line_bernreuther_parton->SetLineWidth(2);
+        line_bernreuther_parton->Draw();
+        
         TLine *line_pwhgp8_particle = new TLine(0.001551,0.3,0.001551,0.7);
         line_pwhgp8_particle->SetLineColor(kBlue);
         line_pwhgp8_particle->SetLineStyle(2);
@@ -477,12 +482,12 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         float t = c_results->GetTopMargin();
         float r = c_results->GetRightMargin();
         float b = c_results->GetBottomMargin();
-        float extraOverCmsTextSize  = 0.76;
+        float extraOverCmsTextSize  = 0.8;
         
         
         TString cmsText, extraText, lumiText;
         cmsText += "CMS";
-        extraText += "";
+        extraText += "Preliminary";
         lumiText += "35.9 fb^{-1} (13 TeV)";
         TLatex latex;
         latex.SetNDC();
@@ -505,8 +510,8 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         auto legend = new TLegend(0.69,0.45,0.99,0.75);
        // legend->AddEntry(line_mg5h6_parton,"MG5_aMC@NLO+HERWIG6","E1");
         legend->AddEntry(line_pwhgp8_parton,"POWHEGv2+PYTHIA8","E1");
-        legend->AddEntry(line_aMC_particle_ll,"MG5_aMC@NLO+PYTHIA8","E1");
-
+        legend->AddEntry(line_aMC_particle_ll,"MG5_aMC@NLO+PYTHIA8 [FxFx]","E1");
+        legend->AddEntry(line_bernreuther_parton,"NLO+EW","E1");
         legend->AddEntry(gr_68,"Data","E1");
         legend->SetTextSize(0.028);
         legend->Draw();

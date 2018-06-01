@@ -291,7 +291,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     toppt_delphi_prof_y->SetLineColor(kBlue);
     toppt_delphi_prof_y->SetLineWidth(3.0);
     
-    toppt_delphi->SetXTitle("#Delta #Phi (ll)");
+    toppt_delphi->SetXTitle("#Delta #phi (ll)");
     toppt_delphi->SetYTitle("P_{T} top");
     TCanvas * c_2d = new TCanvas();
     
@@ -679,13 +679,13 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     if (debug) cout << "N histos = " <<  std::get<1>(histos).size()  <<endl;
     
     TGraphErrors * g = new TGraphErrors();
-    TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",800,600);
+    TCanvas * c_compare_dists = new TCanvas("c_compare_dists","",800,900);
 
     TPad *pad1 = new TPad("pad1","pad1",0,0.45,1,1);
     pad1->SetBottomMargin(0);
-    pad1->SetTopMargin(0.19);
+    pad1->SetTopMargin(0.18);
     pad1->SetLeftMargin(0.15);
-    pad1->SetRightMargin(0.02);
+    pad1->SetRightMargin(0.05);
     pad1->Draw();
     pad1->cd();
     
@@ -719,10 +719,10 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
             
             if (weight == 0) {
                 std::get<1>(histos)[weight]->SetStats(kFALSE);
-                std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.07);
+                std::get<1>(histos)[weight]->GetYaxis()->SetTitleSize(0.08);
                 std::get<1>(histos)[weight]->GetYaxis()->SetTitleOffset(0.75);
                 std::get<1>(histos)[weight]->GetYaxis()->SetLabelSize(0.08);
-                std::get<1>(histos)[weight]->SetYTitle("#frac{d(#sigma_{ t#bar{t}} )}{d( #Delta #Phi_{l#bar{l}} )} [pb]");
+                std::get<1>(histos)[weight]->SetYTitle("#frac{d#sigma}{d#Delta#phi(l, #bar{l})} [pb]");
                 std::get<1>(histos)[weight]->Draw("HIST");
                 //                  std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(-0.008, 0.6);
                 //std::get<1>(histos)[weight]->GetYaxis()->SetRangeUser(0.16, 0.5);
@@ -746,7 +746,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
                 chi2 = calculate_test_statistic( std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight],cov_string);
             }
             else if(mode=="norm_fid"){
-            chi2 = (calculate_test_statistic(std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight], cov_string) + calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight], cov_string  ));
+            chi2 = (calculate_test_statistic(std::get<0>(histos), std::get<1>(histos)[weight], std::get<2>(histos)[weight], cov_string) + calculate_test_statistic(dummy_fiducial_data, mc_histos_fiducial[weight] , std::get<2>(histos)[weight], cov_string ));
             }
             
             g->SetPoint(weight, CtG_vals[weight], chi2);
@@ -770,18 +770,21 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         std::get<0>(histos)->Draw("E0psame");
     }
     
-    TLegend *leg = new TLegend(0.22,0.5,0.53,0.78);
+    TLegend *leg = new TLegend(0.2,0.5,0.51,0.78);
+    leg->SetBorderSize(0);
+
     std::string pred_name_leg;
     leg->AddEntry(std::get<0>(histos) ,"Data","E0p");
     for (int ctg = 0; ctg < n_preds;  ctg++){
         int ctg_val = (int)CtG_vals[ctg];
         if (ctg == ((n_preds - 1)/2)){
-            pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1} (SM)";
+            pred_name_leg = "C_{tG}/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-2} (SM)";
         }else{
-            pred_name_leg = "CtG/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-1}";
+            pred_name_leg = "C_{tG}/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-2}";
         }
         leg->AddEntry( std::get<2>(histos)[ctg], pred_name_leg.c_str(),"l");
     }
+    leg->SetTextSize(0.06);
     leg->Draw();
     
     
@@ -793,7 +796,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     pad2->SetBottomMargin(0.25);
     pad2->SetTopMargin(0.0);
     pad2->SetLeftMargin(0.15);
-    pad2->SetRightMargin(0.02);
+    pad2->SetRightMargin(0.05);
     pad2->SetGridy();
     
     if (debug) cout << "Fitter::scan_couplings::making ratio plot" << endl;
@@ -808,7 +811,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     double data_stat_unc[10] = {0.0171327, 0.0192746,0.0229979,0.0238145, 0.0254806, 0.0269672, 0.0276772, 0.0280034, 0.0288118, 0.0282408};
     
     for (int i = 0; i <= std::get<1>(histos)[0]->GetNbinsX(); i++){
-        
         double ratio = 1.0;
         double ratio_unc = (std::get<0>(histos)->GetBinError(i+1)) / (std::get<0>(histos)->GetBinContent(i+1));
         TAxis *xaxis = std::get<0>(histos)->GetXaxis();
@@ -835,7 +837,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     histo_base->GetYaxis()->SetNdivisions(5);
     histo_base->GetYaxis()->SetRangeUser(0.2, 1.8);
-    histo_base->GetXaxis()->SetRangeUser(0.0, 3.12);
+    histo_base->GetXaxis()->SetRangeUser(0.0, 3.14);
     histo_base->GetYaxis()->SetLabelSize(0.09);
     histo_base->GetXaxis()->SetLabelSize(0.1);
     histo_base->GetXaxis()->SetTitleSize(0.11);
@@ -843,8 +845,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     histo_base->GetYaxis()->SetTitleOffset(0.63);
     histo_base->GetYaxis()->SetTitleSize(0.1);
     histo_base->SetYTitle("#frac{Theory}{Data}");
-    histo_base->SetXTitle("#Delta #Phi_{l#bar{l}}");
-    
+    histo_base->SetXTitle("#Delta#phi(l, #bar{l})");
     histo_base->Draw();
     data_temp->Draw("E2SAME");
     data_temp_stat->Draw("E2SAME");
@@ -861,7 +862,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::making ratio plot" <<  ", Nbins data = "   << std::get<0>(histos)->GetNbinsX() << ", Nbins pred = "   <<  mc_temp->GetNbinsX() <<endl;
         
         if (debug) cout << "Fitter::scan_couplings::here 2 " <<  endl;
-
 
         std::stringstream ss;
         ss << var_name;
@@ -890,15 +890,14 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         }else{
             mc_temp->Draw("HISTSAME");
         }
-    
         if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
     }
     
     TLegend *leg_2 = new TLegend(0.24,0.82,0.51,0.99);
     leg_2->SetBorderSize(0);
     //leg_2->SetTextFont(72);
-    leg_2->AddEntry( data_temp   ,"Stat. #oplus Syst.","f");
-    leg_2->AddEntry( data_temp_stat   ,"Stat. only","f");
+    leg_2->AddEntry( data_temp, "Stat. #oplus Syst.","f");
+    leg_2->AddEntry( data_temp_stat, "Stat. only","f");
     leg_2->Draw();
     
     c_compare_dists->cd();
@@ -910,30 +909,29 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     float t = c_compare_dists->GetTopMargin();
     float r = c_compare_dists->GetRightMargin();
     float b = c_compare_dists->GetBottomMargin();
-    float extraOverCmsTextSize  = 0.76;
+    float extraOverCmsTextSize  = 0.82;
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "";
+    extraText += "Preliminary";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     TLatex latex;
     latex.SetNDC();
     latex.SetTextAngle(0);
-    latex.SetTextSize(0.75*t);
+    latex.SetTextSize(0.8*t);
     latex.SetTextColor(kBlack);
     latex.SetTextFont(61);
     latex.SetTextAlign(31);
-    latex.DrawLatex(0.22,0.905,cmsText);
+    latex.DrawLatex(0.35,0.915,cmsText);
     
     latex.SetTextFont(52);
-    latex.SetTextSize(0.75*t*extraOverCmsTextSize);
-    latex.DrawLatex(0.35,0.905,extraText);
+    latex.SetTextSize(0.8*t*extraOverCmsTextSize);
+    latex.DrawLatex(0.545,0.915,extraText);
 
     latex.SetTextFont(42);
-    latex.SetTextSize(0.6*t);
-    latex.DrawLatex(0.98,0.905,lumiText);
+    latex.SetTextSize(0.76*t);
+    latex.DrawLatex(0.95,0.915,lumiText);
 
-    
     std::stringstream ss;
     ss << var_name;
     
@@ -945,6 +943,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         seglist.push_back(segment);
     }
     
+    c_compare_dists->RedrawAxis();
     std::string compare_canvas_name = "compare_" +  seglist[1] + "_.pdf";
     c_compare_dists->SaveAs(compare_canvas_name.c_str());
     
@@ -952,7 +951,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
 
     
     TCanvas * c1 = new TCanvas();
-    g->GetHistogram()->GetXaxis()->SetTitle("CtG");
+    g->GetHistogram()->GetXaxis()->SetTitle("C_{tG} [TeV^{-1}]");
     g->GetHistogram()->GetYaxis()->SetTitle("#chi^{2} (DATA-THEORY)");
     g->GetHistogram()->GetXaxis()->SetRangeUser(-5.0, 5.0);
     
@@ -968,7 +967,6 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     TFile * f_out = new TFile(scan_rootfile_name.c_str(), "RECREATE");
     
     if (debug) cout << "Fitter::scan_couplings::making rootfile" <<  endl;
-
     
     std::get<0>(histos)->Write();
     for ( int histo = 0; histo <   std::get<1>(histos).size(); histo++){

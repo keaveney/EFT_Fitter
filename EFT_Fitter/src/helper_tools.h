@@ -3,11 +3,9 @@
 //of pval tables and plots for the TOP-17-014 paper.
 //Therefore they are now decoupled from those class and live here
 // as standalone methods that can be intgreated into a similar analysis.
-
 #include <iostream>
 #include <sstream>
 #include <fstream>
-
 #include "TH1F.h"
 #include "TLatex.h"
 #include "TMatrixD.h"
@@ -22,7 +20,6 @@
 #include <RooMCStudy.h>
 #include <RooBinning.h>
 using namespace std;
-
 
 TH2D* make_covariance_matrix(std::string, std::string, std::string);
 TH1* make_poisson_toy(TH1*,TH1*, int, double);
@@ -82,56 +79,65 @@ vector<double> get_bestfit_CL_boundaries(TGraphErrors* gr){
 
 }
 
-
 TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     
     base_histo->GetYaxis()->SetRangeUser(0.0, 5.0);
     base_histo->GetXaxis()->SetRangeUser(-0.5, 0.5);
     base_histo->GetYaxis()->SetTitle("#Delta #chi^{2}");
-    base_histo->GetXaxis()->SetTitle("CtG/#Lambda^{2}");
+    base_histo->GetXaxis()->SetTitle("C_{tG}/#Lambda^{2} [TeV^{-2}]");
     base_histo->GetYaxis()->SetLabelSize(0.04);
     base_histo->GetXaxis()->SetLabelSize(0.04);
     base_histo->GetXaxis()->SetTitleSize(0.04);
-    base_histo->GetYaxis()->SetTitleSize(0.04);
-    base_histo->GetXaxis()->SetTitleOffset(0.95);
-    base_histo->GetYaxis()->SetTitleOffset(0.95);
+    base_histo->GetYaxis()->SetTitleSize(0.05);
+    base_histo->GetXaxis()->SetTitleOffset(1.1);
+    base_histo->GetYaxis()->SetTitleOffset(0.85);
     
-    TCanvas * all_relscans_c = new TCanvas("","",800,600);
+    base_histo->GetXaxis()->SetLabelOffset(0.01);
+    base_histo->GetYaxis()->SetLabelOffset(0.01);
+    base_histo->GetYaxis()->SetNdivisions(8);
+    base_histo->GetXaxis()->SetNdivisions(12);
+
+    
+    TCanvas * all_relscans_c = new TCanvas("","",800,900);
+    //all_relscans_c->SetTickx();
+    //all_relscans_c->SetTicky();
+    
     base_histo->Draw();
-    all_relscans_c->SetTopMargin(0.11);
+    all_relscans_c->SetTopMargin(0.1);
     all_relscans_c->SetBottomMargin(0.15);
-    
+    all_relscans_c->SetLeftMargin(0.0935);
+    all_relscans_c->SetRightMargin(0.09);
+
     float H = all_relscans_c->GetWh();
     float W = all_relscans_c->GetWw();
     float l = all_relscans_c->GetLeftMargin();
     float t = all_relscans_c->GetTopMargin();
     float r = all_relscans_c->GetRightMargin();
     float b = all_relscans_c->GetBottomMargin();
-    float extraOverCmsTextSize  = 0.76;
+    float extraOverCmsTextSize  = 0.8;
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "";
+    extraText += "Preliminary";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     
     TLatex latex;
     latex.SetNDC();
     latex.SetTextAngle(0);
-    latex.SetTextSize(0.4*t);
+    latex.SetTextSize(0.48*t);
     latex.SetTextColor(kBlack);
     latex.SetTextFont(61);
     latex.SetTextAlign(31);
-    latex.DrawLatex(0.17,0.9,cmsText);
+    latex.DrawLatex(0.295,0.912,cmsText);
     
     latex.SetTextFont(52);
-    latex.SetTextSize(0.4*t*extraOverCmsTextSize);
-    latex.DrawLatex(0.3,0.9,extraText);
+    latex.SetTextSize(0.48*t*extraOverCmsTextSize);
+    latex.DrawLatex(0.495,0.912,extraText);
     
     latex.SetTextFont(42);
-    latex.SetTextSize(0.3*t);
-    latex.DrawLatex(0.9,0.9,lumiText);
-        
-
+    latex.SetTextSize(0.46*t);
+    latex.DrawLatex(0.9,0.912,lumiText);
+    
     
     return all_relscans_c;
 
@@ -212,13 +218,11 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
 
     
     for (int i=1;i<=nbins; i++) {
-        std::cout <<"  "<< std::endl;
+      //  std::cout <<"  "<< std::endl;
         mat_deltas[i-1][0] = deltas[i-1];
         mat_deltas_tp[0][i-1] = deltas[i-1];
-
         
         for (int j=1;j<=nbins; j++){
-            
             
             if (i==j){
                 mat_cov[i-1][j-1] = (errors[i-1]*errors[j-1]);
@@ -235,7 +239,7 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
                 mat_inv_cov[i-1][j-1] = corr_coff;
                 chi2_bin = deltas[i-1]*deltas[j-1]*corr_coff;
                 chisq += chi2_bin;
-          // if (cov_file == "files/Nov1/particle/normalised/covariance/HypJetMultpt30_totCovEnvXSMtrxFile.root")std::cout <<"data "<<data->GetBinContent(i) <<" data error "<<errors[i-1] <<"  delta/unc  "<< deltas[i-1]/errors[i-1]  <<"  data error sq "<< errors[i-1]*errors[j-1]  <<" delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<" corr coff "<< corr_coff  <<" chi2 bin "<<chi2_bin <<" chi2 "<< chisq << "\n";
+//if (cov_file == "files/Nov1/parton/normalised/covariance/HypAntiToppT_totCovEnvXSMtrxFile.root")std::cout <<"data "<<data->GetBinContent(i) <<" data error "<<errors[i-1] <<"  delta/unc  "<< deltas[i-1]/errors[i-1]  <<"  data error sq "<< errors[i-1]*errors[j-1]  <<" delta i "<< deltas[i-1]<< " delta j " <<  deltas[j-1] <<" corr coff "<< corr_coff  <<" chi2 bin "<<chi2_bin <<" chi2 "<< chisq << "\n";
                 }
             else {
                 if(i == j){
@@ -262,7 +266,6 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
    // mat_deltas.Print();
     mat_chi.Print();
     mat_cov.Print();
-
 
     }
     
@@ -365,7 +368,7 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename, st
     cov->SetXTitle(axis_title.c_str());
     cov->SetYTitle(axis_title.c_str());
     
-    TCanvas * c = new TCanvas();
+    TCanvas * c = new TCanvas("","",800,800);
     gStyle->SetOptStat(00000);
     cov->Draw("COLZTEXT");
 

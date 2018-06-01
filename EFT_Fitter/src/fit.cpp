@@ -198,6 +198,7 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     leg_rel->AddEntry( g_68, "68% CI","f");
     leg_rel->AddEntry( g_95, "95% CI","f");
     leg_rel->SetBorderSize(0);
+    leg_rel->SetTextSize(0.035);
     //leg_rel->AddEntry( line_lower , "ar#Chiiv:1503.08841" ,"l");
     leg_rel->Draw();
     
