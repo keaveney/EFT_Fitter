@@ -7,10 +7,10 @@ using namespace std;
 int main(int argc, const char * argv[]){
  
     //make_table("norm_parton_bnlo");
-    // make_table("norm_parton_bnlo");
+    // make_table("abs_parton_bnlo");
+    //make_table("norm_particle");
     make_table("norm_particle");
-    make_table("norm_parton");
-    //make_table("abs_particle");
+   // make_table("abs_particle");
 
 }
 
@@ -36,13 +36,15 @@ int make_table(std::string mode){
         "\\MGaMCatNLO+\\Pythia"
     };
     
-    //  vector<string> modelnames = {
-    //     "NNLO+\\alpha_{EW}^{3} (LUXQED17)",
-    //     "NNLO+\\alpha_{EW}^{3} (NNPDF3.1)",
-    //     "NNLO+NNLL' (NNPDF3.1)",
-    //     "aNNNLO (NNPDF3.0)",
-    //    "aNNLO (CT14NNLO)"
-    // };
+ // vector<string> modelnames = {
+ //         "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~173.3~\\GeV",
+ //         "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~172.5~\\GeV",
+ //         "NNLO+\\alphaew^{3} \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+ //         "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+ //         "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~172.5~\\GeV"
+       //   "aN^{3}LO \\\\ (NNPDF3.0) \\\\ \\mt~=~172.5~\\GeV",
+       //   "aNNLO \\\\ (CT14NNLO) \\\\ \\mt~=~172.5~\\GeV"
+ //    };
     
 
     if (mode == "norm_parton"){
@@ -57,12 +59,11 @@ int make_table(std::string mode){
         "files/Jan18/parton/normalised/DiffXS_HypAntiTopRapidity_source.root",
         "files/Jan18/parton/normalised/DiffXS_HypTopRapidityLead_source.root",
         "files/Jan18/parton/normalised/DiffXS_HypTopRapidityNLead_source.root",
+        "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaPhi_source.root",
         "files/Jan18/parton/normalised/DiffXS_HypTTBarpT_source.root",
         "files/Jan18/parton/normalised/DiffXS_HypTTBarRapidity_source.root",
-        "files/Jan18/parton/normalised/DiffXS_HypTTBarMass_source.root",
-        "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
-        "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaPhi_source.root"
-     
+        "files/Jan18/parton/normalised/DiffXS_HypTTBarMass_source.root"
     };
     } else if (mode == "abs_parton"){
         filenames = {
@@ -76,11 +77,11 @@ int make_table(std::string mode){
         "files/Jan18/parton/absolute/DiffXS_HypAntiTopRapidity_source.root",
         "files/Jan18/parton/absolute/DiffXS_HypTopRapidityLead_source.root",
         "files/Jan18/parton/absolute/DiffXS_HypTopRapidityNLead_source.root",
+        "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
+        "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaPhi_source.root",
         "files/Jan18/parton/absolute/DiffXS_HypTTBarpT_source.root",
         "files/Jan18/parton/absolute/DiffXS_HypTTBarRapidity_source.root",
-        "files/Jan18/parton/absolute/DiffXS_HypTTBarMass_source.root",
-        "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
-        "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaPhi_source.root"
+        "files/Jan18/parton/absolute/DiffXS_HypTTBarMass_source.root"
         };
     }
     else if (mode == "norm_parton_bnlo"){
@@ -118,11 +119,11 @@ int make_table(std::string mode){
             "files/Jan18/particle/normalised/DiffXS_HypAntiTopRapidity_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypTopRapidityLead_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaPhi_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypTTBarpT_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypTTBarRapidity_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypTTBarMass_source.root",
-            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
-            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaPhi_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypLeptonpT_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypAntiLeptonpT_source.root",
             "files/Jan18/particle/normalised/DiffXS_HypLeptonpTLead_source.root",
@@ -197,7 +198,6 @@ int make_table(std::string mode){
     //first write latex tables of differential results
     write_results_table(mode, filenames);
     
-
     //make covariance matrices
     for (int var = 0; var< filenames.size(); var++){
         
@@ -267,15 +267,22 @@ int make_table(std::string mode){
             }
             }
     }
+    
+    //remake plots...
+    for (int f = 0; f < filenames.size(); f++){
+   //call to plot remaker function...
+        plot_remaker(filenames[f], mode);
+    }
 
     write_latex(mode, modelnames, vars, chisq, ndof, pval);
-    
     myfile << "\\end{table}"<<endl;
     myfile.close();
     
-   summary_plot("norm_parton.root", "norm_particle.root");
-   // summary_plot("norm_parton_bnlo.root", "norm_particle.root");
-
+   //summary_plot("norm_parton.root", "norm_particle.root");
+  //  summary_plot("norm_parton_bnlo.root", "norm_particle.root");
+    
+    //second write HEPData tables of differential results
+    write_hepdata_tables(mode, filenames, filenames_cov);
 
     return 1;
 }
@@ -306,8 +313,6 @@ std::tuple <float, int, float > process_result(string modelname, string filename
         mode = "abs";
     }
     
-   // cout <<" processing result 2 " <<endl;
-
     string modelhistoname, dataname;
     double chisq_running = 0.0, pval = 0.0;
     double bin_x, bin_data, e_data;
@@ -333,7 +338,6 @@ std::tuple <float, int, float > process_result(string modelname, string filename
         for (int bin = 0; bin < g_model->GetN(); bin++){
             g_model->GetPoint(bin, bin_x, bin_data);
             //cout <<" bin model  =  "<<  bin_data  <<endl;
-
             e_data = g_model->GetErrorY(bin);
             h_model->SetBinContent(bin+1,bin_data);
             h_model->SetBinError(bin+1,e_data);
@@ -395,26 +399,35 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         mode_string = "absolute, parton-level";
     }
 
+    cout <<"nvars  "<< n_vars  <<endl;
+    
     myfile << "\\multirow{"<< n_models <<"}{*}{} &"<<endl;
+    
+    cout <<"here -2 " <<endl;
     
     for (int i = 0 ; i< n_models; i++){
         if (i < (n_models -1)){
-   // myfile << "\\multicolumn{2}{c|}{"<<  model[i] <<"} &" <<endl;
+            // myfile << "\\multicolumn{2}{c|}{"<<  model[i] <<"} &" <<endl;
             myfile << "\\multicolumn{2}{c|}{\\parbox{2.3cm}{\\centering "<<  model[i] <<"}} &" <<endl;
 
         }else{
             myfile << "\\multicolumn{2}{c|}{\\parbox{2.3cm}{\\centering "<<  model[i] <<"}} \\\\" <<endl;
-
-         //   myfile << "\\multicolumn{2}{c|}{"<<  model[n_models-1] <<"} \\\\"  <<endl;
+            //myfile << "\\multicolumn{2}{c|}{"<<  model[n_models-1] <<"} \\\\"  <<endl;
         }
     }
+    cout <<"here -1 " <<endl;
+
     
     for (int m  = 0; m<(n_models-1); m++ ){
         myfile << " & $\\chi^{2}$/ndof & p-val. ";
     }
+    
     myfile << " & $\\chi^{2}$/ndof & p-val. \\\\"<< endl;
     myfile << "\\hline"<<endl;
 
+    cout <<"here 0 " <<endl;
+
+    
     TFile * f_summary = new TFile(mode_rootfile.c_str(), "RECREATE");
     TH1F * h_summary_A;
     TH1F * h_summary_B ;
@@ -427,35 +440,78 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
     for (int summary = 0; summary < model.size(); summary++){
         h_summary.clear();
         
+        cout <<"model "<< summary  <<endl;
+        
+        
+        //"NNLO+\\alphaew^{3} (LUXQED17) m_{t} = 173.3 GeV",
+        //"NNLO+\\alphaew^{3} (LUXQED17) m_{t} = 172.5 GeV",
+        //"NNLO+\\alphaew^{3} (NNPDF3.1) m_{t} = 173.3 GeV",
+       // "NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV",
+       // "NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV",
+       // "aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV",
+       // "aNNLO (CT14NNLO) m_{t} = 172.5 GeV"
+
+        
         if (model[summary] == "\\Powheg+\\Pythia"){
         summary_tag = "pwhg_p8";
         }else if (model[summary] == "\\Powheg+\\Herwigpp"){
             summary_tag = "pwhg_hpp";
         }else if (model[summary] == "\\MGaMCatNLO+\\Pythia"){
             summary_tag = "amc_p8";
-        }else if (model[summary] == "NNLO+\\alpha_{EW}^{3} (LUXQED17)"){
+        }else if (model[summary] == "NNLO+\\alphaew^{3} (LUXQED17) m_{t} = 173.3 GeV"){
             summary_tag = "nnlo_ew_lux";
-        }else if (model[summary] == "NNLO+\\alpha_{EW}^{3} (NNPDF3.1)"){
+        }else if (model[summary] == "NNLO+\\alphaew^{3} (LUXQED17) m_{t} = 172.5 GeV"){
+            summary_tag = "nnlo_ew_lux_1725";
+        }else if (model[summary] == "NNLO+\\alphaew^{3} (NNPDF3.1) m_{t} = 173.3 GeV"){
             summary_tag = "nnlo_ew_nnpdf";
-        }else if (model[summary] == "NNLO+NNLL' (NNPDF3.1)"){
+        }else if (model[summary] == "NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV"){
             summary_tag = "nnlo_nnllprime_nnpdf";
-        }else if (model[summary] == "aNNNLO (NNPDF3.0)"){
+        }else if (model[summary] == "NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV"){
+            summary_tag = "nnlo_nnllprime_nnpdf_1725";
+        }else if (model[summary] == "aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV"){
             summary_tag = "an3lo__nnpdf";
-        }else if (model[summary] == "aNNLO (CT14NNLO)"){
+        }else if (model[summary] == "aNNLO (CT14NNLO) m_{t} = 172.5 GeV"){
             summary_tag = "annlo_ct14";
         }
     
         std::string summary_name_A = mode + summary_tag + "_A";
         std::string summary_name_B = mode + summary_tag + "_B";
         
-        h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 15, 0, 15);
-       // h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 8, 0, 8);
-        h_summary_B = new TH1F(summary_name_B.c_str(), summary_name_B.c_str(), vars.size() - 15 , 0, vars.size() - 15);
+        double hist_low_lim_A, hist_low_lim_B;
+        double hist_high_lim_A,hist_high_lim_B;
+        double offset;
+
+        hist_low_lim_A = (summary*0.32);
+        hist_high_lim_A = 15 + (summary*0.32);
+        hist_low_lim_B = (summary*0.32);
+        hist_high_lim_B = vars.size() - 15 + (summary*0.32);
+        
+         //hist_low_lim_B = 0.0;
+         //hist_high_lim_B = vars.size() - 15;
+        
+        if (mode == "norm_particle"){
+            hist_low_lim_A = hist_low_lim_A + 0.08;
+            hist_low_lim_B = hist_low_lim_A + 0.08;
+            hist_high_lim_A = hist_high_lim_A + 0.08;
+            hist_high_lim_B = hist_high_lim_B + 0.08;
+        }else if (mode == "norm_parton"){
+            hist_low_lim_A = hist_low_lim_A - 0.08;
+            hist_high_lim_A = hist_high_lim_A - 0.08;
+            hist_low_lim_B = hist_low_lim_B - 0.08;
+            hist_high_lim_B = hist_high_lim_B - 0.08;
+        }
+        
+        h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 8, 0, 8);
+        // h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 15, hist_low_lim_A, hist_high_lim_A);
+        h_summary_B = new TH1F(summary_name_B.c_str(), summary_name_B.c_str(), vars.size() - 15 , hist_low_lim_B , hist_high_lim_B);
+
+        //h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 15, 0, 15);
+        //h_summary_B = new TH1F(summary_name_B.c_str(), summary_name_B.c_str(), vars.size() - 15 , 0, vars.size() - 15);
         
         if (mode == "norm_particle" || mode == "abs_particle"  ){
            // nhist= 4;
-        h_summary.push_back(h_summary_A);
-        h_summary.push_back(h_summary_B);
+            h_summary.push_back(h_summary_A);
+            h_summary.push_back(h_summary_B);
         }else if (mode == "norm_parton" || mode == "abs_parton"){
            // nhist=4;
             cout <<"in norm parton mode"<< endl;
@@ -468,6 +524,8 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         }
         h_summaries.push_back(h_summary);
        }
+
+    cout <<"here 1 "<<endl;
 
     vector<string> vars_A, vars_B ;
     if (mode == "norm_particle" || mode == "norm_parton"){
@@ -589,14 +647,12 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
         */
     myfile << "\\hline"<<endl;
     myfile << "\\end{tabular}"<<endl;
-    myfile << "\\caption{The \\chi^{2}/ndof$ and p values quantifying the agreement between theoretical predictions and data for "<< mode_string <<" measurements are shown.}"<< endl;
     myfile << "\\label{tab:"<< mode << "}" << endl;
-    
     
     cout <<"N vars A = "<< vars_A.size() << endl;
     
     for (int m = 0; m< n_models; m++){
-        if (mode == "norm_particle" || mode == "norm_parton"){
+        if (mode == "norm_particle" || mode == "norm_parton" || mode == "abs_particle" || mode == "abs_parton"){
             for (int i  = 0; i< vars_A.size() ; i++ ){
                 h_summaries[m][0]->SetBinContent(i+1, pval[m][i]);
                 h_summaries[m][0]->SetBinContent(i+1, pval[m][i]);
@@ -624,6 +680,8 @@ void write_latex(string mode, vector<string> model, vector<string> vars, float c
     }
     
     f_summary->Close();
+    
+    myfile << "\\caption{The $\\chi^{2}$/ndof and p values quantifying the agreement between theoretical predictions and data for "<< mode_string <<" measurements are shown.}"<< endl;
     
     //myfile << "\\hfill"<<endl;
    // myfile << "{\\small"<<endl;
@@ -656,15 +714,17 @@ void summary_plot(string f1, string f2){
     gPad->SetLeftMargin(0.085);
     gPad->SetRightMargin(1.0);
     gPad->SetTopMargin(0.1);
-    gPad->SetBottomMargin(0.2);
+    gPad->SetBottomMargin(0.13);
     
     TFile * f_norm_parton = new TFile(f1.c_str());
     TFile * f_norm_particle = new TFile(f2.c_str());
     
     if (f1 == "norm_parton_bnlo.root"){
     h_norm_bnlo_nnlo_ew_lux_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnlonnlo_ew_lux_A;1");
+    h_norm_bnlo_nnlo_ew_lux_1725_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnlonnlo_ew_lux_1725_A;1");
     h_norm_bnlo_nnlo_ew_nnpdf_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnlonnlo_ew_nnpdf_A;1");
     h_norm_bnlo_nnlo_nnllprime_nnpdf_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnlonnlo_nnllprime_nnpdf_A;1");
+    h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnlonnlo_nnllprime_nnpdf_1725_A;1");
     h_norm_bnlo_an3lo_nnpdf_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnloan3lo__nnpdf_A;1");
     h_norm_bnlo_annlo_ct14_A =  (TH1F*)f_norm_parton->Get("norm_parton_bnloannlo_ct14_A;1");
     }else{
@@ -688,139 +748,197 @@ void summary_plot(string f1, string f2){
     if (f1 == "norm_parton_bnlo.root"){
         cout <<"summary plot 3  " <<endl;
 
-        double unit_shift = 0.05;
+        double unit_shift = 0.13;
         // offset bin markers
         h_norm_bnlo_nnlo_ew_lux_A_clone = (TH1F*)h_norm_bnlo_nnlo_ew_lux_A->Clone("h_norm_bnlo_nnlo_ew_lux_A_clone");
         TF1 *f0 = new TF1("f0","1",0,n_vars);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->Multiply(f0,1);
-        Double_t shift = (-1.3*unit_shift)*h_norm_bnlo_nnlo_ew_lux_A->GetBinWidth(1);
+        //h_norm_bnlo_nnlo_ew_lux_A_clone->Multiply(f0,1);
+        Double_t shift = (-3.0*unit_shift)*h_norm_bnlo_nnlo_ew_lux_A->GetBinWidth(1);
         h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->Draw("p");
-        h_norm_bnlo_nnlo_ew_lux_A_clone->Draw("psame");
+        
+        
+        cout <<"summary plot 3.5  " <<endl;
+
+        
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone = (TH1F*)h_norm_bnlo_nnlo_ew_lux_A->Clone("h_norm_bnlo_nnlo_ew_lux_1725_A_clone");
+        TF1 *f1 = new TF1("f1","1",0,n_vars);
+        // h_norm_bnlo_nnlo_ew_lux_1725_A_clone->Multiply(f1,1);
+        shift = (-2.0*unit_shift)*h_norm_bnlo_nnlo_ew_lux_1725_A->GetBinWidth(1);
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
+
+        cout <<"summary plot 4  " <<endl;
+
         
         h_norm_bnlo_nnlo_ew_nnpdf_A_clone = (TH1F*)h_norm_bnlo_nnlo_ew_nnpdf_A->Clone("h_norm_bnlo_nnlo_ew_nnpdf_A_clone");
-        TF1 *f1 = new TF1("f1","1",0,n_vars);
-        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->Multiply(f1,1);
-        shift = (-1.3*unit_shift)*h_norm_bnlo_nnlo_ew_nnpdf_A->GetBinWidth(1);
+      //  TF1 *f2 = new TF1("f1","1",0,n_vars);
+      //  h_norm_bnlo_nnlo_ew_nnpdf_A_clone->Multiply(f1,1);
+        shift = (-1.0*unit_shift)*h_norm_bnlo_nnlo_ew_nnpdf_A->GetBinWidth(1);
         h_norm_bnlo_nnlo_ew_nnpdf_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->Draw("psame");
         
         h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone = (TH1F*)h_norm_bnlo_nnlo_nnllprime_nnpdf_A->Clone("h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone");
-        TF1 *f2 = new TF1("f2","1",0,n_vars);
-        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->Multiply(f2,1);
-        shift = (-3.3*unit_shift)*h_norm_bnlo_nnlo_nnllprime_nnpdf_A->GetBinWidth(1);
+       // TF1 *f2 = new TF1("f2","1",0,n_vars);
+       // h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->Multiply(f2,1);
+        shift = (0.0*unit_shift)*h_norm_bnlo_nnlo_nnllprime_nnpdf_A->GetBinWidth(1);
         h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->Draw("psame");
+        
+        cout <<"summary plot 6 " <<endl;
+        
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone = (TH1F*)h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A->Clone("h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone");
+       // TF1 *f2 = new TF1("f2","1",0,n_vars);
+       // h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->Multiply(f2,1);
+        shift = (1.0*unit_shift)*h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A->GetBinWidth(1);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
         h_norm_bnlo_an3lo_nnpdf_A_clone = (TH1F*)h_norm_bnlo_an3lo_nnpdf_A->Clone("h_norm_bnlo_an3lo_nnpdf_A_clone");
-        TF1 *f3 = new TF1("f3","1",0,n_vars);
-        h_norm_bnlo_an3lo_nnpdf_A_clone->Multiply(f3,1);
-        shift = (3.3*unit_shift)*h_norm_bnlo_an3lo_nnpdf_A->GetBinWidth(1);
+       // TF1 *f3 = new TF1("f3","1",0,n_vars);
+       // h_norm_bnlo_an3lo_nnpdf_A_clone->Multiply(f3,1);
+        shift = (2.0*unit_shift)*h_norm_bnlo_an3lo_nnpdf_A->GetBinWidth(1);
         h_norm_bnlo_an3lo_nnpdf_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_bnlo_an3lo_nnpdf_A_clone->Draw("psame");
         
         h_norm_bnlo_annlo_ct14_A_clone = (TH1F*)h_norm_bnlo_annlo_ct14_A->Clone("h_norm_bnlo_annlo_ct14_A_clone");
-        TF1 *f4 = new TF1("f4","1",0,n_vars);
-        h_norm_bnlo_annlo_ct14_A_clone->Multiply(f4,1);
-        shift = (-4.7*unit_shift)*h_norm_bnlo_annlo_ct14_A_clone->GetBinWidth(1);
+       // TF1 *f4 = new TF1("f4","1",0,n_vars);
+       // h_norm_bnlo_annlo_ct14_A_clone->Multiply(f4,1);
+        shift = (3.0*unit_shift)*h_norm_bnlo_annlo_ct14_A_clone->GetBinWidth(1);
         h_norm_bnlo_annlo_ct14_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
+        
+        cout <<"summary plot 7  " <<endl;
+
+        
+    //draw
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->Draw("p");
+        h_norm_bnlo_nnlo_ew_lux_A_clone->Draw("psame");
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone->Draw("psame");
+        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->Draw("psame");
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->Draw("psame");
+        h_norm_bnlo_an3lo_nnpdf_A_clone->Draw("psame");
         h_norm_bnlo_annlo_ct14_A_clone->Draw("psame");
+
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMinimum(low_lim);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMaximum(1.1);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->SetLabelSize(0.06);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->LabelsOption("d");
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->CenterLabels(kTRUE);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->SetNdivisions(32, kFALSE);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetXaxis()->SetLabelOffset(0.02);
         
-        h_norm_bnlo_nnlo_ew_lux_A_clone->SetMinimum(low_lim);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->SetMaximum(1.1);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->SetLabelSize(0.06);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->LabelsOption("d");
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->CenterLabels(kTRUE);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->SetNdivisions(32, kFALSE);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetXaxis()->SetLabelOffset(0.02);
-        
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetYaxis()->SetTickLength(0.01);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetYaxis()->SetTitleOffset(0.6);
-        h_norm_bnlo_nnlo_ew_lux_A_clone->GetYaxis()->SetTitleSize(0.06);
-        
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetYaxis()->SetTickLength(0.01);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetYaxis()->SetTitleOffset(0.6);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->GetYaxis()->SetTitleSize(0.06);
         
 //        vector<int> marker_styles = {21,22,23,27,28,29};
   //      vector<int> marker_colours = {3,4,6,7,8,9};
         h_norm_bnlo_nnlo_ew_lux_A_clone->SetMarkerStyle(21);
-        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerStyle(22);
-        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerStyle(23);
-        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerStyle(27);
-        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerStyle(28);
-
         h_norm_bnlo_nnlo_ew_lux_A_clone->SetMarkerColor(3);
-        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerColor(4);
-        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerColor(6);
-        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerColor(7);
-        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerColor(8);
-        
 
-        h_norm_bnlo_nnlo_ew_lux_A_clone->SetMarkerSize(1.5);
-        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerSize(1.5);
-        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerSize(1.5);
-        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerSize(1.5);
-        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerSize(1.5);
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone->SetMarkerStyle(21);
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone->SetMarkerColor(28);
+        
+        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerStyle(21);
+        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerColor(4);
+
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerStyle(22);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerColor(6);
+        
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->SetMarkerStyle(22);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->SetMarkerColor(32);
+
+        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerStyle(27);
+        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerColor(7);
+
+        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerStyle(28);
+        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerColor(8);
+
+        h_norm_bnlo_nnlo_ew_lux_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_nnlo_ew_lux_1725_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_nnlo_ew_nnpdf_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_an3lo_nnpdf_A_clone->SetMarkerSize(1.2);
+        h_norm_bnlo_annlo_ct14_A_clone->SetMarkerSize(1.2);
 
         h_norm_bnlo_nnlo_ew_lux_A_clone->SetYTitle("p-value");
         h_norm_bnlo_nnlo_ew_lux_A_clone->SetTitle(" ");
+        h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetTitle(" ");
+
         
     }
     else {
-    double unit_shift = 0.05;
+        cout <<"summary plot 4  " <<endl;
+
+    double unit_shift = -0.18;
+    double offset = 0.0;
     // offset bin markers
     h_norm_particle_pwhg_p8_A_clone = (TH1F*)h_norm_particle_pwhg_p8_A->Clone("h_norm_particle_pwhg_p8_A_clone");
+        
+    cout <<"summary plot 41  " <<endl;
+
+        
     TF1 *f0 = new TF1("f0","1",0,n_vars);
     h_norm_particle_pwhg_p8_A_clone->Multiply(f0,1);
-    Double_t shift = (-1.3*unit_shift)*h_norm_particle_pwhg_p8_A->GetBinWidth(1);
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-    h_norm_particle_pwhg_p8_A_clone->Draw("p");
-    h_norm_particle_pwhg_p8_A_clone->Draw("psame");
+    //Double_t shift = offset + (-1.6*unit_shift*h_norm_particle_pwhg_p8_A->GetBinWidth(1));
+      Double_t  shift = -0.9;
+   // h_norm_particle_pwhg_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
+   // h_norm_particle_pwhg_p8_A_clone->Draw("psame");
 
     h_norm_parton_pwhg_p8_A_clone = (TH1F*)h_norm_parton_pwhg_p8_A->Clone("h_norm_parton_pwhg_p8_A_clone");
     TF1 *f1 = new TF1("f1","1",0,n_vars);
     h_norm_parton_pwhg_p8_A_clone->Multiply(f1,1);
-    shift = (1.3*unit_shift)*h_norm_parton_pwhg_p8_A->GetBinWidth(1);
-    h_norm_parton_pwhg_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-    h_norm_parton_pwhg_p8_A_clone->Draw("psame");
+    //shift = offset + (1.3*unit_shift*h_norm_parton_pwhg_p8_A->GetBinWidth(1));
+    shift = -0.6;
+  //  h_norm_parton_pwhg_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
     h_norm_particle_pwhg_hpp_A_clone = (TH1F*)h_norm_particle_pwhg_hpp_A->Clone("h_norm_particle_pwhg_hpp_A_clone");
     TF1 *f3 = new TF1("f3","1",0,n_vars);
     h_norm_particle_pwhg_hpp_A_clone->Multiply(f3,1);
-    shift = -3.3*(unit_shift)*h_norm_particle_pwhg_hpp_A->GetBinWidth(1);
-    h_norm_particle_pwhg_hpp_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-    h_norm_particle_pwhg_hpp_A_clone->Draw("psame");
+   // shift = offset + (-2.6*unit_shift*h_norm_particle_pwhg_hpp_A->GetBinWidth(1));
+        shift = -0.3;
+    //h_norm_particle_pwhg_hpp_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
     h_norm_parton_pwhg_hpp_A_clone = (TH1F*)h_norm_parton_pwhg_hpp_A->Clone("h_norm_parton_pwhg_hpp_A_clone");
     TF1 *f2 = new TF1("f2","1",0,n_vars);
     h_norm_parton_pwhg_hpp_A_clone->Multiply(f2,1);
-    shift = 3.3*(unit_shift)*h_norm_parton_pwhg_hpp_A->GetBinWidth(1);
-    h_norm_parton_pwhg_hpp_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-    h_norm_parton_pwhg_hpp_A_clone->Draw("psame");
+   // shift = offset + (2.6*unit_shift*h_norm_parton_pwhg_hpp_A->GetBinWidth(1));
+      shift = 0.3;
+  //  h_norm_parton_pwhg_hpp_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
     h_norm_particle_amc_p8_A_clone = (TH1F*)h_norm_particle_amc_p8_A->Clone("h_norm_particle_amc_p8_A_clone");
     TF1 *f5 = new TF1("f5","1",0,n_vars);
     h_norm_particle_amc_p8_A_clone->Multiply(f5,1);
-    shift = -4.7*(unit_shift)*h_norm_particle_amc_p8_A->GetBinWidth(1);
-    h_norm_particle_amc_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-    h_norm_particle_amc_p8_A_clone->Draw("psame");
+    //shift =  offset + (-3.9*unit_shift*h_norm_particle_amc_p8_A->GetBinWidth(1));
+    shift = 0.6;
+   // h_norm_particle_amc_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
     h_norm_parton_amc_p8_A_clone = (TH1F*)h_norm_parton_amc_p8_A->Clone("h_norm_parton_amc_p8_A_clone");
     TF1 *f4 = new TF1("f4","1",0,n_vars);
     h_norm_parton_amc_p8_A_clone->Multiply(f4,1);
-    shift = 4.7*(unit_shift)*h_norm_parton_amc_p8_A->GetBinWidth(1);
-    h_norm_parton_amc_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
+    //shift = offset + (3.9*unit_shift*h_norm_parton_amc_p8_A->GetBinWidth(1));
+    shift = 0.9;
+    //h_norm_parton_amc_p8_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
+        
+        //Draw
+    TH1F * h_base_A = (TH1F*)h_norm_particle_pwhg_hpp_A_clone->Clone();
+    h_base_A->Reset();
+    h_base_A->GetXaxis()->SetLimits(0.31,15.31);
+
+    h_base_A->Draw();
+    h_norm_particle_pwhg_p8_A_clone->Draw("psame");
+    h_norm_parton_pwhg_p8_A_clone->Draw("psame");
+    h_norm_particle_pwhg_hpp_A_clone->Draw("psame");
+    h_norm_parton_pwhg_hpp_A_clone->Draw("psame");
+    h_norm_particle_amc_p8_A_clone->Draw("psame");
     h_norm_parton_amc_p8_A_clone->Draw("psame");
         
-    h_norm_particle_pwhg_p8_A_clone->SetMinimum(low_lim);
-    h_norm_particle_pwhg_p8_A_clone->SetMaximum(1.1);
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->SetLabelSize(0.06);
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->LabelsOption("d");
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->CenterLabels(kTRUE);
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->SetNdivisions(32, kFALSE);
-    h_norm_particle_pwhg_p8_A_clone->GetXaxis()->SetLabelOffset(0.02);
+    h_base_A->SetMinimum(low_lim);
+    h_base_A->SetMaximum(1.1);
+    h_base_A->GetXaxis()->SetLabelSize(0.052);
+    h_base_A->GetXaxis()->LabelsOption("d");
+    h_base_A->GetXaxis()->CenterLabels(kTRUE);
+    h_base_A->GetXaxis()->SetNdivisions(32, kFALSE);
+    h_base_A->GetXaxis()->SetLabelOffset(0.02);
         
-    h_norm_particle_pwhg_p8_A_clone->GetYaxis()->SetTickLength(0.01);
-    h_norm_particle_pwhg_p8_A_clone->GetYaxis()->SetTitleOffset(0.6);
-    h_norm_particle_pwhg_p8_A_clone->GetYaxis()->SetTitleSize(0.06);
+    h_base_A->GetYaxis()->SetTickLength(0.01);
+    h_base_A->GetYaxis()->SetTitleOffset(0.6);
+    h_base_A->GetYaxis()->SetTitleSize(0.06);
         
     h_norm_parton_pwhg_p8_A_clone->SetMarkerStyle(21);
     h_norm_parton_pwhg_hpp_A_clone->SetMarkerStyle(21);
@@ -846,8 +964,8 @@ void summary_plot(string f1, string f2){
     h_norm_particle_pwhg_hpp_A_clone->SetMarkerColor(kViolet);
     h_norm_particle_amc_p8_A_clone->SetMarkerColor(kGreen);
         
-    h_norm_particle_pwhg_p8_A_clone->SetYTitle("p-value");
-    h_norm_particle_pwhg_p8_A_clone->SetTitle(" ");
+    h_base_A->SetYTitle("p-value");
+    h_base_A->SetTitle(" ");
     }
     
     cout <<"summary plot 2  " <<endl;
@@ -858,7 +976,9 @@ void summary_plot(string f1, string f2){
     gPad->SetFrameLineColor(0);
     gPad->SetLeftMargin(0.085);
     gPad->SetRightMargin(0.1);
-    gPad->SetTopMargin(0.185);
+    //gPad->SetTopMargin(0.185);
+    //gPad->SetBottomMargin(0.135);
+    gPad->SetTopMargin(0.13);
     gPad->SetBottomMargin(0.135);
     
     
@@ -866,7 +986,7 @@ void summary_plot(string f1, string f2){
         //h_norm_particle_pwhg_p8_B->SetMinimum(0.000000000000000000000000000000000001);
         h_norm_particle_pwhg_p8_B->SetMinimum(low_lim);
         h_norm_particle_pwhg_p8_B->SetMaximum(1.1);
-        h_norm_particle_pwhg_p8_B->GetXaxis()->SetLabelSize(0.06);
+        h_norm_particle_pwhg_p8_B->GetXaxis()->SetLabelSize(0.04);
         h_norm_particle_pwhg_p8_B->GetXaxis()->LabelsOption("d");
         h_norm_particle_pwhg_p8_B->GetXaxis()->CenterLabels(kTRUE);
         h_norm_particle_pwhg_p8_B->GetXaxis()->SetNdivisions(32, kFALSE);
@@ -884,17 +1004,17 @@ void summary_plot(string f1, string f2){
        // h_norm_particle_pwhg_hpp_B->Draw("psame");
        // h_norm_particle_amc_p8_B->Draw("psame");
 
-        h_norm_particle_pwhg_p8_B->SetMarkerStyle(22);
-        h_norm_particle_pwhg_hpp_B->SetMarkerStyle(22);
-        h_norm_particle_amc_p8_B->SetMarkerStyle(22);
+       // h_norm_particle_pwhg_p8_B->SetMarkerStyle(22);
+       // h_norm_particle_pwhg_hpp_B->SetMarkerStyle(22);
+       // h_norm_particle_amc_p8_B->SetMarkerStyle(22);
 
-        h_norm_particle_pwhg_p8_B->SetMarkerSize(2.2);
-        h_norm_particle_pwhg_hpp_B->SetMarkerSize(2.2);
-        h_norm_particle_amc_p8_B->SetMarkerSize(2.2);
+        //h_norm_particle_pwhg_p8_B->SetMarkerSize(2.2);
+        //h_norm_particle_pwhg_hpp_B->SetMarkerSize(2.2);
+        //h_norm_particle_amc_p8_B->SetMarkerSize(2.2);
 
-        h_norm_particle_pwhg_p8_B->SetMarkerColor(kRed);
-        h_norm_particle_pwhg_hpp_B->SetMarkerColor(kViolet);
-        h_norm_particle_amc_p8_B->SetMarkerColor(kGreen);
+        //h_norm_particle_pwhg_p8_B->SetMarkerColor(kRed);
+        //h_norm_particle_pwhg_hpp_B->SetMarkerColor(kViolet);
+        //h_norm_particle_amc_p8_B->SetMarkerColor(kGreen);
         
         double unit_shift = 0.05;
         
@@ -903,35 +1023,34 @@ void summary_plot(string f1, string f2){
         TF1 *f0 = new TF1("f0","1",0,15);
         h_norm_particle_pwhg_p8_B_clone->Multiply(f0,1);
         Double_t shift = (-1.3*unit_shift)*h_norm_particle_pwhg_p8_B->GetBinWidth(1);
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_particle_pwhg_p8_B_clone->Draw("p");
-        h_norm_particle_pwhg_p8_B_clone->Draw("psame");
+      //  h_norm_particle_pwhg_p8_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
 
         h_norm_particle_pwhg_hpp_B_clone = (TH1F*)h_norm_particle_pwhg_hpp_B->Clone("h_norm_particle_pwhg_hpp_B_clone");
         TF1 *f3 = new TF1("f3","1",0,15);
         h_norm_particle_pwhg_hpp_B_clone->Multiply(f3,1);
         shift = -3.3*(unit_shift)*h_norm_particle_pwhg_hpp_B->GetBinWidth(1);
-        h_norm_particle_pwhg_hpp_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_particle_pwhg_hpp_B_clone->Draw("psame");
+      //  h_norm_particle_pwhg_hpp_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
     
         h_norm_particle_amc_p8_B_clone = (TH1F*)h_norm_particle_amc_p8_B->Clone("h_norm_particle_amc_p8_B_clone");
         TF1 *f5 = new TF1("f5","1",0,15);
         h_norm_particle_amc_p8_B_clone->Multiply(f5,1);
         shift = -4.7*(unit_shift)*h_norm_particle_amc_p8_B->GetBinWidth(1);
-        h_norm_particle_amc_p8_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
-        h_norm_particle_amc_p8_B_clone->Draw("psame");
+      //  h_norm_particle_amc_p8_B_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
-        h_norm_particle_pwhg_p8_B_clone->SetMinimum(low_lim);
-        h_norm_particle_pwhg_p8_B_clone->SetMaximum(1.1);
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->SetLabelSize(0.06);
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->LabelsOption("d");
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->CenterLabels(kTRUE);
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->SetNdivisions(32, kFALSE);
-        h_norm_particle_pwhg_p8_B_clone->GetXaxis()->SetLabelOffset(0.02);
+        TH1F * h_base_B = (TH1F*)h_norm_particle_pwhg_hpp_B_clone->Clone();
+        h_base_B->Reset();
         
-        h_norm_particle_pwhg_p8_B_clone->GetYaxis()->SetTickLength(0.01);
-        h_norm_particle_pwhg_p8_B_clone->GetYaxis()->SetTitleOffset(0.6);
-        h_norm_particle_pwhg_p8_B_clone->GetYaxis()->SetTitleSize(0.06);
+        h_base_B->SetMinimum(low_lim);
+        h_base_B->SetMaximum(1.1);
+        h_base_B->GetXaxis()->SetLabelSize(0.042);
+        h_base_B->GetXaxis()->LabelsOption("d");
+        h_base_B->GetXaxis()->CenterLabels(kTRUE);
+        h_base_B->GetXaxis()->SetNdivisions(32, kFALSE);
+        h_base_B->GetXaxis()->SetLabelOffset(0.02);
+        
+        h_base_B->GetYaxis()->SetTickLength(0.01);
+        h_base_B->GetYaxis()->SetTitleOffset(0.6);
+        h_base_B->GetYaxis()->SetTitleSize(0.06);
  
         h_norm_particle_pwhg_p8_B_clone->SetMarkerStyle(22);
         h_norm_particle_pwhg_hpp_B_clone->SetMarkerStyle(22);
@@ -945,32 +1064,42 @@ void summary_plot(string f1, string f2){
         h_norm_particle_pwhg_hpp_B_clone->SetMarkerColor(kViolet);
         h_norm_particle_amc_p8_B_clone->SetMarkerColor(kGreen);
         
-        h_norm_particle_pwhg_p8_B_clone->SetYTitle("p-value");
-        h_norm_particle_pwhg_p8_B_clone->SetTitle(" ");
+        h_base_B->SetYTitle("p-value");
+        h_base_B->SetTitle(" ");
+        
+        h_base_B->GetXaxis()->SetLimits(0.423,19.423);
+        h_base_B->Draw();
+        h_norm_particle_pwhg_p8_B_clone->Draw("psame");
+        h_norm_particle_pwhg_hpp_B_clone->Draw("psame");
+        h_norm_particle_amc_p8_B_clone->Draw("psame");
     
     }
-    
+
     if (f1 == "norm_parton_bnlo.root"){
-        auto legend_A_1 = new TLegend(0.55,0.36,0.88,0.7);
-        legend_A_1->AddEntry(h_norm_bnlo_nnlo_ew_lux_A_clone,"NNLO+#alpha^{3}_{EW} (LUXQED17)","p");
-        legend_A_1->AddEntry(h_norm_bnlo_nnlo_ew_nnpdf_A_clone,"NNLO+#alpha^{3}_{EW} (NNPDF3.1)","p");
-        legend_A_1->AddEntry(h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone,"NNLO+NNLL' (NNPDF3.1)","p");
-        legend_A_1->AddEntry(h_norm_bnlo_an3lo_nnpdf_A_clone,"aN^{3}LO (NNPDF3.0)","p");
-        legend_A_1->AddEntry(h_norm_bnlo_annlo_ct14_A_clone,"aNNLO (CT14NNLO)","p");
-        legend_A_1->SetTextSize(0.032);
+        auto legend_A_1 = new TLegend(0.48,0.36,0.93,0.7);
+        legend_A_1->AddEntry(h_norm_bnlo_nnlo_ew_lux_A_clone,"NNLO+#alpha^{3}_{EW} (LUXQED17) m_{t} = 173.3 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_nnlo_ew_lux_1725_A_clone,"NNLO+#alpha^{3}_{EW} (LUXQED17) m_{t} = 172.5 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_nnlo_ew_nnpdf_A_clone,"NNLO+#alpha^{3}_{EW} (NNPDF3.1) m_{t} = 173.3 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone,"NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_nnlo_nnllprime_nnpdf_1725_A_clone,"NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_an3lo_nnpdf_A_clone,"aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV","p");
+        legend_A_1->AddEntry(h_norm_bnlo_annlo_ct14_A_clone,"aNNLO (CT14NNLO) m_{t} = 172.5 GeV","p");
+        legend_A_1->SetTextSize(0.025);
         legend_A_1->SetFillColor(0);
         legend_A_1->Draw();
     
     }else{
     
-    auto legend_A_1 = new TLegend(0.64,0.62,1.00,1.00);
+    c_master->cd(1);
+    auto legend_A_1 = new TLegend(0.4,0.325,0.77,0.68);
     legend_A_1->AddEntry(h_norm_parton_pwhg_p8_A_clone,"Powheg+Pythia8 (parton)","p");
     legend_A_1->AddEntry(h_norm_particle_pwhg_p8_A_clone,"Powheg+Pythia8 (particle)","p");
     legend_A_1->AddEntry(h_norm_parton_pwhg_hpp_A_clone,"Powheg+Herwig++ (parton)","p");
     legend_A_1->AddEntry(h_norm_particle_pwhg_hpp_A_clone,"Powheg+Herwig++ (particle)","p");
     legend_A_1->AddEntry(h_norm_parton_amc_p8_A_clone,"MG5_aMC@NLO+Pythia8 [FxFx] (parton)","p");
     legend_A_1->AddEntry(h_norm_particle_amc_p8_A_clone,"MG5_aMC@NLO+Pythia8 [FxFx] (particle)","p");
-    legend_A_1->SetTextSize(0.037);
+    legend_A_1->SetTextSize(0.038);
+    legend_A_1->SetTextAlign(12);
     legend_A_1->SetFillColor(0);
     legend_A_1->Draw();
 
@@ -1015,32 +1144,32 @@ void summary_plot(string f1, string f2){
     if (f1 == "norm_parton_bnlo.root"){
         TString cmsText, extraText, lumiText;
         cmsText += "CMS";
-        extraText += "Preliminary";
+        extraText += "";
         lumiText += "35.9 fb^{-1} (13 TeV)";
         TLatex latex;
         latex.SetNDC();
         latex.SetTextAngle(0);
-        latex.SetTextSize(0.28*t);
+        latex.SetTextSize(0.31*t);
         latex.SetTextColor(kBlack);
         latex.SetTextFont(61);
         latex.SetTextAlign(31);
-        latex.DrawLatex(0.18,0.83,cmsText);
+        latex.DrawLatex(0.15,0.885,cmsText);
         
         latex.SetTextFont(52);
         latex.SetTextSize(0.28*t*extraOverCmsTextSize);
-        latex.DrawLatex(0.32,0.83,extraText);
+        latex.DrawLatex(0.34,0.89,extraText);
         
         latex.SetTextFont(42);
-        latex.SetTextSize(0.28*t);
-        latex.DrawLatex(0.9,0.83,lumiText);
+        latex.SetTextSize(0.31*t);
+        latex.DrawLatex(0.9,0.885,lumiText);
         
         latex.SetTextSize(0.2*t);
-        latex.DrawLatex(0.03,0.12,"<");
+        latex.DrawLatex(0.03,0.125,"<");
     }else{
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "Preliminary";
+    extraText += "";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     TLatex latex;
     latex.SetNDC();
@@ -1060,7 +1189,7 @@ void summary_plot(string f1, string f2){
     latex.DrawLatex(0.9,0.92,lumiText);
 
     latex.SetTextSize(0.45*t);
-    latex.DrawLatex(0.05,0.186,"<");
+    latex.DrawLatex(0.05,0.22,"<");
     }
 
     
