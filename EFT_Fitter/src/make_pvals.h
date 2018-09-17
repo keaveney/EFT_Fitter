@@ -247,8 +247,8 @@ std::vector<string> vars = {
     "$\\pt^{\\text{\\tbar}}$",
     "$\\pt^{\\text{t}} \\mathrm{(leading)} $",
     "$\\pt^{\\text{t}} \\mathrm{(trailing)} $",
-    "$\\pt^{\\text{t}} \\mathrm{(} \\ttbar\\ \\mathrm{r.f.)}$",
-    "$\\pt^{\\tbar} \\mathrm{(} \\ttbar\\ \\mathrm{r.f.)}$",
+    "$\\pt^{\\text{t}} \\mathrm{(} \\ttbar\\ \\mathrm{RF)}$",
+    "$\\pt^{\\tbar} \\mathrm{(} \\ttbar\\ \\mathrm{RF)}$",
     "$y_{\\text{t}}$",
     "$y_{\\tbar}$",
     "$y_{\\text{t}} (\\mathrm{leading})$",
@@ -278,6 +278,45 @@ std::vector<string> vars = {
     "$\\pt^{\\bbbar}$",
     "$m_{\\bbbar}$"
 };
+
+std::vector<string> vars_root = {
+    "p_{T}^{t}",
+    "p_{T}^{#bar{t}}",
+    "p_{T}^{t} (leading)",
+    "p_{T}^{t} (trailing)",
+    "p_{T}^{t} (t#bar{t} RF)",
+    "p_{T}^{#bar{t}}(t#bar{t} RF)",
+    "y_{t}",
+    "y_{#bar{t}}",
+    "y_{t} (leading)",
+    "y_{t} (trailing)",
+    "#Delta|y|(t,#bar{t})",
+    "#Delta#phi(t,#bar{t})",
+    "p_{T}^{t#bar{t}}",
+    "y_{t#bar{t}}",
+    "m_{t#bar{t}}",
+    "p_{T}^{l}",
+    "p_{T}^{#bar{l}}",
+    "p_{T}^{l} (leading)",
+    "p_{T}^{l} (trailing)",
+    "#eta_{l}",
+    "#eta_{#bar{l}}",
+    "#eta_{l} (leading)",
+    "#eta_{l} (trailing)",
+    "p_{T}^{l#bar{l}}",
+    "m_{l#bar{l}}",
+    "#Delta#phi(l,#bar{l})",
+    "#Delta#eta(l,#bar{l})",
+    "N_{jets}",
+    "p_{T}^{b} (leading)",
+    "p_{T}^{b} (trailing)",
+    "#eta^{b} (leading)",
+    "#eta^{b} (trailing)",
+    "p_{T}^{b#bar{b}}",
+    "m_{b#bar{b}}"
+};
+
+
 
 
 std::vector<string> vars_txt = {
@@ -354,42 +393,7 @@ std::vector<string> vars_obskey = {
     "MBB"
 };
 
-std::vector<string> vars_root = {
-    "p_{T}^{t}",
-    "p_{T}^{#bar{t}}",
-    "p_{T}^{t} (leading)",
-    "p_{T}^{t} (trailing)",
-    "p_{T}^{t} (t#bar{t} r.f.)",
-    "p_{T}^{#bar{t}}(t#bar{t} r.f.)",
-    "y_{t}",
-    "y_{#bar{t}}",
-    "y_{t} (leading)",
-    "y_{t} (trailing)",
-    "#Delta|y|(t,#bar{t})",
-    "#Delta#phi(t,#bar{t})",
-    "p_{T}^{t#bar{t}}",
-    "y_{t#bar{t}}",
-    "m_{t#bar{t}}",
-    "p_{T}^{l}",
-    "p_{T}^{#bar{l}}",
-    "p_{T}^{l} (leading)",
-    "p_{T}^{l} (trailing)",
-    "#eta_{l}",
-    "#eta_{#bar{l}}",
-    "#eta_{l} (leading)",
-    "#eta_{l} (trailing)",
-    "p_{T}^{l#bar{l}}",
-    "m_{l#bar{l}}",
-    "#Delta#phi(l,#bar{l})",
-    "#Delta#eta(l,#bar{l})",
-    "N_{jets}",
-    "p_{T}^{b} (leading)",
-    "p_{T}^{b} (trailing)",
-    "#eta^{b} (leading)",
-    "#eta^{b} (trailing)",
-    "p_{T}^{b#bar{b}}",
-    "m_{b#bar{b}}"
-};
+
 
 std::vector<string> vars_bnlo = {
     "$\\pt^{\\text{t}}$",
@@ -426,7 +430,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     string hepdata_filename_cov = "";
     
     char_separator<char> sep("#");
-    char_separator<char> sep_2("/");
+    char_separator<char> sep_2("_");
     
     //extract data and bins
     TFile * f_var, *f_var_cov;
@@ -438,9 +442,25 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     vector<double> bins;
     string varname;
     string xtitle;
+    string xsec_type_text, xsec_type_text_2;
     vector<std::string> tokens_vec;
     vector<std::string> mode_tokens_vec;
 
+    tokenizer< char_separator<char> > mode_tokens(mode, sep_2);
+    BOOST_FOREACH (const string& t, mode_tokens) {
+        mode_tokens_vec.push_back(t);
+    }
+    
+    cout<<" tokens vec = " << mode_tokens_vec[0] << " " << mode_tokens_vec[1] <<endl;
+
+    if (mode_tokens_vec[0] == "abs"){
+        xsec_type_text = "Absolute";
+        xsec_type_text_2 = "absolute";
+    }else{
+        xsec_type_text = "Normalized";
+        xsec_type_text = "normalized";
+    }
+    
     for (int f = 0; f < filenames.size(); f++){
         filename = filenames[f];
         filename_cov = filenames_cov[f];
@@ -455,8 +475,8 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
         hepdata_filename += "_hepdata_table";
         hepdata_filename_cov = hepdata_filename;
         hepdata_filename_cov += "_cov";
-        hepdata_filename += ".dat";
-        hepdata_filename_cov += ".dat";
+        hepdata_filename += ".oldhepdata";
+        hepdata_filename_cov += ".oldhepdata";
 
         HDfile.open (hepdata_filename);
         
@@ -469,11 +489,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
             tokens_vec.push_back(t);
         }
         
-        tokenizer< char_separator<char> > mode_tokens(mode, sep_2);
-        BOOST_FOREACH (const string& t, mode_tokens) {
-            mode_tokens_vec.push_back(t);
-        }
-        
+
         tokens_vec.clear();
         
         //get data files
@@ -489,7 +505,6 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
             tokens_vec.push_back(t);
         }
 
-        cout<<" filename cov = " << filename_cov <<endl;
 
         
         //write data
@@ -505,7 +520,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
         //first write header metadata
         HDfile<<"*dataset: "<<endl;
         HDfile<<"*location: Fig. X, Tab. Y: "<<endl; //does this matter?
-        HDfile<<"*dscomment: Normalized cross section at parton level."<<endl; //needs to be changed according to mode variable
+        HDfile<<"*dscomment: "<< xsec_type_text <<" cross section at parton level."<<endl; //needs to be changed according to mode variable
         HDfile<<"*reackey: P P --> TOP TOPBAR X"<<endl;
         HDfile<<"*obskey: DSIG/D"<<  vars_obskey[f]  <<endl; //needs to be changed according to var variable
         HDfile<<"*qual: SQRT(S) IN GEV : 13000.0"<<endl;
@@ -548,8 +563,8 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
         
         //first write header metadata
         HDfile_cov<<"*dataset: "<<endl;
-        HDfile_cov<<"*location: Fig. X, Tab. Y: "<<endl; //does this matter?
-        HDfile_cov<<"*dscomment:Covariance matrix of normalized cross section at parton level."<<endl; //needs to be changed according to mode variable
+        HDfile_cov<<"*location: Fig. X, Tab. Y: "<<endl;
+        HDfile_cov<<"*dscomment:Covariance matrix of "<< xsec_type_text_2 <<" cross section at parton level."<<endl;
         HDfile_cov<<"*reackey: P P --> TOP TOPBAR X"<<endl;
         HDfile_cov<<"*obskey: DSIG/D"<<  vars_obskey[f]  <<endl;
         HDfile_cov<<"*qual: COVARIANCE MATRIX" <<endl;
@@ -898,7 +913,7 @@ void plot_remaker(string filename, string mode){
     
     c->cd();
     c->SetTopMargin(0.1);
-    c->SetBottomMargin(0.15);
+    c->SetBottomMargin(0.16);
     c->SetLeftMargin(0.0995);
     c->SetRightMargin(0.09);
     
