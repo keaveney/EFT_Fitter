@@ -1,0 +1,191 @@
+comment: Absolute and normalised differential cross sections of top quark pair production
+    at both particle level in a fiducial phase space and at parton level in the full phase space
+    Numbers in yaml files provided by James Keaveney (CMS) and are taken from ROOT files prepared 
+    by Mykola Savitskyi (CMS).
+dateupdated: 28/11/2018 XX:XX:XX
+hepdata_doi: XX.XXXXX/hepdata.85705.v1
+record_ids:
+- {id: 1703993, type: inspire}
+- {id: XXXX, type: red}
+---
+data_file: d01-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 3
+---
+data_file: d02-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 4
+---
+data_file: d03-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 5
+---
+data_file: d04-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 6
+---
+data_file: d05-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 7
+---
+data_file: d06-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 8
+---
+data_file: d07-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 9
+---
+data_file: d08-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 10
+---
+data_file: d09-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 11
+---
+data_file: d010-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 12
+---
+data_file: d011-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 13
+---
+data_file: d012-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 14
+---
+data_file: d013-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 15
+---
+data_file: d014-x01-y01.yaml
+description: |
+  Absolute differential cross section at parton level.
+keywords: 
+- name: reactions
+  values: [P P --> TOP TOPBAR X]
+- name: observables
+  name: phrases
+  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]
+- name: cmenergies
+  values: [13000.0]
+location: Data from Fig. 16
