@@ -30,14 +30,9 @@
 
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
-//#include "helper_tools.h"
 #include "compare_theory.h"
 
-//#include "tdrstyle.C"
-//#include "CMS_lumi.C"
-
 //to run on beyond-nlo predictions just change n_models and change list of models in .cc
-// summary plot does not yet work for b-nlo models.
 
 using namespace std;
 using namespace boost;
@@ -45,11 +40,13 @@ using namespace boost;
 //const int n_models = 7;
 //const int n_vars = 8;
 
-const int n_models = 3;
-const int n_vars = 33;
+//const int n_models = 3;
+//const int n_vars = 33;
 
 int make_table(string);
-void write_latex(string, vector<string>, vector<string>, float[n_models][n_vars] , int[n_models][n_vars], double[n_models][n_vars]);
+void write_latex(string, vector<string>, vector<string>, vector<vector<float>> , vector<vector<int>>, vector<vector<double>>);
+vector<std::string> make_covariance_matrices(std::string, vector<std::string>);
+
 
 TH1D* graph2histo(TGraphAsymmErrors*);
 
@@ -109,16 +106,6 @@ ofstream myfile_2;
 
 double low_lim = 0.001;
 
-//TH1D* graph2histo(TGraphAsymmErrors* g){
-//    double x, y;
-//    double nbins = g->GetN();
-//    TH1D * h = new TH1D("", "", nbins, 0.0, nbins);
-//    for(int i=0; i< nbins; i++){
-//        g->GetPoint(i, x, y);
-//        h->SetBinContent(i+1, y);
-//    }
-//    return h;
-//};
 
 std::string bnlo_matrix[8][7] = {
     //pt top
@@ -209,7 +196,6 @@ std::vector<string> units = {
     "\\GeV",
     "\\GeV",
     "\\GeV",
-  //  "\\GeV",
     "",
     "",
     "",
@@ -312,8 +298,6 @@ std::vector<string> vars_root = {
     "N_{jets}"
 };
 
-
-
 std::vector<string> vars_txt = {
     "pt_t",
     "pt_tbar",
@@ -386,8 +370,6 @@ std::vector<string> vars_obskey = {
     "NJETS"
 };
 
-
-
 std::vector<string> vars_bnlo = {
     "$\\pt^{\\text{t}}$",
     "$\\pt^{\\tbar}$",
@@ -410,6 +392,230 @@ std::vector<string> vars_root_bnlo = {
     "#Delta|y|(t,#bar{t})"
 };
 
+vector<vector<std::string>> models_files(std::string mode){
+    
+    vector<vector<std::string>> m_f;
+    vector<std::string> modelnames;
+    vector<std::string> filenames;
+    
+    if (mode == "norm_parton"){
+        modelnames = {
+            "\\Powheg+\\Pythia",
+            "\\Powheg+\\Herwigpp",
+            "\\MGaMCatNLO+\\Pythia"};
+        filenames = {
+            "files/Jan18/parton/normalised/DiffXS_HypToppT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypToppTLead_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypToppTNLead_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypToppTTTRestFrame_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTopRapidityLead_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaPhi_source.root"
+        };
+    }else if (mode == "abs_parton"){
+        modelnames = {
+            "\\Powheg+\\Pythia",
+            "\\Powheg+\\Herwigpp",
+            "\\MGaMCatNLO+\\Pythia"};
+        filenames = {
+            "files/Jan18/parton/absolute/DiffXS_HypToppT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypToppTLead_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypToppTNLead_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypToppTTTRestFrame_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTopRapidityLead_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaPhi_source.root"
+        };
+    }
+    else if (mode == "norm_parton_bnlo"){
+        modelnames = {
+            "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~172.5~\\GeV",
+            "NNLO+\\alphaew^{3} \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~172.5~\\GeV",
+            "aN^{3}LO \\\\ (NNPDF3.0) \\\\ \\mt~=~172.5~\\GeV",
+            "aNNLO \\\\ (CT14NNLO) \\\\ \\mt~=~172.5~\\GeV"
+        };
+        filenames = {
+            "files/Jan18/parton/normalised/DiffXS_HypToppT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/parton/normalised/DiffXS_HypTTBarDeltaRapidity_source.root"
+        };
+    }else if (mode == "abs_parton_bnlo"){
+        modelnames = {
+            "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+\\alphaew^{3} \\\\ (LUXQED17) \\\\ \\mt~=~172.5~\\GeV",
+            "NNLO+\\alphaew^{3} \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~173.3~\\GeV",
+            "NNLO+NNLL' \\\\ (NNPDF3.1) \\\\ \\mt~=~172.5~\\GeV",
+            "aN^{3}LO \\\\ (NNPDF3.0) \\\\ \\mt~=~172.5~\\GeV",
+            "aNNLO \\\\ (CT14NNLO) \\\\ \\mt~=~172.5~\\GeV"
+        };
+        filenames = {
+            "files/Jan18/parton/absolute/DiffXS_HypToppT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/parton/absolute/DiffXS_HypTTBarDeltaRapidity_source.root"
+        };
+    }else if (mode == "norm_particle"){
+        modelnames = {
+            "\\Powheg+\\Pythia",
+            "\\Powheg+\\Herwigpp",
+            "\\MGaMCatNLO+\\Pythia"};
+        filenames = {
+            "files/Jan18/particle/normalised/DiffXS_HypToppT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypToppTLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypToppTNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypToppTTTRestFrame_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTopRapidityLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypTTBarDeltaPhi_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonpT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypAntiLeptonpT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonpTLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonpTNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonEta_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypAntiLeptonEta_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonEtaLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLeptonEtaNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLLBarpT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLLBarMass_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLLBarDPhi_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypLLBarDEta_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBJetpTLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBJetpTNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBJetEtaLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBJetEtaNLead_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBBBarpT_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypBBBarMass_source.root",
+            "files/Jan18/particle/normalised/DiffXS_HypJetMultpt30_source.root"
+        };
+    }
+    else if (mode == "abs_particle"){
+        modelnames = {
+            "\\Powheg+\\Pythia",
+            "\\Powheg+\\Herwigpp",
+            "\\MGaMCatNLO+\\Pythia"};
+        filenames = {
+            "files/Jan18/particle/absolute/DiffXS_HypToppT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypAntiToppT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypToppTLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypToppTNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypToppTTTRestFrame_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTopRapidity_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypAntiTopRapidity_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTopRapidityLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTopRapidityNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTTBarpT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTTBarRapidity_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTTBarMass_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTTBarDeltaRapidity_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypTTBarDeltaPhi_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonpT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypAntiLeptonpT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonpTLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonpTNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonEta_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypAntiLeptonEta_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonEtaLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLeptonEtaNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLLBarpT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLLBarMass_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLLBarDPhi_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypLLBarDEta_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBJetpTLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBJetpTNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBJetEtaLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBJetEtaNLead_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBBBarpT_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypBBBarMass_source.root",
+            "files/Jan18/particle/absolute/DiffXS_HypJetMultpt30_source.root"
+        };
+    }
+
+    m_f.push_back(modelnames);
+    m_f.push_back(filenames);
+
+    return m_f;    
+}
+
+
+vector<std::string> make_covariance_matrices(std::string mode, vector<std::string> filenames){
+    
+    vector<string> filenames_cov;
+    std::string text_filename;
+    std::string root_filename;
+
+    //make covariance matrices
+    for (int var = 0; var< filenames.size(); var++){
+        
+        text_filename  = "files/Nov1/";
+        root_filename  = "";
+        char_separator<char> sep("_");
+        tokenizer< char_separator<char> > tokens(filenames[var], sep);
+        
+        vector<std::string> tokens_vec;
+        BOOST_FOREACH (const string& t, tokens) {
+            tokens_vec.push_back(t);
+        }
+        if (mode == "abs_particle") {
+            text_filename += "particle/absolute/covariance/";
+            text_filename += tokens_vec[1];
+            text_filename += "_totCovEnvXSMtrxFile.txt";
+            root_filename = text_filename.substr(0, text_filename.length() - 3) + "root";
+        }else if (mode == "norm_particle"){
+            text_filename += "particle/normalised/covariance/";
+            text_filename += tokens_vec[1];
+            text_filename += "_totCovEnvXSMtrxFile.txt";
+            root_filename = text_filename.substr(0, text_filename.length() - 3) + "root";
+        }else if (mode == "abs_parton" || mode == "abs_parton_bnlo" ){
+            text_filename += "parton/absolute/covariance/";
+            text_filename += tokens_vec[1];
+            text_filename += "_totCovEnvXSMtrxFile.txt";
+            root_filename = text_filename.substr(0, text_filename.length() - 3) + "root";
+        }else if (mode == "norm_parton" || mode == "norm_parton_bnlo"){
+            text_filename += "parton/normalised/covariance/";
+            text_filename += tokens_vec[1];
+            text_filename += "_totCovEnvXSMtrxFile.txt";
+            root_filename = text_filename.substr(0, text_filename.length() - 3) + "root";
+        }
+        make_covariance_matrix(text_filename, filenames[var], vars_root[var]);
+        filenames_cov.push_back(root_filename);
+    }
+    
+    return filenames_cov;
+}
 
 
 ///change so that this method runs over all measurements, and makes one set of files and submission
