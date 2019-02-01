@@ -50,9 +50,7 @@ int make_table(std::string mode){
     //make covariance matrices
     filenames_cov = make_covariance_matrices(mode, filenames);
     
-    
     cout <<"make table: filenames size  =  "<< filenames.size() << endl;
-
 
     //loop over models and files, calculate test chi2 and fill vectors.
     if (mode == "norm_parton" || mode == "abs_parton" ||mode == "norm_particle" || mode == "abs_particle"){
@@ -111,10 +109,10 @@ int make_table(std::string mode){
     myfile << "\\end{table}"<<endl;
     myfile.close();
     
-   summary_plot("norm_parton.root", "norm_particle.root");
+    summary_plot("norm_parton.root", "norm_particle.root");
     //summary_plot("norm_parton_bnlo.root", "norm_particle.root");
     
-    //second write HEPData tables of differential results
+    //second, write HEPData tables of differential results
     write_hepdata_tables(mode, filenames, filenames_cov);
 
     return 1;
@@ -145,7 +143,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
         mode_string = "absolute, parton-level";
     }
     
-    cout <<" write latex: , n vars =   "<<  n_vars << " n models =  "<< models.size()  <<endl;
+    //cout <<" write latex: , n vars =   "<<  n_vars << " n models =  "<< models.size()  <<endl;
     
     myfile << "\\multirow{"<< n_models <<"}{*}{} &"<<endl;
     
@@ -158,7 +156,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
         }
     }
     
-    cout <<" write latex: 2"<<  endl;
+    //cout <<" write latex: 2"<<  endl;
 
 
     for (int m  = 0; m<( models.size()-1); m++ ){
@@ -187,7 +185,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
     };
     
     
-    cout <<" write latex: 2"<<  endl;
+    //cout <<" write latex: 2"<<  endl;
 
 
     for (int summary = 0; summary < models.size(); summary++){
@@ -227,7 +225,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
          summary_name_B = mode + summary_tag + "_B";
         }
 
-        cout <<" write latex: 2.5"<<  endl;
+       // cout <<" write latex: 2.5"<<  endl;
 
         
         double hist_low_lim_A, hist_low_lim_B;
@@ -242,7 +240,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
        // hist_high_lim_B = vars.size() - 15 + (summary*0.32);
          hist_high_lim_B = vars.size() - 14 + (summary*0.32);
         
-        cout <<" write latex: 3"<<  endl;
+       // cout <<" write latex: 3"<<  endl;
 
          //hist_low_lim_B = 0.0;
          //hist_high_lim_B = vars.size() - 15;
@@ -259,7 +257,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
             hist_high_lim_B = hist_high_lim_B - 0.08;
         }
         
-        std::cout <<"model = **"<<  models[summary]  <<"**summary name   = "<< summary_name_A  << std::endl;
+        //std::cout <<"model = **"<<  models[summary]  <<"**summary name   = "<< summary_name_A  << std::endl;
         
         if (mode == "norm_particle" || mode == "abs_particle"){
             h_summary_A = new TH1F(summary_name_A.c_str(), summary_name_A.c_str(), 14, hist_low_lim_A, hist_high_lim_A);
@@ -279,7 +277,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
         h_summaries.push_back(h_summary);
        }
     
-    cout <<" write latex: 4"<<  endl;
+    //cout <<" write latex: 4"<<  endl;
 
 
     vector<string> vars_A, vars_B;
@@ -295,12 +293,11 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
             for (int i  = 0; i< vars.size() ; i++)vars_A.push_back(vars[i]);
         }
     
-    cout <<"created summry hists " <<endl;
-    cout <<"n_vars =  "<< n_vars <<endl;
-    cout <<"chi2 size  =  "<< chisq[0].size() <<endl;
-    cout <<"pval size  =  "<< pval[0].size() <<endl;
-    cout <<"ndof size  =  "<< ndof[0].size() <<endl;
-
+   // cout <<"created summry hists " <<endl;
+   // cout <<"n_vars =  "<< n_vars <<endl;
+   // cout <<"chi2 size  =  "<< chisq[0].size() <<endl;
+   // cout <<"pval size  =  "<< pval[0].size() <<endl;
+   // cout <<"ndof size  =  "<< ndof[0].size() <<endl;
 
     stringstream stream;
     std::string pval_str;
@@ -310,7 +307,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
     for (int i = 0; i< n_vars; i++){
         myfile<<vars[i];
         for (int m  = 0; m < n_models; m++ ){
-            cout <<"latex check, var =  "<< vars[i] <<" model =  "<< models[m] << " pval = " << pval[m][i] <<  "  ndof = " <<  ndof[m][i]<<endl;
+            //cout <<"latex check, var =  "<< vars[i] <<" model =  "<< models[m] << " pval = " << pval[m][i] <<  "  ndof = " <<  ndof[m][i]<<endl;
             pval_str = std::to_string(pval[m][i]);
         if (pval[m][i] < 0.001 && pval[m][i] >= 0.0){
             pval_str = "$< 10^{-3}$";
@@ -386,13 +383,9 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
     myfile << "\\hline"<<endl;
     myfile << "\\end{tabular}"<<endl;
     myfile << "\\label{tab:"<< mode << "}" << endl;
-    
-    cout <<"N vars A = "<< vars_A.size() << endl;
-    
-    cout <<"n models " << n_models<<endl;
 
+    
     for (int m = 0; m< n_models; m++){
-    cout <<"looping models " << m <<endl;
 
         if (mode == "abs_particle" || mode == "norm_particle"){
             for (int i  = 0; i< vars_A.size() ; i++ ){
@@ -408,25 +401,20 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
             
         }else if (mode == "abs_parton" || mode == "norm_parton"){
             for (int i  = 0; i< vars_A.size() ; i++ ){
-                cout <<"looping var a " << m<<endl;
                 h_summaries[m][0]->SetBinContent(i+1, pval[m][i]);
                 h_summaries[m][0]->GetXaxis()->SetBinLabel(i+1,vars_root[i].c_str());
             }
+            h_summaries[m][0]->Write();
         }
         else{
             for (int i  = 0; i< vars_A.size() ; i++ ){
-               cout <<"looping var a bnlo" << m<<endl;
                 h_summaries[m][0]->SetBinContent(i+1, pval[m][i]);
                 h_summaries[m][0]->GetXaxis()->SetBinLabel(i+1,vars_root_bnlo[i].c_str());
             }
-            cout <<" looping vars a  1" << endl;
 
             h_summaries[m][0]->Write();
         }
     }
-    
-    cout <<" filled tables" << endl;
-
     
     f_summary->Close();
     

@@ -630,40 +630,11 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     string hepdata_filename = "";
     string hepdata_sub_filename = "";
     string hepdata_filename_cov = "";
-    
     TCanvas * c_cov;
     
     char_separator<char> sep("#");
     char_separator<char> sep_2("_");
-    
-    // hepdata_filename = "";
-     //hepdata_filename += "HEPData/";
-    //hepdata_filename += mode;
-    //hepdata_filename += "/";
-    // varname = vars_txt[f];
-    // string unit = units[f];
-    // hepdata_filename += varname;
-    // hepdata_filename += "_";
-   // hepdata_filename += "test_hepdata_file";
-    // hepdata_filename_cov = hepdata_filename;
-    // hepdata_filename_cov += "_cov";
-     //hepdata_filename += ".oldhepdata";
-    // hepdata_filename_cov += ".oldhepdata";
-    //    HDfile.open (hepdata_filename);
-    
-    //first write header metadata
-    //HDfile<<"*author: SIRUNYAN"<<endl;
-    //HDfile<<"*reference: ARXIV:1811.06625"<<endl;
-    //HDfile<<"*reference: CMS-TOP-17-014"<<endl;
-    //HDfile<<"*reference: CERN-EP-2018-252"<<endl;
-    ///HDfile<<"*reference: doi:xxxx-xxxx"<<endl;
-    //HDfile<<"*status: Encoded 26 NOV 2018 by James Keaveney"<<endl;
-    //HDfile<<"*experiment: CERN-LHC-CMS"<<endl;
-    //HDfile<<"*detector: CMS"<<endl;
-    //HDfile<<"*inspireId: 1703993"<<endl;
-    //HDfile<<"*cdsId: 2647715"<<endl;
-    //HDfile<<"*title: Measurements of tt differential cross sections in proton-proton collisions at sqrt(s) = 13 TeV using events containing two leptons."<<endl;
-    //HDfile<<"*comment: CERN-LHC. Measurements of the normalised and absolute differntial cross sections at both parton- and particle-levels for top quark pair production using the dilepton decay channels in proton-proton collisions at a centre-of-mass energy of 13 TeV with 35.9 fb^-1 of data collected in 2016. "<<endl;
+    char_separator<char> sep_3("/");
     
     //extract data and bins
     TFile * f_var, *f_var_cov;
@@ -678,6 +649,8 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     string xsec_type_text, xsec_type_text_2;
     vector<std::string> tokens_vec;
     vector<std::string> mode_tokens_vec;
+    vector<std::string> file_tokens_vec;
+
 
     tokenizer< char_separator<char> > mode_tokens(mode, sep_2);
     BOOST_FOREACH (const string& t, mode_tokens){
@@ -692,362 +665,413 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
         xsec_type_text = "normalized";
     }
     
-    hepdata_sub_filename = "test_submission.yaml";
+    hepdata_sub_filename = "HEPData/test_submission.yaml";
     HDfile_sub.open(hepdata_sub_filename);
     
     HDfile_sub<<"comment: Absolute and normalised differential cross sections of top quark pair production"<<endl;
-    HDfile_sub<<"    at both particle level in a fiducial phase space and at parton level in the full phase space"<<endl;
+    HDfile_sub<<"    at parton level in the full phase space and at particle level in a fiducial phase space."<<endl;
     HDfile_sub<<"    Numbers in yaml files provided by James Keaveney (CMS) and are taken from ROOT files prepared "<<endl;
     HDfile_sub<<"    by Mykola Savitskyi (CMS)."<<endl;
-    HDfile_sub<<"dateupdated: 28/11/2018 XX:XX:XX"<<endl;
+    HDfile_sub<<"date updated: 28/11/2018 XX:XX:XX"<<endl;
     HDfile_sub<<"hepdata_doi: XX.XXXXX/hepdata.85705.v1" << endl;
     HDfile_sub<<"record_ids:"<<endl;
     HDfile_sub<<"- {id: 1703993, type: inspire}"<<endl;
     HDfile_sub<<"- {id: XXXX, type: red}"<<endl;
     
-    for (int f = 0; f < filenames.size(); f++){
-        filename = filenames[f];
-        filename_cov = filenames_cov[f];
-        
-        hepdata_filename = "";
-        hepdata_filename += "HEPData/";
-        varname = vars_txt[f];
-        int fp = f+1;
-        std::string yaml_filename = "d0" + std::to_string(fp) + "-x01-y01.yaml";
-        hepdata_filename += yaml_filename;
-        //hepdata_filename += varname;
-        //hepdata_filename += "_";
-        //hepdata_filename += mode;
-        //hepdata_filename += ".yaml";
-        
-        HDfile.open (hepdata_filename);
-        
-        bins.clear();
-        tokens_vec.clear();
-        string f_str = std::to_string(f);
-        
-        tokenizer< char_separator<char> > tokens_2(filenames[f], sep_2);
-        BOOST_FOREACH (const string& t, tokens_2) {
-            tokens_vec.push_back(t);
-        }
+    //////////////////////////////////////////////////////
+    //write results   ////////////////////////////////////
+    //////////////////////////////////////////////////////
     
-        tokens_vec.clear();
-        
-        //get data files
-        f_var = new TFile(filename.c_str());
-        h_mc = (TH1F*)f_var->Get("mc");
-        g_data = (TGraphAsymmErrors*)f_var->Get("data");
-        g_data_stat_unc_only = (TGraphAsymmErrors*)f_var->Get("data_staterror_only");
-        
-        xtitle = h_mc->GetXaxis()->GetTitle();
-        tokenizer< char_separator<char> > tokens(xtitle, sep);
-        BOOST_FOREACH (const string& t, tokens){
-            tokens_vec.push_back(t);
-        }
-        
-        //write data
-        for (int bin = 1; bin <= h_mc->GetNbinsX(); bin++){
-            bin_centre = h_mc->GetBinCenter(bin);
-            bin_width = h_mc->GetBinWidth(bin);
-            bin_edge = bin_centre - (bin_width/2.0);
-            bins.push_back(bin_edge);
-        }
-        
-        bins.push_back(bin_centre + (bin_width/2.0));
-        
-        string hd_unit;
-        std::string tex_str = h_mc->GetYaxis()->GetTitle();
-        std::string x_tex_str = h_mc->GetXaxis()->GetTitle();
-        
-        std::cout <<" tex string  = "<< tex_str << std::endl;
-        
-        char_separator<char> sep_2(" ");
-        vector<std::string> tokens_vec;
-        tokenizer< char_separator<char> > tokens_3(tex_str, sep_2);
-        BOOST_FOREACH (const string& t, tokens_3) {
-            tokens_vec.push_back(t);
-        }
-        tex_str = tokens_vec[0] + tokens_vec[1] ;
-        tokens_vec.clear();
-        
-        tokenizer< char_separator<char> > tokens_4(x_tex_str, sep_2);
-        BOOST_FOREACH (const string& t, tokens_4) {
-            tokens_vec.push_back(t);
-        }
-        x_tex_str = tokens_vec[0];
-        tokens_vec.clear();
-        
-        replace(tex_str, "#", "\\");
-        replace(tex_str, "\\left", "");
-        replace(tex_str, "\\right", "");
-        
-        replace(x_tex_str, "#", "\\");
-
-        std::string super_script = "^{-1}";
-        std::string xsec_unit = "pb";
-
-        if (mode == "norm_parton" || mode == "norm_particle"){
-            xsec_unit = "";
-            if (units[f] == "\\GeV"){
-                hd_unit = "1/GEV";
+    std::vector<std::string> parton_particle_files = {
+        "DiffXS_HypToppT_source.root",
+        "DiffXS_HypAntiToppT_source.root",
+        "DiffXS_HypToppTLead_source.root",
+        "DiffXS_HypToppTNLead_source.root",
+        "DiffXS_HypToppTTTRestFrame_source.root",
+        "DiffXS_HypTopRapidity_source.root",
+        "DiffXS_HypAntiTopRapidity_source.root",
+        "DiffXS_HypTopRapidityLead_source.root",
+        "DiffXS_HypTopRapidityNLead_source.root",
+        "DiffXS_HypTTBarpT_source.root",
+        "DiffXS_HypTTBarRapidity_source.root",
+        "DiffXS_HypTTBarMass_source.root",
+        "DiffXS_HypTTBarDeltaRapidity_source.root",
+        "DiffXS_HypTTBarDeltaPhi_source.root"
+    };
+    
+    std::vector<std::string> particle_only_files = {
+        "DiffXS_HypLeptonpT_source.root",
+        "DiffXS_HypAntiLeptonpT_source.root",
+        "DiffXS_HypLeptonpTLead_source.root",
+        "DiffXS_HypLeptonpTNLead_source.root",
+        "DiffXS_HypLeptonEta_source.root",
+        "DiffXS_HypAntiLeptonEta_source.root",
+        "DiffXS_HypLeptonEtaLead_source.root",
+        "DiffXS_HypLeptonEtaNLead_source.root",
+        "DiffXS_HypLLBarpT_source.root",
+        "DiffXS_HypLLBarMass_source.root",
+        "DiffXS_HypLLBarDPhi_source.root",
+        "DiffXS_HypLLBarDEta_source.root",
+        "DiffXS_HypBJetpTLead_source.root",
+        "DiffXS_HypBJetpTNLead_source.root",
+        "DiffXS_HypBJetEtaLead_source.root",
+        "DiffXS_HypBJetEtaNLead_source.root",
+        "DiffXS_HypBBBarpT_source.root",
+        "DiffXS_HypBBBarMass_source.root",
+        "DiffXS_HypJetMultpt30_source.root"
+    };
+    
+    std::vector<std::string> modes = {"parton_particle", "particle_only"};
+    std::vector<std::string> levels;
+    std::vector<std::string> types = {"absolute", "normalised"};
+    
+    int fp = 0 ;
+    int var_number =0;
+    
+    for (int mode = 0; mode < modes.size(); mode++){
+            if (modes[mode]=="parton_particle"){
+                filenames = parton_particle_files;
+                levels = {"parton", "particle"};
             }else{
-                hd_unit =  "";
+                filenames = particle_only_files;
+                levels = {"particle"};
             }
-        }else{
-            xsec_unit = "";
-            if (units[f] == "\\GeV"){
-                hd_unit = "PB/GEV";
-            }else{
-                hd_unit =  "PB";
+        
+            for (int f = 0; f < filenames.size(); f++){
+                for (int l = 0; l < levels.size(); l++){
+                    for (int ty = 0; ty < types.size(); ty++){
+                                    filename =  "files/Jan18/" + levels[l] + "/" + types[ty] + "/" + filenames[f];
+                                    std::cout << "smart filename  = " << filename << std::endl;
+                        
+                                    file_tokens_vec.clear();
+                        
+                                    tokenizer< char_separator<char> > file_tokens(filenames[f], sep_2);
+                                    BOOST_FOREACH (const string& ft, file_tokens){
+                                    file_tokens_vec.push_back(ft);
+                                    }
+                        
+                                    //filename = filenames[f];
+                                    //filename_cov = filenames_cov[f];
+                                    filename_cov = "files/Nov1/" +  levels[l] + "/" + types[ty] + "/covariance/" + file_tokens_vec[1] + "_totCovEnvXSMtrxFile.root";
+                        
+                                    std::cout  << "filename = " << filename << " filename_cov = " << filename_cov << std::endl;
+                        
+                                    hepdata_filename = "";
+                                    hepdata_filename += "HEPData/";
+                                    varname = vars_txt[f];
+                        
+                                    fp = fp + 1;
+                                    std::string yaml_filename = "d0" + std::to_string(fp) + "-x01-y01.yaml";
+                                    hepdata_filename += yaml_filename;
+                        
+                                    HDfile.open (hepdata_filename);
+                        
+                                    bins.clear();
+                                    tokens_vec.clear();
+                                    string f_str = std::to_string(f);
+                        
+                                    tokenizer< char_separator<char> > tokens_2(filenames[f], sep_2);
+                                    BOOST_FOREACH (const string& t, tokens_2) {
+                                        tokens_vec.push_back(t);
+                                    }
+                        
+                                    tokens_vec.clear();
+                        
+                                    //get data files
+                                    f_var = new TFile(filename.c_str());
+                                    h_mc = (TH1F*)f_var->Get("mc");
+                                    g_data = (TGraphAsymmErrors*)f_var->Get("data");
+                                    g_data_stat_unc_only = (TGraphAsymmErrors*)f_var->Get("data_staterror_only");
+                        
+                                    xtitle = h_mc->GetXaxis()->GetTitle();
+                                    tokenizer< char_separator<char> > tokens(xtitle, sep);
+                                    BOOST_FOREACH (const string& t, tokens){
+                                        tokens_vec.push_back(t);
+                                    }
+                        
+                                    //write data
+                                    for (int bin = 1; bin <= h_mc->GetNbinsX(); bin++){
+                                        bin_centre = h_mc->GetBinCenter(bin);
+                                        bin_width = h_mc->GetBinWidth(bin);
+                                        bin_edge = bin_centre - (bin_width/2.0);
+                                        bins.push_back(bin_edge);
+                                    }
+                        
+                                    bins.push_back(bin_centre + (bin_width/2.0));
+                        
+                                    string hd_unit;
+                                    std::string tex_str = h_mc->GetYaxis()->GetTitle();
+                                    std::string x_tex_str = h_mc->GetXaxis()->GetTitle();
+                        
+                                    char_separator<char> sep_2(" ");
+                                    vector<std::string> tokens_vec;
+                                    tokenizer< char_separator<char> > tokens_3(tex_str, sep_2);
+                                    BOOST_FOREACH (const string& t, tokens_3) {
+                                        tokens_vec.push_back(t);
+                                    }
+                                    tex_str = tokens_vec[0] + tokens_vec[1] ;
+                                    tokens_vec.clear();
+                        
+                                    tokenizer< char_separator<char> > tokens_4(x_tex_str, sep_2);
+                                    BOOST_FOREACH (const string& t, tokens_4) {
+                                        tokens_vec.push_back(t);
+                                    }
+                                    x_tex_str = tokens_vec[0];
+                                    tokens_vec.clear();
+                        
+                                    replace(tex_str, "#", "\\");
+                                    replace(tex_str, "\\left", "");
+                                    replace(tex_str, "\\right", "");
+                                    replace(x_tex_str, "#", "\\");
+
+                                    std::string super_script = "^{-1}";
+                                    std::string xsec_unit = "pb";
+
+                        /*
+                                    if (mode == "norm_parton" || mode == "norm_particle"){
+                                        xsec_unit = "";
+                                        if (units[f] == "\\GeV"){
+                                            hd_unit = "1/GEV";
+                                        }else{
+                                            hd_unit =  "";
+                                        }
+                                    }else{
+                                        xsec_unit = "";
+                                        if (units[f] == "\\GeV"){
+                                            hd_unit = "PB/GEV";
+                                        }else{
+                                            hd_unit =  "PB";
+                                        }
+                                    }
+                         */
+                        
+                                    std::string level;
+                                    std::string type;
+                                    std::string sig;
+/*
+                                    if (mode == "norm_particle"){
+                                        level = "particle";
+                                        type = "Normalised";
+                                        sig = "SIG(fiducial)";
+                                    }else if (mode == "abs_particle"){
+                                        level = "particle";
+                                        type = "Absolute";
+                                        sig = "SIG(fiducial)";
+                                    }
+                                    else if (mode == "norm_parton"){
+                                        level = "parton";
+                                        type = "Absolute";
+                                        sig = "SIG";
+
+                                    }else if (mode == "abs_parton"){
+                                        level = "parton";
+                                        type = "Absolute";
+                                        sig = "SIG";
+                                    }
+ 
+ */
+                                    HDfile_sub<<"---"<<endl;
+                                    HDfile_sub<<"data_file: "<< yaml_filename <<endl;
+                                    HDfile_sub<<"description: |"<< endl;
+                                    HDfile_sub<<"  "<< types[ty] <<" differential cross section at "<< levels[l] << " level as a function of "<< vars[var_number] <<"."<<endl;
+                                    HDfile_sub<<"keywords: "<<endl;
+                                    HDfile_sub<<"- name: reactions"<<endl;
+                                    HDfile_sub<<"  values: [P P --> TOP TOPBAR X]"<<endl;
+                                    HDfile_sub<<"- name: observables"<<endl;
+                        
+                                   // if (mode == "norm_particle" || mode == "abs_particle" ){
+                                   //     HDfile_sub<<"  values: [DSIG_FID/" << vars_obskey[f] << "]"  << endl;
+                                   // }
+                        
+                                    HDfile_sub<<"  name: phrases"<<endl;
+                                    HDfile_sub<<"  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]"<<endl;
+                                    HDfile_sub<<"- name: cmenergies"<<endl;
+                                    HDfile_sub<<"  values: [13000.0]"<<endl;
+                                    HDfile_sub<<"location: Data from Fig. "<< f+3 <<endl;
+                        
+                                    std:string unit = units[f];
+                                    replace(unit, "\\", "");
+                        
+                                    if (unit == "GeV"){
+                                        unit = "GEV";
+                                    }else{
+                                        unit = "";
+                                    }
+                        
+                                    //independent variables
+                                    HDfile<<"independent_variables: "<<endl;
+
+                                    if (unit != ""){
+                                        HDfile<<"- header: {name: '$"<< x_tex_str <<"$ [" <<  unit << "]'}"<<endl;
+                                    }else{
+                                        HDfile<<"- header: {name: '$"<< x_tex_str <<"$ '}"<<endl;
+                                    }
+                        
+                                    HDfile<<"  values:"<<endl;
+                                    for (int bin = 1; bin < bins.size(); bin++){
+                                        HDfile<<"  - {high: "<< bins[bin] <<", low: "<< bins[bin-1] <<"}"<<endl;
+                                    }
+                        
+                                    //dependent variables
+                                    HDfile<<"dependent_variables: "<<endl;
+                                    HDfile<<"- header: {name: "<<  sig  <<", units: " << hd_unit <<"}" <<endl;
+                                    HDfile<<"  qualifiers: "<<endl;
+                                    HDfile<<"  - {name: RE, value: P P --> TOP TOPBAR X}"<<endl;
+                                    HDfile<<"  - {name: SQRT(S), units: GEV, value: '13000.0'}"<<endl;
+                                    HDfile<<"  values:"<<endl;
+                        
+                                    for (int bin = 1; bin < bins.size(); bin++){
+                                        g_data->GetPoint(bin-1, data_x, data_y);
+                                        
+                                        stat_unc = g_data_stat_unc_only->GetErrorY(bin-1);
+                                        tot_unc = g_data->GetErrorY(bin-1);
+                                        sys_unc = pow( (  (pow(tot_unc,2)) -  (pow(stat_unc,2))    ), 0.5     );
+                                        HDfile<<"  - value: "  << data_y  << endl;
+                                        HDfile<<"    errors:"<<endl;
+                                        HDfile<<"    - {label: stat, symerror: " << stat_unc << "}" << endl;
+                                        HDfile<<"    - {label: sys, symerror: "  << sys_unc  << "}" << endl;
+                                    }
+                        
+                                    //get covariance matrix and draw
+                                    gStyle->SetPaintTextFormat("4.8f");
+                                    //gStyle->SetPalette(51);
+                                    const Int_t Number = 3;
+                                    Double_t Red[Number]    = { 1.00, 0.00, 0.00};
+                                    Double_t Green[Number]  = { 0.00, 1.00, 0.00};
+                                    Double_t Blue[Number]   = { 1.00, 0.00, 1.00};
+                                    Double_t Length[Number] = { 0.00, 0.50, 1.00 };
+                                    Int_t nb = 500;
+                                    //TColor::CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
+
+                                    f_var_cov = new TFile(filename_cov.c_str());
+                                    h_cov = (TH2D*)f_var_cov->Get("cov");
+                                    h_cov->SetContour(nb);
+                                    c_cov = new TCanvas();
+                                    h_cov->Draw("colz");
+                        
+                                    //gPad->Update();
+                                    TPaletteAxis *palette = (TPaletteAxis*)h_cov->GetListOfFunctions()->FindObject("palette");
+                        
+                                    // the following lines moe the paletter. Choose the values you need for the position.
+                                    palette->SetX1NDC(0.89);
+                                    palette->SetX2NDC(0.94);
+                                    palette->SetY1NDC(0.1);
+                                    palette->SetY2NDC(0.9);
+                                    //gPad->Modified();
+                                    //gPad->Update();
+                        
+                                    std::string hepdata_filename_covplot = "";
+                                    hepdata_filename_covplot += "CovMatrices/";
+                                    varname = vars_txt[f];
+                                    hepdata_filename_covplot += varname;
+                                    hepdata_filename_covplot += "_";
+                                    hepdata_filename_covplot += mode;
+                                    hepdata_filename_covplot += "_";
+                                    hepdata_filename_covplot += "_cov.pdf";
+                        
+                                    c_cov->SetTopMargin(0.1);
+                                    c_cov->SetBottomMargin(0.15);
+                                    c_cov->SetLeftMargin(0.0935);
+                                    c_cov->SetRightMargin(0.12);
+                        
+                                    float H = c_cov->GetWh();
+                                    float W = c_cov->GetWw();
+                                    float l = c_cov->GetLeftMargin();
+                                    float t = c_cov->GetTopMargin();
+                                    float r = c_cov->GetRightMargin();
+                                    float b = c_cov->GetBottomMargin();
+                                    float extraOverCmsTextSize  = 0.8;
+                        
+                                    TString cmsText, extraText,extraText2, lumiText;
+                                    cmsText += "CMS";
+                                    extraText += "Supplementary ";
+                        
+                        /*
+                                    if (mode == "norm_parton"){
+                                        extraText2 += " parton level, normalised";
+                                    }else if (mode == "abs_parton"){
+                                        extraText2 += " parton level, absolute";
+                                    }else if (mode == "norm_particle"){
+                                        extraText2 += " particle level, normalised";
+                                    }else if (mode == "abs_particle"){
+                                        extraText2 += " particle level, absolute";
+                                    }
+                         */
+                        
+                                    lumiText += "35.9 fb^{-1} (13 TeV)";
+                        
+                                    TLatex latex;
+                                    latex.SetNDC();
+                                    latex.SetTextAngle(0);
+                                    latex.SetTextSize(0.48*t);
+                                    latex.SetTextColor(kBlack);
+                                    latex.SetTextFont(61);
+                                    latex.SetTextAlign(31);
+                                    latex.DrawLatex(0.16,0.916,cmsText);
+                                    latex.SetTextFont(52);
+                                    latex.SetTextSize(0.49*t*extraOverCmsTextSize);
+                                    latex.DrawLatex(0.345,0.915,extraText);
+                                    latex.SetTextFont(42);
+                                    latex.SetTextSize(0.38*t);
+                                    latex.DrawLatex(0.628,0.915,extraText2);
+                                    latex.SetTextFont(42);
+                                    latex.SetTextSize(0.46*t);
+                                    latex.DrawLatex(0.88,0.916,lumiText);
+                        
+                                    c_cov->SaveAs(hepdata_filename_covplot.c_str());
+                        
+                                    //////////////////////////////////////////////////////
+                                    //write covariance matrices //////////////////////////
+                                    //////////////////////////////////////////////////////
+                                    std::string yaml_filename_cov = "HEPData/d0" + std::to_string(fp) + "-x01-y01_cov.yaml";
+
+                                    HDfile_cov.open (yaml_filename_cov);
+                                    HDfile_cov<<"dependent_variables:" <<endl;
+                                    HDfile_cov<<"- header: {name: ''}" <<endl;
+                                    HDfile_cov<<"  qualifiers:" <<endl;
+                                    HDfile_cov<<"  - {name: '', value: COVARIANCE MATRIX}" <<endl;
+                                    HDfile_cov<<"  values:" <<endl;
+                        
+                                    for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
+                                        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
+                                            for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
+                                                HDfile_cov<<"  - {value: "  << std::defaultfloat << std::setprecision(15) << h_cov->GetBinContent(xbin,ybin) << "}"<< endl;
+                                        }
+                                    }
+                        
+                                    HDfile_cov<<"independent_variables:" <<endl;
+                                    HDfile_cov<<"- header: {name: Bin}" <<endl;
+                                    HDfile_cov<<"  values:" <<endl;
+                                    for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
+                                    for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
+                                        for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
+                                            HDfile_cov<<"  - {value: "<< ybin <<".0}" <<endl;
+                                        }
+                                    }
+                                    HDfile_cov<<"- header: {name: Bin}" <<endl;
+                                    HDfile_cov<<"  values:" <<endl;
+                                    for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
+                                    for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
+                                        for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
+                                            HDfile_cov<<"  - {value: "<< xbin <<".0}" <<endl;
+                                        }
+                                    }
+                        
+                                    HDfile.close();
+                                    HDfile_cov.close();
+                                    f_var->Close();
+                }
             }
-        }
-        
-        std::string level;
-        std::string type;
-        std::string sig;
-
-        if (mode == "norm_particle"){
-            level = "particle";
-            type = "Normalised";
-            sig = "SIG(fiducial)";
-        }else if (mode == "abs_particle"){
-            level = "particle";
-            type = "Absolute";
-            sig = "SIG(fiducial)";
-        }
-        else if (mode == "norm_parton"){
-            level = "parton";
-            type = "Absolute";
-            sig = "SIG";
-
-        }else if (mode == "abs_parton"){
-            level = "parton";
-            type = "Absolute";
-            sig = "SIG";
-        }
-        
-        HDfile_sub<<"---"<<endl;
-        HDfile_sub<<"data_file: "<< yaml_filename <<endl;
-        HDfile_sub<<"description: |"<< endl;
-        HDfile_sub<<"  "<< type <<" differential cross section at "<< level << " level."<<endl;
-        HDfile_sub<<"keywords: "<<endl;
-        HDfile_sub<<"- name: reactions"<<endl;
-        HDfile_sub<<"  values: [P P --> TOP TOPBAR X]"<<endl;
-        HDfile_sub<<"- name: observables"<<endl;
-        
-        if (mode == "norm_particle" || mode == "abs_particle" ){
-            HDfile_sub<<"  values: [DSIG_FID/" << vars_obskey[f] << "]"  << endl;
-        }
-        
-        HDfile_sub<<"  name: phrases"<<endl;
-        HDfile_sub<<"  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]"<<endl;
-        HDfile_sub<<"- name: cmenergies"<<endl;
-        HDfile_sub<<"  values: [13000.0]"<<endl;
-        HDfile_sub<<"location: Data from Fig. "<< f+3 <<endl;
-        
-        std:string unit = units[f];
-        replace(unit, "\\", "");
-        
-        if (unit == "GeV"){
-            unit = "GEV";
-        }else{
-            unit = "";
-        }
-        
-        //independent variables
-        HDfile<<"independent_variables: "<<endl;
-        //HDfile<<"- header: {name: Bin}"<<endl;
-        //HDfile<<"  values:"<<endl;
-        //for (int bin = 1; bin < bins.size(); bin++){
-        //    HDfile<<"  - {value: "<< bin << ".0}" <<  endl;
-       // }
-        if (unit != ""){
-            HDfile<<"- header: {name: '$"<< x_tex_str <<"$ [" <<  unit << "]'}"<<endl;
-        }else{
-            HDfile<<"- header: {name: '$"<< x_tex_str <<"$ '}"<<endl;            
-        }
-            
-            
-        HDfile<<"  values:"<<endl;
-        for (int bin = 1; bin < bins.size(); bin++){
-            HDfile<<"  - {high: "<< bins[bin] <<", low: "<< bins[bin-1] <<"}"<<endl;
-        }
-        
-        //dependent variables
-        HDfile<<"dependent_variables: "<<endl;
-        HDfile<<"- header: {name: "<<  sig  <<", units: " << hd_unit <<"}" <<endl;
-        HDfile<<"  qualifiers: "<<endl;
-        HDfile<<"  - {name: RE, value: P P --> TOP TOPBAR X}"<<endl;
-        HDfile<<"  - {name: SQRT(S), units: GEV, value: '13000.0'}"<<endl;
-        
-       // for (int bin = 1; bin < bins.size(); bin++){
-       //     HDfile<<"  - {value: "<< bin  << ".0}"<<endl;
-       // }
-        //if (hd_unit == "1/GEV"){
-       //     HDfile<<"- header: {name: '$"<< x_tex_str <<"$ GEV'}"<<endl;
-       // }else{
-       //     HDfile<<"- header: {name: '$"<< x_tex_str <<"$ '}"<<endl;
-       // }
-        
-        HDfile<<"  values:"<<endl;
-        
-        for (int bin = 1; bin < bins.size(); bin++){
-            g_data->GetPoint(bin-1, data_x, data_y);
-            
-            stat_unc = g_data_stat_unc_only->GetErrorY(bin-1);
-            tot_unc = g_data->GetErrorY(bin-1);
-            sys_unc = pow( (  (pow(tot_unc,2)) -  (pow(stat_unc,2))    ), 0.5     );
-            HDfile<<"  - value: "  << data_y  << endl;
-            HDfile<<"    errors:"<<endl;
-            HDfile<<"    - {label: stat, symerror: " << stat_unc << "}" << endl;
-            HDfile<<"    - {label: sys, symerror: "  << sys_unc  << "}" << endl;
-            //HDfile<< bin <<"; "<< std::defaultfloat << std::setprecision(4) << bins[bin-1]<<" TO "<< bins[bin] << "; " << data_y << " +- "<< stat_unc << " (DSYS="<<  sys_unc<< ");"<< endl;
-        }
-        
-        //get covariance matrix and draw
-        gStyle->SetPaintTextFormat("4.8f");
-        //gStyle->SetPalette(51);
-        const Int_t Number = 3;
-        Double_t Red[Number]    = { 1.00, 0.00, 0.00};
-        Double_t Green[Number]  = { 0.00, 1.00, 0.00};
-        Double_t Blue[Number]   = { 1.00, 0.00, 1.00};
-        Double_t Length[Number] = { 0.00, 0.50, 1.00 };
-        Int_t nb = 500;
-        //TColor::CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
-
-        f_var_cov = new TFile(filename_cov.c_str());
-        h_cov = (TH2D*)f_var_cov->Get("cov");
-        h_cov->SetContour(nb);
-        c_cov = new TCanvas();
-        h_cov->Draw("colz");
-        
-        //gPad->Update();
-        TPaletteAxis *palette = (TPaletteAxis*)h_cov->GetListOfFunctions()->FindObject("palette");
-        
-        // the following lines moe the paletter. Choose the values you need for the position.
-        palette->SetX1NDC(0.89);
-        palette->SetX2NDC(0.94);
-        palette->SetY1NDC(0.1);
-        palette->SetY2NDC(0.9);
-        //gPad->Modified();
-        //gPad->Update();
-        
-        std::string hepdata_filename_covplot = "";
-        hepdata_filename_covplot += "CovMatrices/";
-        varname = vars_txt[f];
-        hepdata_filename_covplot += varname;
-        hepdata_filename_covplot += "_";
-        hepdata_filename_covplot += mode;
-        hepdata_filename_covplot += "_";
-        hepdata_filename_covplot += "_cov.pdf";
-        
-        c_cov->SetTopMargin(0.1);
-        c_cov->SetBottomMargin(0.15);
-        c_cov->SetLeftMargin(0.0935);
-        c_cov->SetRightMargin(0.12);
-        
-        float H = c_cov->GetWh();
-        float W = c_cov->GetWw();
-        float l = c_cov->GetLeftMargin();
-        float t = c_cov->GetTopMargin();
-        float r = c_cov->GetRightMargin();
-        float b = c_cov->GetBottomMargin();
-        float extraOverCmsTextSize  = 0.8;
-        
-        TString cmsText, extraText,extraText2, lumiText;
-        cmsText += "CMS";
-        extraText += "Supplementary ";
-        
-        if (mode == "norm_parton"){
-            extraText2 += " parton level, normalised";
-        }else if (mode == "abs_parton"){
-            extraText2 += " parton level, absolute";
-        }else if (mode == "norm_particle"){
-            extraText2 += " particle level, normalised";
-        }else if (mode == "abs_particle"){
-            extraText2 += " particle level, absolute";
-        }
-        
-        lumiText += "35.9 fb^{-1} (13 TeV)";
-        
-        TLatex latex;
-        latex.SetNDC();
-        latex.SetTextAngle(0);
-        latex.SetTextSize(0.48*t);
-        latex.SetTextColor(kBlack);
-        latex.SetTextFont(61);
-        latex.SetTextAlign(31);
-        latex.DrawLatex(0.16,0.916,cmsText);
-        
-        latex.SetTextFont(52);
-        latex.SetTextSize(0.49*t*extraOverCmsTextSize);
-        latex.DrawLatex(0.345,0.915,extraText);
-        
-        latex.SetTextFont(42);
-        latex.SetTextSize(0.38*t);
-        latex.DrawLatex(0.628,0.915,extraText2);
-        
-        latex.SetTextFont(42);
-        latex.SetTextSize(0.46*t);
-        latex.DrawLatex(0.88,0.916,lumiText);
-        
-        c_cov->SaveAs(hepdata_filename_covplot.c_str());
-
-        //write covariances
-        std::string yaml_filename_cov = "HEPData/d0" + std::to_string(fp) + "-x01-y01_cov.yaml";
-
-        HDfile_cov.open (yaml_filename_cov);
-        HDfile_cov<<"dependent_variables:" <<endl;
-        HDfile_cov<<"- header: {name: ''}" <<endl;
-        HDfile_cov<<"  qualifiers:" <<endl;
-        HDfile_cov<<"  - {name: '', value: COVARIANCE MATRIX}" <<endl;
-        HDfile_cov<<"  values:" <<endl;
-        
-        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
-            for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
-                for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
-                    HDfile_cov<<"  - {value: "  << std::defaultfloat << std::setprecision(15) << h_cov->GetBinContent(xbin,ybin) << "}"<< endl;
+                var_number++;
             }
-        }
-        
-        HDfile_cov<<"independent_variables:" <<endl;
-        HDfile_cov<<"- header: {name: Bin}" <<endl;
-        HDfile_cov<<"  values:" <<endl;
-        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
-        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
-            for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
-                HDfile_cov<<"  - {value: "<< ybin <<".0}" <<endl;
-            }
-        }
-        HDfile_cov<<"- header: {name: Bin}" <<endl;
-        HDfile_cov<<"  values:" <<endl;
-        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++)
-        for (int xbin = 1; xbin <= h_cov->GetNbinsX(); xbin++){
-            for (int ybin = 1; ybin <= h_cov->GetNbinsY(); ybin++){
-                HDfile_cov<<"  - {value: "<< xbin <<".0}" <<endl;
-            }
-        }
-        
-        HDfile.close();
-        HDfile_cov.close();
-
-        f_var->Close();
-    
-    }
-    
-    //HDfile_sub<<"---"<<endl;
     
     HDfile_sub.close();
-
-    
-    //HDfile_cov.close();
-
-
+}
 }
 
 void write_results_table(string mode, vector<string> filenames){
     
-    //cout<<"writing results table"<< endl;
+    cout<<"writing results table"<< endl;
     
     string tex_filename;
     string filename_norm;
@@ -1097,7 +1121,7 @@ void write_results_table(string mode, vector<string> filenames){
         filename_abs = tokens_vec[0] + "/" + tokens_vec[1] + "/"  + tokens_vec[2] + "/absolute/" +tokens_vec[4];
         tokens_vec.clear();
         
-        
+
         
         f_var_norm = new TFile(filename_norm.c_str());
         h_mc_norm = (TH1F*)f_var_norm->Get("mc");
@@ -1312,7 +1336,6 @@ void write_results_table(string mode, vector<string> filenames){
             myfile_2<< std::defaultfloat << std::setprecision(4) <<"$\\text{[}$"<< bins[bin-1]<<", "<< bins[bin]<<"$\\text{]}$";
 
             
-            
             if (scify_norm && scify_abs){
            // myfile_2 << std::fixed << std::setprecision(4) << " & ("<< str_data_norm_y  <<" $\\pm$ "<<  str_stat_unc_norm <<" $\\pm$ "<< str_sys_unc_norm << ")"<<exp_str_norm << " & ("<< str_data_abs_y <<" $\\pm$ "<<  str_stat_unc_abs << " $\\pm$ " << str_sys_unc_abs <<") "<< exp_str_abs << " \\\\"<<endl;
             myfile_2 << " & ("<< str_data_norm_y  <<" $\\pm$ "<<  str_stat_unc_norm <<" $\\pm$ "<< str_sys_unc_norm << ")"<<exp_str_norm << " & ("<< str_data_abs_y <<" $\\pm$ "<<  str_stat_unc_abs << " $\\pm$ " << str_sys_unc_abs <<") "<< exp_str_abs << " \\\\"<<endl;
@@ -1357,7 +1380,6 @@ void write_results_table(string mode, vector<string> filenames){
         f_var_norm->Close();
         f_var_abs->Close();
 
-        
 }
     myfile_2.close();
 
