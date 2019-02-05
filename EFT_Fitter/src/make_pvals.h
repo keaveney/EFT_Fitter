@@ -665,18 +665,23 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
         xsec_type_text = "normalized";
     }
     
-    hepdata_sub_filename = "HEPData/test_submission.yaml";
+    hepdata_sub_filename = "HEPData/submission.yaml";
     HDfile_sub.open(hepdata_sub_filename);
     
-    HDfile_sub<<"comment: Absolute and normalised differential cross sections of top quark pair production"<<endl;
+    
+    HDfile_sub<<"---"<<endl;
+  //  HDfile_sub<<"additional_resources:"<<endl;
+  //  HDfile_sub<<"  - {location: \"http://cms-results.web.cern.ch/cms-results/public-results/publications/TOP-17-014/index.html\", description: \"web page with auxiliary material\"}"<<endl;
+
+    HDfile_sub<<"comment |: Absolute and normalised differential cross sections of top quark pair production"<<endl;
     HDfile_sub<<"    at parton level in the full phase space and at particle level in a fiducial phase space."<<endl;
     HDfile_sub<<"    Numbers in yaml files provided by James Keaveney (CMS) and are taken from ROOT files prepared "<<endl;
     HDfile_sub<<"    by Mykola Savitskyi (CMS)."<<endl;
-    HDfile_sub<<"date updated: 28/11/2018 XX:XX:XX"<<endl;
-    HDfile_sub<<"hepdata_doi: XX.XXXXX/hepdata.85705.v1" << endl;
-    HDfile_sub<<"record_ids:"<<endl;
-    HDfile_sub<<"- {id: 1703993, type: inspire}"<<endl;
-    HDfile_sub<<"- {id: XXXX, type: red}"<<endl;
+//    HDfile_sub<<"date updated: 28/11/2018 XX:XX:XX"<<endl;
+//    HDfile_sub<<"hepdata_doi: XX.XXXXX/hepdata.85705.v1" << endl;
+//    HDfile_sub<<"record_ids:"<<endl;
+//    HDfile_sub<<"- {id: 1703993, type: inspire}"<<endl;
+//    HDfile_sub<<"- {id: XXXX, type: red}"<<endl;
     
     //////////////////////////////////////////////////////
     //write results   ////////////////////////////////////
@@ -727,7 +732,10 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     
     int fp = 0 ;
     int var_number =0;
-    
+    int index = 0;
+    int table_iterator = 0;
+    int table_number = 0;
+    std::string level ;
     for (int mode = 0; mode < modes.size(); mode++){
             if (modes[mode]=="parton_particle"){
                 filenames = parton_particle_files;
@@ -736,13 +744,12 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                 filenames = particle_only_files;
                 levels = {"particle"};
             }
-        
             for (int f = 0; f < filenames.size(); f++){
                 for (int l = 0; l < levels.size(); l++){
                     for (int ty = 0; ty < types.size(); ty++){
                                     filename =  "files/Jan18/" + levels[l] + "/" + types[ty] + "/" + filenames[f];
-                                    std::cout << "smart filename  = " << filename << std::endl;
-                        
+                                    //std::cout << "          filename  = " << levels[l] << std::endl;
+                                    level = levels[l];
                                     file_tokens_vec.clear();
                         
                                     tokenizer< char_separator<char> > file_tokens(filenames[f], sep_2);
@@ -753,8 +760,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     //filename = filenames[f];
                                     //filename_cov = filenames_cov[f];
                                     filename_cov = "files/Nov1/" +  levels[l] + "/" + types[ty] + "/covariance/" + file_tokens_vec[1] + "_totCovEnvXSMtrxFile.root";
-                        
-                                    std::cout  << "filename = " << filename << " filename_cov = " << filename_cov << std::endl;
+                                   // std::cout  << "filename = " << filename << " filename_cov = " << filename_cov << std::endl;
                         
                                     hepdata_filename = "";
                                     hepdata_filename += "HEPData/";
@@ -823,12 +829,10 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     replace(tex_str, "\\left", "");
                                     replace(tex_str, "\\right", "");
                                     replace(x_tex_str, "#", "\\");
-
                                     std::string super_script = "^{-1}";
                                     std::string xsec_unit = "pb";
 
-                        /*
-                                    if (mode == "norm_parton" || mode == "norm_particle"){
+                                    if (modes[mode] == "norm_parton" || modes[mode] == "norm_particle"){
                                         xsec_unit = "";
                                         if (units[f] == "\\GeV"){
                                             hd_unit = "1/GEV";
@@ -843,51 +847,23 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                             hd_unit =  "PB";
                                         }
                                     }
-                         */
                         
-                                    std::string level;
-                                    std::string type;
                                     std::string sig;
-/*
-                                    if (mode == "norm_particle"){
-                                        level = "particle";
-                                        type = "Normalised";
-                                        sig = "SIG(fiducial)";
-                                    }else if (mode == "abs_particle"){
-                                        level = "particle";
-                                        type = "Absolute";
-                                        sig = "SIG(fiducial)";
-                                    }
-                                    else if (mode == "norm_parton"){
-                                        level = "parton";
-                                        type = "Absolute";
-                                        sig = "SIG";
 
-                                    }else if (mode == "abs_parton"){
-                                        level = "parton";
-                                        type = "Absolute";
-                                        sig = "SIG";
+                                    if (levels[l] == "parton"){
+                                        if (types[ty] == "absolute"){
+                                            sig = "\\frac{d\\sigma}{dX}";
+                                        }else{
+                                            sig = "\\frac{1}{\\sigma}\\frac{d\\sigma}{dX}";
+                                        }
+                                    
+                                    }else if (levels[l] == "particle"){
+                                        if (types[ty] == "absolute"){
+                                            sig = "\\frac{d\\sigma}{dX}";
+                                        }else{
+                                            sig = "\\frac{1}{\\sigma}\\frac{d\\sigma}{dX}";
+                                        }
                                     }
- 
- */
-                                    HDfile_sub<<"---"<<endl;
-                                    HDfile_sub<<"data_file: "<< yaml_filename <<endl;
-                                    HDfile_sub<<"description: |"<< endl;
-                                    HDfile_sub<<"  "<< types[ty] <<" differential cross section at "<< levels[l] << " level as a function of "<< vars[var_number] <<"."<<endl;
-                                    HDfile_sub<<"keywords: "<<endl;
-                                    HDfile_sub<<"- name: reactions"<<endl;
-                                    HDfile_sub<<"  values: [P P --> TOP TOPBAR X]"<<endl;
-                                    HDfile_sub<<"- name: observables"<<endl;
-                        
-                                   // if (mode == "norm_particle" || mode == "abs_particle" ){
-                                   //     HDfile_sub<<"  values: [DSIG_FID/" << vars_obskey[f] << "]"  << endl;
-                                   // }
-                        
-                                    HDfile_sub<<"  name: phrases"<<endl;
-                                    HDfile_sub<<"  values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]"<<endl;
-                                    HDfile_sub<<"- name: cmenergies"<<endl;
-                                    HDfile_sub<<"  values: [13000.0]"<<endl;
-                                    HDfile_sub<<"location: Data from Fig. "<< f+3 <<endl;
                         
                                     std:string unit = units[f];
                                     replace(unit, "\\", "");
@@ -914,7 +890,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                         
                                     //dependent variables
                                     HDfile<<"dependent_variables: "<<endl;
-                                    HDfile<<"- header: {name: "<<  sig  <<", units: " << hd_unit <<"}" <<endl;
+                                    HDfile<<"- header: {name: '"<<  sig  <<"' , units: '" << hd_unit <<"'}" <<endl;
                                     HDfile<<"  qualifiers: "<<endl;
                                     HDfile<<"  - {name: RE, value: P P --> TOP TOPBAR X}"<<endl;
                                     HDfile<<"  - {name: SQRT(S), units: GEV, value: '13000.0'}"<<endl;
@@ -1023,7 +999,9 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     //////////////////////////////////////////////////////
                                     //write covariance matrices //////////////////////////
                                     //////////////////////////////////////////////////////
-                                    std::string yaml_filename_cov = "HEPData/d0" + std::to_string(fp) + "-x01-y01_cov.yaml";
+                                    std::string dir = "HEPData/";
+                                    std::string filename_cov = "d0" + std::to_string(fp) + "-x01-y01_cov.yaml";
+                                    std::string yaml_filename_cov = dir + filename_cov;
 
                                     HDfile_cov.open (yaml_filename_cov);
                                     HDfile_cov<<"dependent_variables:" <<endl;
@@ -1060,13 +1038,48 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     HDfile.close();
                                     HDfile_cov.close();
                                     f_var->Close();
+                        
+                        index++;
+                        if (table_iterator%2 == 0) table_number++;
+                        table_iterator++;
+                        
+                        //write details in submission.yaml
+                        HDfile_sub<<"---"<<endl;
+                        
+                        //table_number = table_number + ((table_iterator%2)*14) + table_iterator;
+                        //cout <<"Index,  Table number  = "<< table_iterator <<" , " <<((table_iterator%2)*14) + table_iterator  << endl;
+                        
+                        cout<<"level  =  "<< level <<endl;
+                        
+                        HDfile_sub<<"name: Table "<< index <<endl;
+                        HDfile_sub<<"location: Data from Table "<< table_number << " of preprint"<<endl;
+                        HDfile_sub<<"description: Measured "<< types[ty] <<" differential cross section at "<< level << " level as a function of $"<< x_tex_str <<"$."<<endl;
+                        HDfile_sub<<"keywords: "<<endl;
+                        HDfile_sub<<"- {name: reactions, values: [P P --> TOP TOPBAR X]}"<<endl;
+                        HDfile_sub<<"- {name: observables,  values: [SIG]}"<<endl;
+                        HDfile_sub<<"- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}"<<endl;
+                        HDfile_sub<<"- {name: cmenergies, values: [13000.0]}"<<endl;
+                        HDfile_sub<<"data_file: "<< yaml_filename <<endl;
+                        
+                        index++;
+                        
+                        HDfile_sub<<"---"<<endl;
+                        HDfile_sub<<"name: Table "<< index <<endl;
+                        HDfile_sub<<"location: Data from Figure "<< index << " of supplmentary material"<<endl;
+                        HDfile_sub<<"description: Covariance matrix of the "<< types[ty] <<" differential cross section at "<< level << " level as a function of $"<< x_tex_str <<"$."<<endl;
+                        HDfile_sub<<"keywords: "<<endl;
+                        HDfile_sub<<"- {name: reactions,values: [P P --> TOP TOPBAR X]}"<<endl;
+                        HDfile_sub<<"- {name: observables, values: [SIG]}"<<endl;
+                        HDfile_sub<<"- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}"<<endl;
+                        HDfile_sub<<"- {name: cmenergies, values: [13000.0]}"<<endl;
+                        HDfile_sub<<"data_file: "<< filename_cov <<endl;
                 }
             }
                 var_number++;
             }
-    
-    HDfile_sub.close();
 }
+    HDfile_sub.close();
+    
 }
 
 void write_results_table(string mode, vector<string> filenames){

@@ -435,7 +435,7 @@ void write_latex(string mode, vector<string> models, vector<string> vars, vector
 void summary_plot(string f1, string f2){
     
     double x_lim;
-    cout <<"summary plot 1  " <<endl;
+   // cout <<"summary plot 1  " <<endl;
 
     TCanvas * c_master = new TCanvas("c_master","c_master");
     gStyle->SetOptStat(00000);
@@ -446,7 +446,7 @@ void summary_plot(string f1, string f2){
     c_master->cd(1);
     }
     
-    cout <<"summary plot 2  " <<endl;
+    //cout <<"summary plot 2  " <<endl;
     
     gPad->SetLogy();
     gPad->SetGridx();
@@ -482,7 +482,7 @@ void summary_plot(string f1, string f2){
      h_norm_particle_amc_p8_B =  (TH1F*)f_norm_particle->Get("norm_particleamc_p8_B;1");
     }
     
-    cout <<"summary plot 3  " <<endl;
+    //cout <<"summary plot 3  " <<endl;
 
     TFile * summary = new TFile("summary.root", "RECREATE");
 
@@ -526,7 +526,7 @@ void summary_plot(string f1, string f2){
         x_lim = h_norm_bnlo_annlo_ct14_A_clone->GetXaxis()->GetXmax();
         h_norm_bnlo_annlo_ct14_A_clone->GetXaxis()->SetLimits(0+shift,x_lim+shift);
         
-        cout <<"summary plot 3.2  " <<endl;
+       // cout <<"summary plot 3.2  " <<endl;
 
         
         //draw
@@ -579,7 +579,7 @@ void summary_plot(string f1, string f2){
         h_norm_bnlo_annlo_ct14_A_clone->SetMarkerColor(8);
         //h_norm_bnlo_annlo_ct14_A_clone->SetMarkerColor(6);
 
-        cout <<"summary plot 3.3  " <<endl;
+//        cout <<"summary plot 3.3  " <<endl;
 
         h_norm_bnlo_nnlo_ew_lux_A_clone->SetMarkerSize(1.2);
         h_norm_bnlo_nnlo_ew_lux_1725_A_clone->SetMarkerSize(1.2);
@@ -595,7 +595,7 @@ void summary_plot(string f1, string f2){
         h_norm_bnlo_nnlo_nnllprime_nnpdf_A_clone->SetTitle(" ");
     }
     else {
-        cout <<"summary plot 4  " <<endl;
+      //  cout <<"summary plot 4  " <<endl;
 
     double unit_shift = -0.03;
     double offset = -0.5;
@@ -604,37 +604,37 @@ void summary_plot(string f1, string f2){
     h_norm_particle_pwhg_p8_A_clone = (TH1F*)h_norm_particle_pwhg_p8_A->Clone("h_norm_particle_pwhg_p8_A_clone");
     Double_t shift = offset + (-1.6*unit_shift*h_norm_particle_pwhg_p8_A->GetBinWidth(1));
    
-        cout <<"summary plot 4.1  " <<endl;
+   //     cout <<"summary plot 4.1  " <<endl;
 
         
     h_norm_parton_pwhg_p8_A_clone = (TH1F*)h_norm_parton_pwhg_p8_A->Clone("h_norm_parton_pwhg_p8_A_clone");
     shift = offset + (1.6*unit_shift*h_norm_parton_pwhg_p8_A->GetBinWidth(1));
         
         
-        cout <<"summary plot 4.2  " <<endl;
+    //    cout <<"summary plot 4.2  " <<endl;
 
     h_norm_particle_pwhg_hpp_A_clone = (TH1F*)h_norm_particle_pwhg_hpp_A->Clone("h_norm_particle_pwhg_hpp_A_clone");
     shift = offset + (-2.6*unit_shift*h_norm_particle_pwhg_hpp_A->GetBinWidth(1));
         
-        cout <<"summary plot 4.3  " <<endl;
+      //  cout <<"summary plot 4.3  " <<endl;
 
         
     h_norm_parton_pwhg_hpp_A_clone = (TH1F*)h_norm_parton_pwhg_hpp_A->Clone("h_norm_parton_pwhg_hpp_A_clone");
     shift = offset + (2.6*unit_shift*h_norm_parton_pwhg_hpp_A->GetBinWidth(1));
         
-        cout <<"summary plot 4.4  " <<endl;
+    //    cout <<"summary plot 4.4  " <<endl;
 
         
     h_norm_particle_amc_p8_A_clone = (TH1F*)h_norm_particle_amc_p8_A->Clone("h_norm_particle_amc_p8_A_clone");
     shift =  offset + (-3.9*unit_shift*h_norm_particle_amc_p8_A->GetBinWidth(1));
         
-        cout <<"summary plot 4.5  " <<endl;
+//        cout <<"summary plot 4.5  " <<endl;
 
         
     h_norm_parton_amc_p8_A_clone = (TH1F*)h_norm_parton_amc_p8_A->Clone("h_norm_parton_amc_p8_A_clone");
     shift = offset + (3.9*unit_shift*h_norm_parton_amc_p8_A->GetBinWidth(1));
 
-        cout <<"summary plot 1.....  " <<endl;
+    //    cout <<"summary plot 1.....  " <<endl;
 
         
     //Draw
@@ -643,7 +643,7 @@ void summary_plot(string f1, string f2){
     h_base_A->GetXaxis()->SetLimits(0.3,14.3);
 
         
-        cout <<"summary plot 2.....  " <<endl;
+   //     cout <<"summary plot 2.....  " <<endl;
 
     h_base_A->Draw();
     h_norm_particle_pwhg_p8_A_clone->Draw("psame");
@@ -695,7 +695,7 @@ void summary_plot(string f1, string f2){
     h_base_A->SetTitle(" ");
     }
     
-    cout <<"summary plot 2  " <<endl;
+   // cout <<"summary plot 2  " <<endl;
 
     c_master->cd(2);
     gPad->SetLogy();
