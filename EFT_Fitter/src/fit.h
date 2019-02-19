@@ -169,7 +169,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     TH1F * h_CtG_pred_scaleup;
     TH1F * h_CtG_pred_fiducial;
     
-    double scaling =1.0, CtG;
+    double scaling = 1.0, CtG;
     
     if (closure_test){
         
@@ -190,7 +190,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
         double data_int = data_histo->Integral();
         running_total = 1.0;
         data_histo->Scale(running_total/data_int);
-    
         
     }else{
         if(debug)    cout << "data mode\n";
@@ -207,12 +206,12 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             double bin_error = (g_data->GetErrorYhigh(point) + g_data->GetErrorYlow(point))/2.0 ;
             double bin_error_down = g_data->GetErrorYlow(point);
             double bin_error_up   = g_data->GetErrorYhigh(point);
-            bin_width = (bins[point+1] -  bins[point]);
+            bin_width = (bins[point+1] - bins[point]);
             
           cout << "looping on graph points, "<< point <<", bin xsec  " << bin_height  <<"  bin error up  "<< bin_error_up   << " bin error down "<< bin_error_down <<" running_total " << running_total  <<"\n";
             
             //hmmmmm need to set asymmetric errors in the histo or use TGraph throughout
-            //this step seems obselete now that data unceetainties
+            //this step seems obselete now that data unceretainties
             // are accommodated with the covariance matrix
             
             if (error_mode == "nom"){
@@ -399,7 +398,6 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
     
         if (add_pwhg)    mc_histo_pwhg->Scale(sigma_sm_fid/running_fid_xs_pwhg);
     
-    
        //make histo of pure CtG contribution
         TH1F * h_pure_Ctg = (TH1F*)mc_histo_pos2->Clone();
         TH1F * h_pure_Ctg_scaledown = (TH1F*)mc_histo_pos2_scaledown->Clone();
@@ -466,7 +464,7 @@ std::tuple <TH1F*, vector<TH1F *>, vector<TGraphAsymmErrors *> > Fitter::initial
             
             //create histo containing prediction for fiducial cross section
             h_CtG_pred_fiducial = new TH1F("","", 1, 0.0,1.0);
-            double fid_xsec_pred =0.0;
+            double fid_xsec_pred = 0.0;
             
             TGraphAsymmErrors * gr_errors = new TGraphAsymmErrors(nbins);
             
@@ -686,6 +684,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     pad1->SetTopMargin(0.18);
     pad1->SetLeftMargin(0.15);
     pad1->SetRightMargin(0.05);
+    pad1->SetTicks();
     pad1->Draw();
     pad1->cd();
     
@@ -775,7 +774,8 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
 
     std::string pred_name_leg;
     leg->AddEntry(std::get<0>(histos) ,"Data","E0p");
-    for (int ctg = 0; ctg < n_preds;  ctg++){
+    for (int ctg = (n_preds-1); ctg >= 0;  ctg = ctg-1){
+        std::get<2>(histos)[ctg]->SetLineWidth(2);
         int ctg_val = (int)CtG_vals[ctg];
         if (ctg == ((n_preds - 1)/2)){
             pred_name_leg = "C_{tG}/#Lambda^{2} = " +  std::to_string(ctg_val).substr(0,4) + " TeV^{-2} (SM)";
@@ -831,12 +831,12 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     }
     
     data_temp->SetFillColor(kOrange-2);
-    data_temp_stat->SetFillColor(kGray);
+    data_temp_stat->SetFillColor(kGray+1);
     
     TH1F * histo_base = new TH1F("","", 1, 0.0, 3.14);
     
-    histo_base->GetYaxis()->SetNdivisions(5);
-    histo_base->GetYaxis()->SetRangeUser(0.2, 1.8);
+    histo_base->GetYaxis()->SetNdivisions(506);
+    histo_base->GetYaxis()->SetRangeUser(0.55, 1.35);
     histo_base->GetXaxis()->SetRangeUser(0.0, 3.14);
     histo_base->GetYaxis()->SetLabelSize(0.09);
     histo_base->GetXaxis()->SetLabelSize(0.1);
@@ -893,12 +893,16 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
         if (debug) cout << "Fitter::scan_couplings::here 3 6" <<  endl;
     }
     
-    TLegend *leg_2 = new TLegend(0.24,0.82,0.51,0.99);
+    TLegend *leg_2 = new TLegend(0.22,0.38,0.58,0.58);
     leg_2->SetBorderSize(0);
+    leg_2->SetFillStyle(0);
+
     //leg_2->SetTextFont(72);
-    leg_2->AddEntry( data_temp, "Stat. #oplus Syst.","f");
-    leg_2->AddEntry( data_temp_stat, "Stat. only","f");
+    leg_2->AddEntry( data_temp, "Stat #oplus Syst","f");
+    leg_2->AddEntry( data_temp_stat, "Stat only","f");
     leg_2->Draw();
+    pad2->SetTicks();
+    pad2->RedrawAxis();
     
     c_compare_dists->cd();
     c_compare_dists->SetTopMargin(0.06);
@@ -913,7 +917,7 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "Preliminary";
+    extraText += "";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     TLatex latex;
     latex.SetNDC();
@@ -922,11 +926,11 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     latex.SetTextColor(kBlack);
     latex.SetTextFont(61);
     latex.SetTextAlign(31);
-    latex.DrawLatex(0.35,0.915,cmsText);
+    latex.DrawLatex(0.265,0.915,cmsText);
     
     latex.SetTextFont(52);
     latex.SetTextSize(0.8*t*extraOverCmsTextSize);
-    latex.DrawLatex(0.545,0.915,extraText);
+    latex.DrawLatex(0.53,0.915,extraText);
 
     latex.SetTextFont(42);
     latex.SetTextSize(0.76*t);
@@ -944,6 +948,9 @@ std::tuple < double, double > Fitter::scan_couplings(std::string run_name, std::
     }
     
     c_compare_dists->RedrawAxis();
+    gPad->RedrawAxis();
+
+    
     std::string compare_canvas_name = "compare_" +  seglist[1] + "_.pdf";
     c_compare_dists->SaveAs(compare_canvas_name.c_str());
     

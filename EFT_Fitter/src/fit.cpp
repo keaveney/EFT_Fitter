@@ -58,7 +58,6 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     TCanvas * all_relscans_c;
     
     for (int scan = 0; scan< scans.size(); scan ++){
-
         int n = scans[scan]->GetN();
         double* ny = scans[scan]->GetY();
         int locmax = TMath::LocMin(n,ny);
@@ -93,6 +92,9 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     TGraphAsymmErrors * g_68 = new TGraphAsymmErrors();
     TGraphAsymmErrors * g_95 = new TGraphAsymmErrors();
     TGraphAsymmErrors * g_central = new TGraphAsymmErrors();
+    g_central->SetLineStyle(7);
+    g_central->SetLineWidth(2);
+
     
     g_68->SetPoint(0, boundaries[2], 2.42);
     g_95->SetPoint(0, boundaries[2], 2.42);
@@ -126,12 +128,12 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     TLine *line_68 = new TLine(-0.5,1.0,boundaries[3],1.0);
     line_68->SetLineColor(kGreen);
     line_68->SetLineStyle(4);
-    line_68->SetLineWidth(3);
+    line_68->SetLineWidth(4);
     
     TLine *line_95 = new TLine(-0.5,3.84,boundaries[4],3.84);
     line_95->SetLineColor(kYellow);
     line_95->SetLineStyle(4);
-    line_95->SetLineWidth(3);
+    line_95->SetLineWidth(4);
     line_68->Draw();
     line_95->Draw();
     
@@ -142,8 +144,8 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     for (int scan = 0; scan< rel_scans.size(); scan ++){
         if (debug) std::cout <<" looping relscans "<<"\n";
         rel_scans[scan]->SetLineColor(scan+1);
-        rel_scans[scan]->SetLineWidth(2);
-        rel_scans[scan]->SetLineStyle(2);
+        rel_scans[scan]->SetLineWidth(3);
+//        rel_scans[scan]->SetLineStyle(2);
         rel_scans[scan]->SetMarkerSize(1);
         rel_scans[scan]->SetMarkerColor(scan+1);
         rel_scans[scan]->SetMarkerStyle(22);
@@ -180,8 +182,10 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
             
             gr_down =  (TGraphErrors*)f_scan_scaledown->Get(";1");
             gr_up =    (TGraphErrors*)f_scan_scaleup->Get(";1");
-            gr_down->SetLineStyle(2);
-            gr_up->SetLineStyle(2);
+            gr_down->SetLineStyle(1);
+            gr_up->SetLineStyle(1);
+            gr_down->SetLineWidth(2);
+            gr_up->SetLineWidth(2);
             gr_down->SetLineColorAlpha(kBlue, 0.55);
             gr_up->SetLineColorAlpha(kRed, 0.55);
             gr_down->Draw("CSAME");
@@ -193,8 +197,8 @@ void Fitter::make_summary_plot(vector<TGraphErrors*> scans){
     f_scan_scaleup->Close();
 
     leg_rel->AddEntry( g_central, "best-fit value","E1");
-    leg_rel->AddEntry( gr_down, "- theory sys.","l");
-    leg_rel->AddEntry( gr_up, "+ theory sys.","l");
+    leg_rel->AddEntry( gr_down, "+ theory syst","l");
+    leg_rel->AddEntry( gr_up, "- theory syst","l");
     leg_rel->AddEntry( g_68, "68% CI","f");
     leg_rel->AddEntry( g_95, "95% CI","f");
     leg_rel->SetBorderSize(0);

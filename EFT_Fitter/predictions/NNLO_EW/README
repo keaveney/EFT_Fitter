@@ -1,0 +1,66 @@
+Top-pair production at the LHC through NNLO QCD and NLO EW
+Authors: Czakon, Heymes, Mitov, Pagani, Tsinikos, Zaro (2017)
+Contact: mczakon@physik.rwth-aachen.de
+         dheymes@hep.phy.cam.ac.uk
+         andrewp@hep.phy.cam.ac.uk
+	 davide.pagani@tum.de
+	 ioannis.tsinikos@tum.be
+	 marco.zaro@lpthe.jussieu.fr
+
+When using these results please cite arXiv:1705.04105.
+
+--------------------------------------------------------------------------------------------
+
+Top-quark mass mtop : 173.3 GeV
+Higgs-boson mass : 125.09 GeV
+W-boson mass : 80.385 GeV
+Z-boson mass : 91.1876 GeV
+EW renormalisation : Gmu-scheme
+Gmu = 1.1663787·10^{-5} GeV^{-2}
+
+Mtt      : Invariant mass distribution of the top-quark pair
+PTtt      : Transverse momentum distribution of the top-quark pair
+dytt	: difference of the absolute values of rapidities of top and antitop quarks i.e. |y(t)|-|y(tx)|
+Ytt   : Rapidity distribution of the top-quark pair
+Yt   : Rapidity distribution of the top quark
+Ytx   : Rapidity distribution of the antitop quark pair
+Yavt  : Averaged rapidity distribution of the top-quark absolute rapidity distribution and the antitop-quark absolute rapidity distribution       
+PTavt    : Averaged transverse momentum distribution of the top-quark transverse momentum distribution and the antitop-quark transverse momentum distribution 
+PTt     : Top-quark transverse momentum distribution
+PTtx     : Antitop-quark transverse momentum distribution
+
+
+Central scales: 	mu0 = HT/4 for Mtt, PTtt, Ytt, Yavt, Yt, Ytx, dytt  (arXiv: 1606.03350)
+                       	mu0 = MT/2 for PTavt           	(arXiv: 1606.03350)
+			mu0 = MTt/2 for PTt 		(MTt = sqrt(mtop^2 + PTt^2))
+			mu0 = MTtx/2 for PTtx         	(MTtx = sqrt(mtop^2 + PTtx^2))
+			
+
+PDF-sets:
+LUXQED : "LUXqed_plus_PDF4LHC15_nnlo_100"
+LUXQED17 : "LUXqed17_plus_PDF4LHC15_nnlo_100"
+NNPDF31: "NNPDF31_nnlo_as_0118_luxqed"
+
+
+--------------------------------------------------------------------------------------------
+
+( {a,b} := {muR=a*mu0,muF=b*mu0}, K := (QCDxEW)/QCD and total-*=scale-* plus pdf-* added in quadrature  )
+Files with the name "*-pheno.dat" contain the following 10 columns:
+                 bin-center  central-value scale-min scale-max pdf-min pdf-max total-min total-max bin-width K
+Units:
+PTavt,Mtt:	[GeV]  [pb]  [pb]  [pb]  [pb]  [pb]  [pb]  [pb]  [GeV]  [1]
+Ytt,Yavt,Yt,Ytx,dytt: [1]  [pb]  [pb]  [pb]  [pb]  [pb]  [pb]  [pb]  [1]  [1]
+
+---------------------------------------------------------------------------------------------
+
+Files with the name "*-LUXQED-all_members.dat" and "*-LUXQED17-all_members.dat" contain the following 116 columns ( with {a,b} := {muR=a*mu0,muF=b*mu0} ):
+                 bin-center  {1,1}  {1/2,1/2}  {2,2}  {1/2,1}  {1,1/2}  {2,1} {1,2} {PDFmembers : 1-107} bin-width
+
+Files with the name "*-NNPDF31-all_members.dat" contain the following 109 columns ( with {a,b} := {muR=a*mu0,muF=b*mu0} ):
+                 bin-center  {1,1}  {1/2,1/2}  {2,2}  {1/2,1}  {1,1/2}  {2,1} {1,2} {PDFmembers : 1-100} bin-width
+
+Units:
+PTavt,Mtt:	[GeV] [pb] ... [pb]  [GeV]
+Ytt,Yavt,Yt,Ytx,dytt:	[1]   [pb] ... [pb]  [1]
+
+---------------------------------------------------------------------------------------------

@@ -1,16 +1,14 @@
+1)macro for extracting constraint on ctg using measured differential cross section,
+corrsponding covariance matrix and appropriate "basis", predicitons.
+
+Inputs are hardcoded:
+
+
+Compile and run as follows:
 clang++ -o bin/fit src/fit.cpp `root-config --cflags --libs` -lRooFit -lRooFitCore
 ./bin/fit
 
-There are two methods to accommodat the systematic uncertainties of the data:
-
-1) The data is varied within its systematic uncertainties by changing the error_mode flag in
-the initalise routine from "nom" to "down" or "up".
-
-2) The systematic uncertainties of the data are included in the chi^2 calculation. This
-is done by setting the "schmitt_fit" flag in the calculate_test_statistic routine to
-true.
-
-
+2)
 
 
 //macro for plot editing and chi2 tables
@@ -18,37 +16,3 @@ clang++ -o plot src/make_pvals.cc  `root-config --cflags --libs` -I /usr/local/i
 
 
 
-$\pt^{\text{t}}$ &
-$\pt^{\text{\tbar}}
-$\pt^{\text{t}}$ (l
-$\pt^{\text{t}}$ (t
-$\pt^{\text{t}}$ (\
-$\pt^{\text{\tbar}}
-$y_{\text{t}}$ & 6.
-$y_{\text{\tbar}}$
-$y_{\text{t}}$ (lea
-$y_{\text{t}}$ (tra
-$\pt^{\ttbar}$ & 34
-$y_{\ttbar}$ & 3.5/
-$m_{\ttbar}$ & 12/7
-$\Delta|y|$(t,\tbar
-$\Delta\phi$(t,\tba
-$\pt^{\text{l}}$ &
-$\pt^{\text{\lbar}}
-$\pt^{\text{l}}$ (l
-$\pt^{\text{l}}$ (t
-$\eta_{\text{l}}$&
-$\eta_{\text{\lbar}
-$\eta_{\text{l}}$ (
-$\eta_{\text{l}}$ (
-$\pt^{\llbar}$ & 14
-$m_{\llbar}$ & 37/8
-$\Delta\phi$(l,\lba
-$\Delta|\eta|$(l,$\
-\Nj\ & 14/6& 0.04 &
-$\pt^{\text{b}}$ (l
-$\pt^{\text{b}}$ (t
-$\eta_{\text{b}}$ (
-$\eta_{\text{b}}$ (
-$\pt^{\text{\bbbar}
-$m_{\text{\bbbar}}$

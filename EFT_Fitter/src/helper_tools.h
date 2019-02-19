@@ -1,7 +1,7 @@
 //This header file contains a few simple tools that were needed for the EFT analysis
 //but ended up being useful for the charge asymmetry analysis and creation
 //of pval tables and plots for the TOP-17-014 paper.
-//Therefore they are now decoupled from those class and live here
+//Therefore they are now decoupled from those classes and live here
 // as standalone methods that can be intgreated into a similar analysis.
 #include <iostream>
 #include <sstream>
@@ -19,6 +19,10 @@
 #include <RooPlot.h>
 #include <RooMCStudy.h>
 #include <RooBinning.h>
+
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+
 using namespace std;
 
 TH2D* make_covariance_matrix(std::string, std::string, std::string);
@@ -26,6 +30,35 @@ TH1* make_poisson_toy(TH1*,TH1*, int, double);
 double calculate_test_statistic(TH1F*, TH1F*, TGraphAsymmErrors*, std::string);
 TCanvas* make_results_canvas(TH1F*,vector<double>);
 vector<double> get_CL_boundaries(TGraphErrors* gr);
+
+TH1D* graph2histo(TGraphAsymmErrors*);
+
+TH1D* graph2histo(TGraphAsymmErrors* g){
+    double x, y, exh, exl, eyh, eyl;
+    int nbins = g->GetN();
+    double bins[nbins+1];
+    for(int i=0; i< nbins; i++){
+        g->GetPoint(i, x, y);
+        exl = g->GetErrorXlow(i);
+        exh = g->GetErrorXhigh(i);
+        eyl = g->GetErrorYlow(i);
+        eyh = g->GetErrorYhigh(i);
+        bins[i] = (x - exl);
+    }
+    bins[nbins] = (bins[nbins-1] + exh);
+
+    TH1D * h = new TH1D("", "", nbins,bins);
+    for(int i=0; i< nbins; i++){
+        g->GetPoint(i, x, y);
+        eyl = g->GetErrorYlow(i);
+        eyh = g->GetErrorYhigh(i);
+        h->SetBinContent(i+1, y);
+        h->SetBinError(i+1, eyh);
+    }
+
+    return h;
+};
+
 
 vector<double> get_bestfit_CL_boundaries(TGraphErrors* gr){
     
@@ -79,10 +112,60 @@ vector<double> get_bestfit_CL_boundaries(TGraphErrors* gr){
 
 }
 
+
+void replace(std::string& str,
+               const std::string& oldStr,
+               const std::string& newStr)
+{
+    std::string::size_type pos = 0u;
+    while((pos = str.find(oldStr, pos)) != std::string::npos){
+        str.replace(pos, oldStr.length(), newStr);
+        pos += newStr.length();
+    }
+}
+
+std::string trim(const std::string& str,
+                 const std::string& whitespace = " \t")
+{
+    const auto strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return ""; // no content
+    
+    const auto strEnd = str.find_last_not_of(whitespace);
+    const auto strRange = strEnd - strBegin + 1;
+    
+    return str.substr(strBegin, strRange);
+}
+
+std::string reduce(const std::string& str,
+                   const std::string& fill = " ",
+                   const std::string& whitespace = " \t")
+{
+    // trim first
+    auto result = trim(str, whitespace);
+    
+    // replace sub ranges
+    auto beginSpace = result.find_first_of(whitespace);
+    while (beginSpace != std::string::npos)
+    {
+        const auto endSpace = result.find_first_not_of(whitespace, beginSpace);
+        const auto range = endSpace - beginSpace;
+        
+        result.replace(beginSpace, range, fill);
+        
+        const auto newStart = beginSpace + fill.length();
+        beginSpace = result.find_first_of(whitespace, newStart);
+    }
+    
+    return result;
+}
+
+
+
 TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     
     base_histo->GetYaxis()->SetRangeUser(0.0, 5.0);
-    base_histo->GetXaxis()->SetRangeUser(-0.5, 0.5);
+    base_histo->GetXaxis()->SetRangeUser(-0.5, 0.52);
     base_histo->GetYaxis()->SetTitle("#Delta #chi^{2}");
     base_histo->GetXaxis()->SetTitle("C_{tG}/#Lambda^{2} [TeV^{-2}]");
     base_histo->GetYaxis()->SetLabelSize(0.04);
@@ -95,7 +178,7 @@ TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     base_histo->GetXaxis()->SetLabelOffset(0.01);
     base_histo->GetYaxis()->SetLabelOffset(0.01);
     base_histo->GetYaxis()->SetNdivisions(8);
-    base_histo->GetXaxis()->SetNdivisions(12);
+    base_histo->GetXaxis()->SetNdivisions(8);
 
     
     TCanvas * all_relscans_c = new TCanvas("","",800,900);
@@ -107,6 +190,8 @@ TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     all_relscans_c->SetBottomMargin(0.15);
     all_relscans_c->SetLeftMargin(0.0935);
     all_relscans_c->SetRightMargin(0.09);
+    //all_relscans_c->SetTicks();
+
 
     float H = all_relscans_c->GetWh();
     float W = all_relscans_c->GetWw();
@@ -118,7 +203,7 @@ TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "Preliminary";
+    extraText += "";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     
     TLatex latex;
@@ -128,11 +213,11 @@ TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
     latex.SetTextColor(kBlack);
     latex.SetTextFont(61);
     latex.SetTextAlign(31);
-    latex.DrawLatex(0.295,0.912,cmsText);
+    latex.DrawLatex(0.21,0.911,cmsText);
     
     latex.SetTextFont(52);
     latex.SetTextSize(0.48*t*extraOverCmsTextSize);
-    latex.DrawLatex(0.495,0.912,extraText);
+    latex.DrawLatex(0.495,0.915,extraText);
     
     latex.SetTextFont(42);
     latex.SetTextSize(0.46*t);
@@ -143,16 +228,10 @@ TCanvas* make_results_canvas(TH1F* base_histo, vector<double> boundaries){
 
 }
 
-
-
-
-
 double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_errors, std::string cov_file){
     
-    //std::cout <<"***CALCULATING TEST STATISTIC***   "<<  cov_file  << std::endl;
-    
+    //std::cout <<"***CALCULATING TEST STATISTIC***   "<<  cov_file  << std::endl;    
     double test_statistic = 0.0;
-    int nbins  = data->GetSize() - 2;
     bool schmitt_fit = true;
     std::vector<double> deltas;
     std::vector<double> errors;
@@ -164,12 +243,29 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
     double theory_error =0.0;
     double total_error =0.0;
     
+    
+    //check filename to see what mode we are in (absolute or normalised)
+    boost::char_separator<char> sep("/");
+    boost::tokenizer< boost::char_separator<char> > tokens_t(cov_file, sep);
+    vector<std::string> tokens_vec;
+    BOOST_FOREACH (const string& t, tokens_t) {
+        tokens_vec.push_back(t);
+    }
+    std::string mode = tokens_vec[3];
+    
+    // set nbins according to mode
+    int nbins;
+    if (mode == "normalised"){
+        nbins = data->GetNbinsX() - 1 ;
+    } else{
+        nbins = data->GetNbinsX();
+    }
+    
+    
     //Retrieve covariance matrix from text file
     TFile *cov_rootfile = new TFile(cov_file.c_str());
     TH2D * cov = (TH2D*)cov_rootfile->Get("inv_cov");
     
-    //TH2D * cov;
-    //cov = make_covariance_matrix(cov_file.c_str(),data);
     
     deltas.clear();
     errors.clear();
@@ -177,8 +273,7 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
     double cumul_chi2 = 0;
     //std::cout <<" "<< endl;
 
-
-    for (int i=1;i <=  data->GetSize() -2; i++){
+    for (int i=1; i<= nbins; i++){
         
         double data_bin = data->GetBinContent(i);
         double pred_bin = pred->GetBinContent(i);
@@ -186,6 +281,9 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
         deltas.push_back(delta);
         
         cumul_chi2 = cumul_chi2 + (delta*delta) / ( data->GetBinError(i) * data->GetBinError(i));
+        
+       // std::cout <<"data " <<data_bin <<", pred_bin "<< pred_bin <<" delta " << delta<< " delta/error = "<< delta/data->GetBinError(i) << " delta_sq " << delta*delta <<", data error squared  = "<< data->GetBinError(i)* data->GetBinError(i) <<  " chi2 in bin =  " <<  (delta*delta)/(data->GetBinError(i)*data->GetBinError(i))<< " cumul. chi2 = " << cumul_chi2 <<"\n";
+        
         
         if (data_errors_only){
             
@@ -205,7 +303,6 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
             errors.push_back( total_error);
         }
     }
-    
 
     //TMatrixD mat_inv_cov =  TMatrixD(matrix.size(), matrix.size());
     //TMatrixD mat_deltas =  TMatrixD(matrix.size(), matrix.size());
@@ -216,14 +313,12 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
     TMatrixD mat_deltas(nbins, 1);
     TMatrixD mat_chi(1, 1);
 
-    
     for (int i=1;i<=nbins; i++) {
       //  std::cout <<"  "<< std::endl;
         mat_deltas[i-1][0] = deltas[i-1];
         mat_deltas_tp[0][i-1] = deltas[i-1];
         
         for (int j=1;j<=nbins; j++){
-            
             if (i==j){
                 mat_cov[i-1][j-1] = (errors[i-1]*errors[j-1]);
             }
@@ -278,7 +373,7 @@ double calculate_test_statistic(TH1F* data, TH1F* pred, TGraphAsymmErrors * gr_e
 
 TH2D* make_covariance_matrix(std::string filename, std::string data_filename, std::string varname){
     
-    //std::cout <<" make_covariance_matrix "<< filename  <<std::endl;
+   // std::cout <<" make_covariance_matrix "<< filename  <<std::endl;
 
     //first fill vectors from text file
     std::ifstream readFile(filename.c_str());
@@ -286,7 +381,34 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename, st
     std::vector<std::string> tokens;
     std::string line;
     std::string delimiter = " ";
+
+    TFile * data_file = new TFile(data_filename.c_str());
+    TH1F * h_template = (TH1F*)data_file->Get("mc");
+    TGraphAsymmErrors * data = (TGraphAsymmErrors*)data_file->Get("data");
     
+    //check filename to see what mode we are in (absolute or normalised)
+    boost::char_separator<char> sep("/");
+    boost::tokenizer< boost::char_separator<char> > tokens_t(filename, sep);
+    vector<std::string> tokens_vec;
+    BOOST_FOREACH (const string& t, tokens_t) {
+        tokens_vec.push_back(t);
+    }
+    std::string mode = tokens_vec[3];
+    
+    // set nbins according to mode
+    int nbins;
+    if (mode == "normalised"){
+        nbins = h_template->GetNbinsX() - 1 ;
+    } else{
+        nbins = h_template->GetNbinsX();
+    }
+    
+    TMatrixD mat =  TMatrixD(nbins, nbins);
+    double lower_range = h_template->GetBinLowEdge(1);
+    double upper_range = h_template->GetBinLowEdge(nbins) + h_template->GetBinWidth(nbins);
+
+    
+    //fill transient matrix with the covariances from the text file
     while(getline(readFile,line)){
         tokens.clear();
         std::istringstream iss(line);
@@ -304,24 +426,19 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename, st
     }
     readFile.close();
     
-    //std::cout <<" rows "<< matrix.size() <<"  columns  "<< matrix[0].size() <<std::endl;
-
-    TFile * data_file = new TFile(data_filename.c_str());
-    TMatrixD mat =  TMatrixD(matrix.size(), matrix.size());
-    TH1F * h_template = (TH1F*)data_file->Get("mc");
-    TGraphAsymmErrors * data = (TGraphAsymmErrors*)data_file->Get("data");
     
-    int nbins = h_template->GetNbinsX();
-    double lower_range = h_template->GetBinLowEdge(1);
-    double upper_range = h_template->GetBinLowEdge(nbins) + h_template->GetBinWidth(nbins);
 
-    TH2D* cov = new TH2D("cov","cov", matrix.size(), 1.0, matrix.size() +1.0 , matrix.size(), 1.0, matrix.size() + 1.0);
-    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size(), 1.0, matrix.size() +1.0, matrix.size(), 1.0, matrix.size() + 1.0);
+
+//    TH2D* cov = new TH2D("cov","cov", matrix.size(), 1.0, matrix.size() +1.0 , matrix.size(), 1.0, matrix.size() + 1.0);
+//    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", matrix.size(), 1.0, matrix.size() +1.0, matrix.size(), 1.0, matrix.size() + 1.0);
     
-    cov->GetXaxis()->SetNdivisions(matrix.size());
-    cov->GetYaxis()->SetNdivisions(matrix.size());
-    inv_cov->GetXaxis()->SetNdivisions(matrix.size());
-    inv_cov->GetYaxis()->SetNdivisions(matrix.size());
+    TH2D* cov = new TH2D("cov","cov", nbins, 1.0, nbins +1.0 , nbins, 1.0, nbins + 1.0);
+    TH2D* inv_cov = new TH2D("inv_cov","inv_cov", nbins, 1.0, nbins +1.0, nbins, 1.0, nbins + 1.0);
+    
+    cov->GetXaxis()->SetNdivisions(nbins);
+    cov->GetYaxis()->SetNdivisions(nbins);
+    inv_cov->GetXaxis()->SetNdivisions(nbins);
+    inv_cov->GetYaxis()->SetNdivisions(nbins);
     
     cov->GetXaxis()->CenterLabels();
     cov->GetYaxis()->CenterLabels();
@@ -331,10 +448,10 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename, st
     
     double point_i_x,point_i_y, point_j_x, point_j_y;
     
-    for (int x = 0; x < matrix.size(); x++){
+    for (int x = 0; x < nbins; x++){
         data->GetPoint(x, point_i_x, point_i_y);
         
-        for (int y = 0; y < matrix[x].size(); y++){
+        for (int y = 0; y < nbins; y++){
             //std::cout <<" xm "<< matrix[x][y] <<std::endl;
             std::string::size_type sz;
             std::string cov_elem_str = matrix[x][y];
@@ -354,8 +471,8 @@ TH2D* make_covariance_matrix(std::string filename, std::string data_filename, st
     Double_t det2;
     mat.Invert(&det2);
     
-    for (int x = 0; x < matrix.size(); x++){
-        for (int y = 0; y < matrix[x].size(); y++){
+    for (int x = 0; x < nbins; x++){
+        for (int y = 0; y < nbins; y++){
             inv_cov->SetBinContent(x+1, y+1, mat[x][y]);
         }
     }

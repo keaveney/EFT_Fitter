@@ -734,8 +734,11 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
     int var_number =0;
     int index = 0;
     int table_iterator = 0;
-    int table_number = 0;
-    std::string level ;
+    int table_number = 1;
+    int table_number_parton = 0;
+    int table_number_particle = 14;
+
+    std::string level;
     for (int mode = 0; mode < modes.size(); mode++){
             if (modes[mode]=="parton_particle"){
                 filenames = parton_particle_files;
@@ -747,15 +750,16 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
             for (int f = 0; f < filenames.size(); f++){
                 for (int l = 0; l < levels.size(); l++){
                     for (int ty = 0; ty < types.size(); ty++){
+            
                                     filename =  "files/Jan18/" + levels[l] + "/" + types[ty] + "/" + filenames[f];
                                     //std::cout << "          filename  = " << levels[l] << std::endl;
-                                    level = levels[l];
                                     file_tokens_vec.clear();
                         
                                     tokenizer< char_separator<char> > file_tokens(filenames[f], sep_2);
                                     BOOST_FOREACH (const string& ft, file_tokens){
                                     file_tokens_vec.push_back(ft);
                                     }
+                                    level = levels[l];
                         
                                     //filename = filenames[f];
                                     //filename_cov = filenames_cov[f];
@@ -937,8 +941,8 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     //gPad->Update();
                         
                                     std::string hepdata_filename_covplot = "";
-                                    hepdata_filename_covplot += "CovMatrices/";
                                     varname = vars_txt[f];
+                                    hepdata_filename_covplot += "CovMatrices/";
                                     hepdata_filename_covplot += varname;
                                     hepdata_filename_covplot += "_";
                                     hepdata_filename_covplot += mode;
@@ -1038,21 +1042,22 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                                     HDfile.close();
                                     HDfile_cov.close();
                                     f_var->Close();
-                        
                         index++;
-                        if (table_iterator%2 == 0) table_number++;
                         table_iterator++;
-                        
                         //write details in submission.yaml
                         HDfile_sub<<"---"<<endl;
                         
                         //table_number = table_number + ((table_iterator%2)*14) + table_iterator;
                         //cout <<"Index,  Table number  = "<< table_iterator <<" , " <<((table_iterator%2)*14) + table_iterator  << endl;
                         
-                        cout<<"level  =  "<< level <<endl;
+                        //cout<<"level  =  "<< level <<endl;
                         
                         HDfile_sub<<"name: Table "<< index <<endl;
-                        HDfile_sub<<"location: Data from Table "<< table_number << " of preprint"<<endl;
+                        if (level == "particle"){
+                        HDfile_sub<<"location: Data from Table "<< table_number+14 << " of paper."<<endl;
+                        }else{
+                            HDfile_sub<<"location: Data from Table "<< table_number << " of paper."<<endl;
+                        }
                         HDfile_sub<<"description: Measured "<< types[ty] <<" differential cross section at "<< level << " level as a function of $"<< x_tex_str <<"$."<<endl;
                         HDfile_sub<<"keywords: "<<endl;
                         HDfile_sub<<"- {name: reactions, values: [P P --> TOP TOPBAR X]}"<<endl;
@@ -1065,7 +1070,7 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                         
                         HDfile_sub<<"---"<<endl;
                         HDfile_sub<<"name: Table "<< index <<endl;
-                        HDfile_sub<<"location: Data from Figure "<< index << " of supplmentary material"<<endl;
+                        HDfile_sub<<"location: Data from Figure "<< index << " of additional figures on analysis webpage."<<endl;
                         HDfile_sub<<"description: Covariance matrix of the "<< types[ty] <<" differential cross section at "<< level << " level as a function of $"<< x_tex_str <<"$."<<endl;
                         HDfile_sub<<"keywords: "<<endl;
                         HDfile_sub<<"- {name: reactions,values: [P P --> TOP TOPBAR X]}"<<endl;
@@ -1073,6 +1078,11 @@ void write_hepdata_tables(string mode, vector<string> filenames, vector<string> 
                         HDfile_sub<<"- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}"<<endl;
                         HDfile_sub<<"- {name: cmenergies, values: [13000.0]}"<<endl;
                         HDfile_sub<<"data_file: "<< filename_cov <<endl;
+                        
+                        if ((table_iterator != 1) && (table_iterator%2 == 0)) {
+                            table_number++;
+                        }
+                        
                 }
             }
                 var_number++;

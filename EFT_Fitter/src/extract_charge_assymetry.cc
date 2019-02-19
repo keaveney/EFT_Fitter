@@ -350,7 +350,6 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         f_CA_result->Write();
     
         return ;
-
     
 }
 
@@ -366,8 +365,8 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
 
        // vector<std::string> runs = {"norm.root"};
 
-        
         TCanvas * c_results = new TCanvas();
+        c_results->SetBottomMargin(0.15);
         
         TGraphAsymmErrors * gr_68;
         TGraphAsymmErrors * gr_95;
@@ -377,12 +376,15 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         
         h_base->SetLineWidth(0.0);
         h_base->GetXaxis()->SetRangeUser(-0.07, 0.07);
-        h_base->GetYaxis()->SetRangeUser(-0.5, 1.5);
+        h_base->GetYaxis()->SetRangeUser(-0.3, 1.7);
         h_base->GetYaxis()->SetTickLength(0.);
         h_base->GetYaxis()->SetLabelSize(0.);
         h_base->GetXaxis()->SetTitle("A_{C}^{X}");
+        h_base->GetXaxis()->SetTitleSize(0.05);
+        h_base->GetXaxis()->SetTitleOffset(1.0);
+
         h_base->GetYaxis()->SetLabelOffset(999);
-        h_base->GetYaxis()->SetAxisColor(0,100.0);
+        //h_base->GetYaxis()->SetAxisColor(0,100.0);
         h_base->Draw();
         
         for(int r =0 ;  r < runs.size(); r++){
@@ -396,8 +398,12 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         gr_central = (TGraphAsymmErrors*)f_results->Get("central;1");
         f_results->Close();
             
+            
+        gr_central->SetLineWidth(3);
+
         gr_68->SetFillColor(kGreen);
         gr_95->SetFillColor(kYellow);
+
             
             if (r == 0){
         gr_95->Draw("SAME2");
@@ -410,12 +416,10 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
                 gr_central->Draw("SAMEE1Z");
             
             }
-    
         }
         
         h_base->GetXaxis()->SetRangeUser(-0.03, 0.03);
 
-        
        // TLine *line_mg5h6_parton = new TLine(0.0045,-0.2,0.0045,0.2);
        // line_mg5h6_parton->SetLineColor(kRed);
        // line_mg5h6_parton->Draw();
@@ -423,54 +427,52 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         TLine *line_pwhgp8_parton = new TLine(0.003442,-0.2,0.003442,0.2);
         line_pwhgp8_parton->SetLineColor(kBlue);
         line_pwhgp8_parton->SetLineStyle(2);
-        line_pwhgp8_parton->SetLineWidth(2);
-
+        line_pwhgp8_parton->SetLineWidth(3);
         line_pwhgp8_parton->Draw();
         
         TLine *line_aMC_parton = new TLine(0.003007,-0.2,0.003007,0.2);
         line_aMC_parton->SetLineColor(kRed);
-        line_aMC_parton->SetLineStyle(2);
-        line_aMC_parton->SetLineWidth(2);
+        line_aMC_parton->SetLineStyle(3);
+        line_aMC_parton->SetLineWidth(3);
         line_aMC_parton->Draw();
         
         TLine *line_bernreuther_parton = new TLine(0.0075,-0.2,0.0075,0.2);
         line_bernreuther_parton->SetLineColor(kViolet);
-        line_bernreuther_parton->SetLineStyle(2);
-        line_bernreuther_parton->SetLineWidth(2);
+        line_bernreuther_parton->SetLineStyle(8);
+        line_bernreuther_parton->SetLineWidth(3);
         line_bernreuther_parton->Draw();
         
         TLine *line_pwhgp8_particle = new TLine(0.001551,0.3,0.001551,0.7);
         line_pwhgp8_particle->SetLineColor(kBlue);
         line_pwhgp8_particle->SetLineStyle(2);
-        line_pwhgp8_particle->SetLineWidth(2);
+        line_pwhgp8_particle->SetLineWidth(3);
         line_pwhgp8_particle->Draw();
         
         TLine *line_aMC_particle = new TLine(0.00221,0.3,0.00221,0.7);
         line_aMC_particle->SetLineColor(kRed);
-        line_aMC_particle->SetLineStyle(2);
-        line_aMC_particle->SetLineWidth(2);
+        line_aMC_particle->SetLineStyle(3);
+        line_aMC_particle->SetLineWidth(3);
         line_aMC_particle->Draw();
         
         TLine *line_pwhgp8_particle_ll = new TLine(-0.0018,0.8,-0.0018,1.2);
         line_pwhgp8_particle_ll->SetLineColor(kBlue);
-        line_pwhgp8_particle_ll->SetLineStyle(2);
-        line_pwhgp8_particle_ll->SetLineWidth(2);
+        line_pwhgp8_particle_ll->SetLineStyle(7);
+        line_pwhgp8_particle_ll->SetLineWidth(3);
         line_pwhgp8_particle_ll->Draw();
     
-        
         TLine *line_aMC_particle_ll = new TLine(-0.00148351,0.8,-0.00148351,1.2);
         line_aMC_particle_ll->SetLineColor(kRed);
-        line_aMC_particle_ll->SetLineStyle(2);
-        line_aMC_particle_ll->SetLineWidth(2);
+        line_aMC_particle_ll->SetLineStyle(3);
+        line_aMC_particle_ll->SetLineWidth(3);
         line_aMC_particle_ll->Draw();
-        
+
         
         TLatex Tl;
         Tl.SetTextAlign(12);
-        Tl.SetTextSize(0.03);
-        Tl.DrawLatex(-0.03, 0.0,"A_{c}^{tt} parton level");
-        Tl.DrawLatex(-0.03, 0.5,"A_{c}^{tt} particle level");
-        Tl.DrawLatex(-0.03, 1.0,"A_{c}^{ll}  particle level");
+        Tl.SetTextSize(0.045);
+        Tl.DrawLatex(-0.034, 0.0,"A_{c}^{tt} parton level");
+        Tl.DrawLatex(-0.034, 0.5,"A_{c}^{tt} particle level");
+        Tl.DrawLatex(-0.034, 1.0,"A_{c}^{ll}  particle level");
         
        // Tl.DrawLatex(-0.03, 3.0,"A_{c}^{tt} parton level");
        // Tl.DrawLatex(-0.03, 4.0,"A_{c}^{tt} particle level");
@@ -484,36 +486,39 @@ void calculate_CA(TGraph * data, TH2F * h_cov, std::string write) {
         float b = c_results->GetBottomMargin();
         float extraOverCmsTextSize  = 0.8;
         
-        
         TString cmsText, extraText, lumiText;
         cmsText += "CMS";
-        extraText += "Preliminary";
+        extraText += "";
         lumiText += "35.9 fb^{-1} (13 TeV)";
         TLatex latex;
         latex.SetNDC();
         latex.SetTextAngle(0);
-        latex.SetTextSize(0.75*t);
+        latex.SetTextSize(0.46*t);
         latex.SetTextColor(kBlack);
         latex.SetTextFont(61);
         latex.SetTextAlign(31);
-        latex.DrawLatex(0.22,0.905,cmsText);
+        latex.DrawLatex(0.17,0.916,cmsText);
         
         latex.SetTextFont(52);
-        latex.SetTextSize(0.75*t*extraOverCmsTextSize);
-        latex.DrawLatex(0.35,0.905,extraText);
+        latex.SetTextSize(0.71*t*extraOverCmsTextSize);
+        latex.DrawLatex(0.3,0.912,extraText);
         
         latex.SetTextFont(42);
-        latex.SetTextSize(0.6*t);
-        latex.DrawLatex(0.98,0.905,lumiText);
+        latex.SetTextSize(0.46*t);
+        latex.DrawLatex(0.9,0.916,lumiText);
         
+        gr_68->SetLineWidth(0);
+        gr_95->SetLineWidth(0);
         
-        auto legend = new TLegend(0.69,0.45,0.99,0.75);
-       // legend->AddEntry(line_mg5h6_parton,"MG5_aMC@NLO+HERWIG6","E1");
-        legend->AddEntry(line_pwhgp8_parton,"POWHEGv2+PYTHIA8","E1");
-        legend->AddEntry(line_aMC_particle_ll,"MG5_aMC@NLO+PYTHIA8 [FxFx]","E1");
+        auto legend = new TLegend(0.49,0.55,0.79,0.85);
+        legend->AddEntry(gr_central,"Data","E1Z");
+        legend->AddEntry(gr_68,"68% CI","f");
+        legend->AddEntry(gr_95,"95% CI","f");
+        legend->AddEntry(line_pwhgp8_parton,"POWHEGV2 + PYTHIA8","E1");
+        legend->AddEntry(line_aMC_particle_ll,"MG5_aMC@NLO + PYTHIA8 [FxFx]","E1");
         legend->AddEntry(line_bernreuther_parton,"NLO+EW","E1");
-        legend->AddEntry(gr_68,"Data","E1");
-        legend->SetTextSize(0.028);
+        legend->SetTextSize(0.032);
+        legend->SetBorderSize(0);
         legend->Draw();
         
         gStyle->SetOptStat(00000);

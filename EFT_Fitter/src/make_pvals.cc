@@ -9,8 +9,8 @@ int main(int argc, const char * argv[]){
     //make_table("norm_parton_bnlo");
     // make_table("abs_parton_bnlo");
     //make_table("norm_parton");
-    make_table("norm_particle");
-    //make_table("abs_particle");
+   // make_table("norm_particle");
+    make_table("abs_particle");
     //make_table("abs_parton");
 }
 

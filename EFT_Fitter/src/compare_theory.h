@@ -25,6 +25,7 @@
 #include "TArrayD.h"
 
 #include "TPaveText.h"
+
 #include "TF1.h"
 #include <utility>
 #include <tuple>
@@ -32,6 +33,7 @@
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 #include "helper_tools.h"
+
 #include "tdrstyle.C"
 
 TGraphAsymmErrors* read_prediction(std::string, bool, std::string);
@@ -45,45 +47,55 @@ vector<TGraphAsymmErrors*> make_unc_graphs(TGraphAsymmErrors*,TGraphAsymmErrors*
 //top pt
 vector<std::string> preds_top_pt = {
     "predictions/NNLO_EW/LHC13-CMS-PTt-mTt2-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-PTt-mTt2-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-PTt-mTt2-NNPDF31-pheno.dat",
     "predictions/NNLLprime/LHC13-CMS-PTtav-mTt2-NNPDF31.dat",
+    "predictions/NNLLprime_172-5/LHC13-CMS-PTtav-mTt2-NNPDF31.dat",
     "predictions/aNNNLO/LHC13-CMS-PTtav-sqrt-mT-NNPDF30.dat",
-    "predictions/aNNLO/LHC13-CMS-PTtav-mT-NNPDF30.dat"};
+    "predictions/aNNLO/LHC13-CMS-PTtav-mT-CT14NNLO.dat"
+    //"predictions/aNNLO/LHC13-CMS-PTtav-mT-CT14NNLO.dat"
+};
 
 vector<std::string> pred_names_top_pt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
-    "NNLO+NNLL' (NNPDF3.1)",
-    "approx. N^{3}LO (NNPDF3.0)",
-    "approx. NNLO (CT14NNLO)"
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV",
+    "NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV",
+    "NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV",
+    "aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV",
+    "aNNLO (CT14NNLO) m_{t} = 172.5 GeV"
 };
 
 vector<bool> divide_options_top_pt = {
     true,
     true,
+    true,
+    false,
     false,
     true,
     false};
 
 vector<float> plot_options_top_pt = {
-    0.015, 20.0, 0.81,1.46, 0.6,0.45,0.8,0.78, 0.24,0.77,0.41,0.94};
+    0.0006, 29.0, 0.81,1.46, 0.2,0.019,0.5,0.5, 0.24,0.75,0.41,0.92};
 
 vector<float> plot_options_top_pt_norm = {
-    0.000018, 0.025, 0.81,1.58, 0.6,0.45,0.8,0.78, 0.24,0.77,0.41,0.94};
+    0.0000006, 0.038, 0.81,1.58, 0.2,0.019,0.5,0.5, 0.24,0.72,0.41,0.93};
 
 //anti-top pt
 vector<std::string> preds_antitop_pt = {
     "predictions/NNLO_EW/LHC13-CMS-PTtx-mTtx2-LUXQED17-pheno.dat",
-    "predictions/NNLO_EW/LHC13-CMS-PTtx-mTtx2-NNPDF31-pheno.dat",
-    "predictions/NNLLprime/LHC13-CMS-PTtav-mTt2-NNPDF31.dat"
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-PTtx-mTtx2-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW/LHC13-CMS-PTtx-mTtx2-NNPDF31-pheno.dat"
+  //  "predictions/NNLLprime/LHC13-CMS-PTtav-mTt2-NNPDF31.dat"
   //  "predictions/aNNNLO/LHC13-CMS-PTtav-sqrt-mT-NNPDF30.dat",
    // "predictions/aNNLO/LHC13-CMS-PTtav-mT-NNPDF30.dat"
 };
 
 vector<std::string> pred_names_antitop_pt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
-   "NNLO+NNLL' (NNPDF3.1)"
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV"
+   // "NNLO+NNLL' (NNPDF3.1)"
   //  "approx. N^{3}LO (NNPDF3.0)",
   //  "approx. NNLO (CT14NNLO)"
 };
@@ -91,146 +103,175 @@ vector<std::string> pred_names_antitop_pt = {
 vector<bool> divide_options_antitop_pt = {
     true,
     true,
-   false
+    true
+ //  false
  //   true,
  //   false
 };
 
 vector<float> plot_options_antitop_pt = {
-    0.01, 20.0, 0.81,1.56, 0.6,0.45,0.8,0.78, 0.24,0.77,0.41,0.94};
+   // 0.01, 20.0, 0.81,1.56, 0.6,0.45,0.8,0.78, 0.24,0.73,0.41,0.925
+    0.012, 16.0, 0.81,1.46, 0.2,0.019,0.5,0.4, 0.24,0.75,0.41,0.92
+    
+};
+
 vector<float> plot_options_antitop_pt_norm = {
-    0.0001, 0.01, 0.81,1.52, 0.6,0.45,0.8,0.78, 0.24,0.77,0.41,0.94};
+    0.000013, 0.016, 0.81,1.58, 0.2,0.019,0.5,0.4, 0.24,0.73,0.41,0.93
+//    0.0001, 0.01, 0.81,1.52, 0.6,0.45,0.8,0.78, 0.24,0.73,0.41,0.92
+    
+};
 
 //yt
 vector<std::string> preds_top_y = {
     "predictions/NNLO_EW/LHC13-CMS-Yt-HT4-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-Yt-HT4-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-Yt-HT4-NNPDF31-pheno.dat",
     "predictions/aNNNLO/LHC13-CMS-Yt-NNPDF3.0.dat",
-    "predictions/aNNLO/LHC13-CMS-Yt-NNPDF3.0.dat"};
+    "predictions/aNNLO/LHC13-CMS-Yt-CT14NNLO.dat"};
 
 vector<std::string> pred_names_top_y = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
-    "approx. N^{3}LO (NNPDF3.0)",
-    "approx. NNLO (CT14NNLO)"};
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV",
+    "aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV",
+    "aNNLO (CT14NNLO) m_{t} = 172.5 GeV"};
 
 vector<bool> divide_options_top_y = {
+    true,
     true,
     true,
     true,
     false};
 
 vector<float> plot_options_top_y = {
-    45.0, 350.0, 0.87,1.25,0.4,0.15,0.6,0.48, 0.4,0.77,0.6,0.94};
+    45.0, 350.0, 0.87,1.26,0.31,0.02,0.58,0.37, 0.4,0.8,0.6,0.97};
 
 vector<float> plot_options_top_y_norm = {
-    0.05, 0.5, 0.87,1.19,0.4,0.15,0.6,0.48,  0.4,0.77,0.6,0.94};
+    0.05, 0.5, 0.87,1.19,0.31,0.02,0.58,0.37, 0.4,0.8,0.6,0.97};
 
 //ytbar
 vector<std::string> preds_antitop_y = {
     "predictions/NNLO_EW/LHC13-CMS-Ytx-HT4-LUXQED17-pheno.dat",
-    "predictions/NNLO_EW/LHC13-CMS-Ytx-HT4-NNPDF31-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-Ytx-HT4-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW/LHC13-CMS-Ytx-HT4-NNPDF31-pheno.dat"
     //"predictions/aNNNLO/LHC13-CMS-Yt-NNPDF3.0.dat",
-    "predictions/aNNLO/LHC13-CMS-Yt-NNPDF3.0.dat"
+   // "predictions/aNNLO/LHC13-CMS-Yt-NNPDF3.0.dat"
 };
 
 vector<std::string> pred_names_antitop_y = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV"
   //  "approx. N^{3}LO (NNPDF3.0)",
-    "approx. NNLO (CT14NNLO)"
+  //  "approx. NNLO (CT14NNLO)"
 };
 
 vector<bool> divide_options_antitop_y = {
     true,
     true,
+    true
   //  true,
-    false
+ //   false
 };
 
 vector<float> plot_options_antitop_y = {
-    45.0, 350.0, 0.87,1.22,0.4,0.15,0.6,0.48,  0.4,0.77,0.6,0.94
+    45.0, 350.0, 0.87,1.22,0.3,0.02,0.6,0.34,  0.4,0.77,0.6,0.94
 };
 
 vector<float> plot_options_antitop_y_norm = {
-    0.05, 0.5, 0.87,1.19,0.4,0.15,0.6,0.48,  0.4,0.77,0.6,0.94
+    0.05, 0.5, 0.87,1.19,0.3,0.02,0.6,0.34, 0.4,0.79,0.6,0.96
 };
 
 //mtt
 vector<std::string> preds_mtt = {
     "predictions/NNLO_EW/LHC13-CMS-Mtt-HT4-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-Mtt-HT4-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-Mtt-HT4-NNPDF31-pheno.dat",
-    "predictions/NNLLprime/LHC13-CMS-Mtt-HT4-NNPDF31.dat"
+    "predictions/NNLLprime/LHC13-CMS-Mtt-HT4-NNPDF31.dat",
+    "predictions/NNLLprime_172-5/LHC13-CMS-Mtt-HT4-NNPDF31.dat"
+
 };
 
 vector<std::string> pred_names_mtt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
-    "NNLO+NNLL' (NNPDF3.1)"
-};
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV",
+    "NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV",
+    "NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV"
 
+};
 
 vector<bool> divide_options_mtt = {
     true,
     true,
+    true,
+    false,
     false
 };
 
 vector<float> plot_options_mtt = {
-    0.0005, 30.0, 0.6,1.45, 0.6,0.45,0.8,0.78, 0.25,0.77,0.45,0.94
+    0.0003, 20.0, 0.6,1.55, 0.22,0.03,0.42,0.39, 0.25,0.78,0.45,0.985
 };
+
 vector<float> plot_options_mtt_norm = {
-    0.0000015, 0.019, 0.65, 1.45, 0.6,0.45,0.8,0.78, 0.25,0.77,0.45,0.94
+    0.0000006, 0.02, 0.6, 1.55, 0.22,0.03,0.42,0.39, 0.25,0.78,0.45,0.985
 };
 
 //pttt
 vector<std::string> preds_pttt = {
     "predictions/NNLO_EW/LHC13-CMS-PTtt-HT4-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-PTtt-HT4-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-PTtt-HT4-NNPDF31-pheno.dat"
 };
 
 vector<std::string> pred_names_pttt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV",
 };
 
 vector<bool> divide_options_pttt = {
+    true,
     true,
     true
 };
 
 vector<float> plot_options_pttt = {
-    0.005, 45.0, 0.75,1.45, 0.6,0.45,0.8,0.78, 0.35,0.77,0.55,0.94
+    0.014, 350.0, 0.75,1.45, 0.38,0.4,0.7,0.71, 0.35,0.77,0.55,0.94
 };
 vector<float> plot_options_pttt_norm = {
-    0.0000025, 0.045, 0.8, 1.45, 0.6,0.45,0.8,0.78, 0.35,0.74,0.55,0.91
+    0.000014, 0.35, 0.76, 1.45, 0.38,0.4,0.7,0.71, 0.35,0.74,0.55,0.91
 };
+
 //ytt
 vector<std::string> preds_ytt = {
     "predictions/NNLO_EW/LHC13-CMS-Ytt-HT4-LUXQED17-pheno.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-Ytt-HT4-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-Ytt-HT4-NNPDF31-pheno.dat"
     //  "predictions/NNLLprime/LHC13-CMS-Ytt-HT4-NNPDF31.dat"
 };
 
 vector<std::string> pred_names_ytt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)"
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV"
     //   "NNLO+NNLL' (NNPDF3.1)"
 };
 
 
 vector<bool> divide_options_ytt = {
     true,
+    true,
     true
     // false
 };
 
 vector<float> plot_options_ytt = {
-    25.0, 500.0, 0.83,1.25, 0.4,0.15,0.6,0.48, 0.4,0.77,0.6,0.94
+    19.0, 500.0, 0.83,1.28, 0.34,0.02,0.59,0.37, 0.4,0.76,0.6,0.97
 };
 
 vector<float> plot_options_ytt_norm = {
-    0.04, 0.6, 0.83,1.25, 0.4,0.15,0.6,0.48 , 0.4,0.77,0.6,0.94
+    0.025, 0.6, 0.83,1.28, 0.34,0.02,0.59,0.37, 0.4,0.76,0.6,0.97
 };
 
 //rapidity differnce
@@ -238,31 +279,32 @@ vector<std::string> preds_dytt = {
     //  "predictions/NNLO_EW/LHC13-CMS-Ytt-HT4-LUXQED17-pheno.dat"
     //  "predictions/NNLO_EW/LHC13-CMS-dytt-HT4-LUXQED17-pheno.dat"
     "predictions/NNLO_EW/LHC13-CMS-dytt-HT4-LUXQED17-pheno_rewrite.dat",
+    "predictions/NNLO_EW_172-5/LHC13-CMS-mt_172.5-dytt-HT4-LUXQED17-pheno.dat",
     "predictions/NNLO_EW/LHC13-CMS-dytt-HT4-NNPDF31-pheno.dat"
     //  "predictions/NNLLprime/LHC13-CMS-Ytt-HT4-NNPDF31.dat"
 };
 
 vector<std::string> pred_names_dytt = {
-    "NNLO+#alpha_{EW}^{3} (LUXQED17)",
-    "NNLO+#alpha_{EW}^{3} (NNPDF3.1)"
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV",
+    "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV",
+    "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV"
     //   "NNLO+NNLL' (NNPDF3.1)"
 };
 
 vector<bool> divide_options_dytt = {
+    true,
     true,
     true
     // false
 };
 
 vector<float> plot_options_dytt = {
-    35.0, 550.0, 0.85,1.19, 0.4,0.15,0.6,0.48, 0.45,0.77,0.65,0.94
+    35.0, 550.0, 0.85,1.19, 0.41,0.11,0.6,0.42, 0.45,0.81,0.65,0.97
 };
 
 vector<float> plot_options_dytt_norm = {
-    0.04, 0.7, 0.91,1.13, 0.4,0.15,0.6,0.48,0.45,0.77,0.65,0.94
+    0.044, 0.7, 0.91,1.13, 0.41,0.11,0.6,0.42,0.45,0.735,0.65,0.88
 };
-
-
 
 
 TH1D* make_ratio_histo(TGraphAsymmErrors* g_den, TH1F* h_num){
@@ -290,7 +332,6 @@ TH1D* make_ratio_histo(TGraphAsymmErrors* g_den, TH1F* h_num){
 };
 
 
-
 TGraphAsymmErrors* remove_ex(TGraphAsymmErrors*  g){
     for (int p = 0; p < g->GetN(); p++){
         g->SetPointEXlow(p, 0.0);
@@ -298,7 +339,6 @@ TGraphAsymmErrors* remove_ex(TGraphAsymmErrors*  g){
     }
     return g;
 }
-
 
 TGraphAsymmErrors* refine_graph(TGraphAsymmErrors*  g_orig, int pred_index, double total_predictions,  std::string pred_name){
     
@@ -311,6 +351,7 @@ TGraphAsymmErrors* refine_graph(TGraphAsymmErrors*  g_orig, int pred_index, doub
     TGraphAsymmErrors* g = new TGraphAsymmErrors();
     double bin_edge, bin_centre, y, new_centre;
     double x_orig, y_orig, exl_orig, exh_orig, eyl_orig , eyh_orig;
+    double bin_offset = 0.05;
 
     for(int bin = 0; bin < g_orig->GetN(); bin++){
         g_orig->GetPoint(bin,x_orig, y_orig);
@@ -321,35 +362,56 @@ TGraphAsymmErrors* refine_graph(TGraphAsymmErrors*  g_orig, int pred_index, doub
         eyh_orig = g_orig->GetErrorYhigh(bin);
         
         bin_edge = x_orig - exl_orig;
-        new_centre = bin_edge + (pred_index+1)*((exl_orig+exh_orig)/(total_predictions+1.0)) + ((exl_orig+exh_orig)/30.0);
+        new_centre = bin_edge + (pred_index+1)*((exl_orig+exh_orig)/(total_predictions+1.0)) + ((bin_offset)*(exl_orig+exh_orig));
         g->SetPoint(bin, new_centre, y_orig);
         g->SetPointError(bin, exl_orig, exh_orig, eyl_orig, eyh_orig);
        // std::cout <<"refining   " <<  bin<<"  "<< new_centre<<" " << y_orig  << std::endl;
-
     }
     
-    if (pred_name == "NNLO+#alpha_{EW}^{3} (LUXQED17)"){
+    if (pred_name == "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 173.3 GeV"){
+        //g->SetMarkerStyle(21);
+        //g->SetMarkerColor(3);
         g->SetMarkerStyle(21);
         g->SetMarkerColor(3);
     }
-    else if (pred_name == "NNLO+#alpha_{EW}^{3} (LUXQED)"){
-        g->SetMarkerStyle(29);
-        g->SetMarkerColor(9);
+    else if (pred_name == "NNLO+#alpha_{EW}^{3} (LUXQED17) m_{t} = 172.5 GeV"){
+       // g->SetMarkerStyle(21);
+       // g->SetMarkerColor(28);
+        g->SetMarkerStyle(21);
+        g->SetMarkerColor(28);
+
     }
-    else if (pred_name == "NNLO+#alpha_{EW}^{3} (NNPDF3.1)"){
-        g->SetMarkerStyle(22);
+    else if (pred_name == "NNLO+#alpha_{EW}^{3} (NNPDF3.1) m_{t} = 173.3 GeV"){
+       // g->SetMarkerStyle(21);
+       // g->SetMarkerColor(4);
+        g->SetMarkerStyle(25);
         g->SetMarkerColor(4);
-    } else if (pred_name == "NNLO+NNLL' (NNPDF3.1)") {
-        g->SetMarkerStyle(23);
+
+    } else if (pred_name == "NNLO+NNLL' (NNPDF3.1) m_{t} = 173.3 GeV") {
+        //g->SetMarkerStyle(22);
+        //g->SetMarkerColor(6);
+        g->SetMarkerStyle(20);
         g->SetMarkerColor(6);
-    }else if (pred_name == "approx. N^{3}LO (NNPDF3.0)") {
+
+    }else if (pred_name == "NNLO+NNLL' (NNPDF3.1) m_{t} = 172.5 GeV") {
+       // g->SetMarkerStyle(22);
+      //  g->SetMarkerColor(32);
+         g->SetMarkerStyle(24);
+          g->SetMarkerColor(32);
+    
+    }
+    else if (pred_name == "aN^{3}LO (NNPDF3.0) m_{t} = 172.5 GeV") {
         g->SetMarkerStyle(27);
         g->SetMarkerColor(7);
-    }else if (pred_name == "approx. NNLO (CT14NNLO)") {
+    
+    }else if (pred_name == "aNNLO (CT14NNLO) m_{t} = 172.5 GeV") {
         g->SetMarkerStyle(28);
         g->SetMarkerColor(8);
+
     }
-    g->SetMarkerSize(1.3);
+    
+    
+    g->SetMarkerSize(0.8);
 
     return g;
 }
@@ -377,8 +439,10 @@ vector<TGraphAsymmErrors*> make_unc_graphs(TGraphAsymmErrors* g_data, TGraphAsym
         g_ratio_stat->SetPointError(p, bin_error,bin_error, unc_stat, unc_stat);
     }
 
-    g_ratio_total->SetFillColor(kOrange-4);
-    g_ratio_stat->SetFillColor(kGray+1);
+    //g_ratio_total->SetFillColor(kOrange-4);
+    //g_ratio_stat->SetFillColor(kGray+1);
+    g_ratio_total->SetFillColor(796);
+    g_ratio_stat->SetFillColor(921);
     g_ratio_total->SetLineWidth(0.0);
     g_ratio_stat->SetLineWidth(0.0);
 
@@ -414,11 +478,12 @@ void make_plot(std::string observable, std::string units, std::string filename,s
 
     gStyle->SetOptStat(00000);
     gStyle->SetEndErrorSize(0);
+    //gStyle->SetErrorX(0.00001);
     
     vector<int> colors = {3,4,5,6,7,8,9};
     vector<TGraphAsymmErrors*> pred_graphs;
     
-    //std::cout <<"***READING FILENAME***   "<<  filename.c_str()  << std::endl;
+    std::cout <<"***READING FILENAME***   "<<  filename.c_str()  << std::endl;
     TFile * f = new TFile(filename.c_str());
     TGraphAsymmErrors * g = (TGraphAsymmErrors*)f->Get("data");
     TGraphAsymmErrors * g_stat = (TGraphAsymmErrors*)f->Get("data_staterror_only");
@@ -441,18 +506,26 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     
     if (type =="abs"){
         first_fragment = "#frac{d#sigma}{d";
+        if(units != "") {
+            y_axis_title = first_fragment + observable + "} " + "[pb/" + units + "]";
+        }else{
+            y_axis_title = first_fragment + observable + "} " + "[pb" + units + "]";
+        }
+    
     }else{
         first_fragment = "#frac{1}{#sigma} #frac{d#sigma}{d";
+    
+        if(units != "") {
+            y_axis_title = first_fragment + observable + "} " + "[" + units + "^{-1}]";
+        }else{
+            y_axis_title = first_fragment + observable + "} ";
+        }
     }
     
-    if(units != "") {
-        y_axis_title = first_fragment + observable + "} " + "[pb/" + units + "]";
-    }else{
-        y_axis_title = first_fragment + observable + "} " + "[pb" + units + "]";
-    }
     h_mc->SetYTitle(y_axis_title.c_str());
     h_mc->GetYaxis()->SetTitleSize(0.07);
-    h_mc->GetYaxis()->SetTitleOffset(0.95);
+    h_mc->GetYaxis()->SetLabelSize(0.06);
+    h_mc->GetYaxis()->SetTitleOffset(1.2);
     h_mc->SetTitle("");
     h_mc->SetLineColor(kRed+1);
 
@@ -473,6 +546,9 @@ void make_plot(std::string observable, std::string units, std::string filename,s
  */
 
     h_mc->Draw();
+    h_mc->SetMarkerSize(0);
+    h_mc->SetMarkerColor(kRed+1);
+
     h_mc->GetYaxis()->SetRangeUser(plot_params[0], plot_params[1]);
     
     c->cd();
@@ -483,6 +559,7 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     pad2->SetLeftMargin(0.19);
     pad2->SetRightMargin(0.05);
     pad2->SetGridy();
+
     pad2->SetTicks();
     pad2->Draw();
     pad2->cd();
@@ -502,6 +579,7 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     h_ratio_base->Draw();
     h_ratio_base->GetYaxis()->SetRangeUser(plot_params[2], plot_params[3]);
     h_ratio_base->GetYaxis()->SetNdivisions(505);
+    h_ratio_base->GetXaxis()->SetNdivisions(506);
     h_ratio_base->GetYaxis()->SetLabelSize(0.09);
     h_ratio_base->GetXaxis()->SetLabelSize(0.1);
     h_ratio_base->GetXaxis()->SetTitleSize(0.11);
@@ -553,32 +631,59 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     }else{
         x_axis_title = observable + " [" + units + "]";
     }
-    std::cout <<"***OBSERVABLE****   "  <<    x_axis_title <<std::endl;
+    std::cout <<"***OBSERVABLE****"  << x_axis_title <<"***" <<std::endl;
     h_ratio_base->SetXTitle(x_axis_title.c_str());
 
+    pad2->SetGridy();
+
+    
     pad1->cd();
     pad1->SetLogy();
-    g->SetMarkerSize(1.3);
+    g->SetMarkerSize(0.8);
+    g->SetLineWidth(2.0);
+
+    
+    TH1D* data_histo;
+    data_histo = graph2histo(g);
+    data_histo->SetMarkerSize(0.8);
+    data_histo->SetLineWidth(2.0);
+    data_histo->SetLineColor(1);
+    data_histo->SetMarkerStyle(20);
     g->Draw("E0PSAME");
+
+    vector<TH1F*> dummy_hists;
+    for (int p = 0; p< prediction_names.size(); p++){
+        TH1F * dummy_hist = new TH1F("","", 1, 0.0, 1.0);
+        dummy_hist->SetMarkerSize(pred_graphs[p]->GetMarkerSize());
+        dummy_hist->SetMarkerStyle(pred_graphs[p]->GetMarkerStyle());
+        dummy_hist->SetMarkerColor(pred_graphs[p]->GetMarkerColor());
+        dummy_hist->SetLineColor(1);
+        dummy_hists.push_back(dummy_hist);
+    }
     
     TLegend *leg = new TLegend(plot_params[4], plot_params[5], plot_params[6], plot_params[7]);
     leg->SetBorderSize(0);
-    leg->AddEntry(g ,"Data","P");
-    leg->AddEntry(h_mc,"Powheg v2+Pythia8","l");
+    leg->SetFillStyle(0);
+    leg->AddEntry(data_histo ,"Data","e0p");
+    leg->AddEntry(h_mc,"POWHEGV2 + PYTHIA8","l");
     
     for (int p = 0; p< prediction_names.size(); p++){
-        leg->AddEntry(pred_graphs[p], prediction_names[p].c_str(),"p");
+       // leg->AddEntry(pred_graphs[p], prediction_names[p].c_str(),"p");
+        leg->AddEntry(dummy_hists[p], prediction_names[p].c_str(),"e0p");
     }
+    
+    
 
-    leg->SetTextSize(0.033);
+    leg->SetTextSize(0.041);
     leg->Draw();
     
     pad2->cd();
     TLegend *leg_2 = new TLegend(plot_params[8], plot_params[9], plot_params[10], plot_params[11]);
     leg_2->SetBorderSize(0);
+    leg_2->SetFillStyle(0);
     leg_2->SetTextSize(0.09);
-    leg_2->AddEntry(g_ratio_uncs[0], "Stat. #oplus Syst.","f");
-    leg_2->AddEntry(g_ratio_uncs[1], "Stat.","f");
+    leg_2->AddEntry(g_ratio_uncs[0], "Stat #oplus Syst","f");
+    leg_2->AddEntry(g_ratio_uncs[1], "Stat","f");
     leg_2->Draw();
     pad2->RedrawAxis();
     pad2->SetTicky(1);
@@ -590,6 +695,12 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     c->SetLeftMargin(0.0995);
     c->SetRightMargin(0.09);
     
+    if (x_axis_title == "m_{t#bar{t}} [GeV]"){
+        std::cout <<"found mtt"  << std::endl;
+        pad1->SetLogx();
+        pad2->SetLogx();
+    }
+    
     float H = c->GetWh();
     float W = c->GetWw();
     float l = c->GetLeftMargin();
@@ -600,7 +711,7 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     
     TString cmsText, extraText, lumiText;
     cmsText += "CMS";
-    extraText += "Preliminary";
+    extraText += "";
     lumiText += "35.9 fb^{-1} (13 TeV)";
     
     TLatex latex;
@@ -610,7 +721,7 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     latex.SetTextColor(kBlack);
     latex.SetTextFont(61);
     latex.SetTextAlign(31);
-    latex.DrawLatex(0.39,0.905,cmsText);
+    latex.DrawLatex(0.29,0.905,cmsText);
     
     latex.SetTextFont(52);
     latex.SetTextSize(0.43*t*extraOverCmsTextSize);
@@ -618,10 +729,10 @@ void make_plot(std::string observable, std::string units, std::string filename,s
     
     latex.SetTextFont(42);
     latex.SetTextSize(0.39*t);
-    latex.DrawLatex(0.915,0.905,lumiText);
+    latex.DrawLatex(0.94,0.905,lumiText);
     
-    latex.SetTextSize(0.36*t);
-    latex.DrawLatex(0.47,0.83,"Dilepton: parton");
+    latex.SetTextSize(0.39*t);
+    latex.DrawLatex(0.56,0.84,"Dilepton, parton level");
     
     std::string pdf_title = observable +"_" + type + ".pdf";
     c->SaveAs(pdf_title.c_str());

@@ -1,0 +1,1885 @@
+---
+comment |: Absolute and normalised differential cross sections of top quark pair production
+    at parton level in the full phase space and at particle level in a fiducial phase space.
+    Numbers in yaml files provided by James Keaveney (CMS) and are taken from ROOT files prepared 
+    by Mykola Savitskyi (CMS).
+---
+name: Table 1
+location: Data from Table 1 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d01-x01-y01.yaml
+---
+name: Table 2
+location: Data from Figure 2 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d01-x01-y01_cov.yaml
+---
+name: Table 3
+location: Data from Table 1 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d02-x01-y01.yaml
+---
+name: Table 4
+location: Data from Figure 4 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d02-x01-y01_cov.yaml
+---
+name: Table 5
+location: Data from Table 16 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d03-x01-y01.yaml
+---
+name: Table 6
+location: Data from Figure 6 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d03-x01-y01_cov.yaml
+---
+name: Table 7
+location: Data from Table 16 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d04-x01-y01.yaml
+---
+name: Table 8
+location: Data from Figure 8 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d04-x01-y01_cov.yaml
+---
+name: Table 9
+location: Data from Table 3 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d05-x01-y01.yaml
+---
+name: Table 10
+location: Data from Figure 10 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d05-x01-y01_cov.yaml
+---
+name: Table 11
+location: Data from Table 3 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d06-x01-y01.yaml
+---
+name: Table 12
+location: Data from Figure 12 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d06-x01-y01_cov.yaml
+---
+name: Table 13
+location: Data from Table 18 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d07-x01-y01.yaml
+---
+name: Table 14
+location: Data from Figure 14 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d07-x01-y01_cov.yaml
+---
+name: Table 15
+location: Data from Table 18 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d08-x01-y01.yaml
+---
+name: Table 16
+location: Data from Figure 16 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d08-x01-y01_cov.yaml
+---
+name: Table 17
+location: Data from Table 5 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d09-x01-y01.yaml
+---
+name: Table 18
+location: Data from Figure 18 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d09-x01-y01_cov.yaml
+---
+name: Table 19
+location: Data from Table 5 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d010-x01-y01.yaml
+---
+name: Table 20
+location: Data from Figure 20 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d010-x01-y01_cov.yaml
+---
+name: Table 21
+location: Data from Table 20 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d011-x01-y01.yaml
+---
+name: Table 22
+location: Data from Figure 22 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d011-x01-y01_cov.yaml
+---
+name: Table 23
+location: Data from Table 20 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d012-x01-y01.yaml
+---
+name: Table 24
+location: Data from Figure 24 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d012-x01-y01_cov.yaml
+---
+name: Table 25
+location: Data from Table 7 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d013-x01-y01.yaml
+---
+name: Table 26
+location: Data from Figure 26 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d013-x01-y01_cov.yaml
+---
+name: Table 27
+location: Data from Table 7 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d014-x01-y01.yaml
+---
+name: Table 28
+location: Data from Figure 28 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d014-x01-y01_cov.yaml
+---
+name: Table 29
+location: Data from Table 22 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d015-x01-y01.yaml
+---
+name: Table 30
+location: Data from Figure 30 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d015-x01-y01_cov.yaml
+---
+name: Table 31
+location: Data from Table 22 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d016-x01-y01.yaml
+---
+name: Table 32
+location: Data from Figure 32 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d016-x01-y01_cov.yaml
+---
+name: Table 33
+location: Data from Table 9 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d017-x01-y01.yaml
+---
+name: Table 34
+location: Data from Figure 34 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d017-x01-y01_cov.yaml
+---
+name: Table 35
+location: Data from Table 9 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d018-x01-y01.yaml
+---
+name: Table 36
+location: Data from Figure 36 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d018-x01-y01_cov.yaml
+---
+name: Table 37
+location: Data from Table 24 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d019-x01-y01.yaml
+---
+name: Table 38
+location: Data from Figure 38 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d019-x01-y01_cov.yaml
+---
+name: Table 39
+location: Data from Table 24 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d020-x01-y01.yaml
+---
+name: Table 40
+location: Data from Figure 40 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{t}(t\bar{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d020-x01-y01_cov.yaml
+---
+name: Table 41
+location: Data from Table 11 of paper.
+description: Measured absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d021-x01-y01.yaml
+---
+name: Table 42
+location: Data from Figure 42 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d021-x01-y01_cov.yaml
+---
+name: Table 43
+location: Data from Table 11 of paper.
+description: Measured normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d022-x01-y01.yaml
+---
+name: Table 44
+location: Data from Figure 44 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d022-x01-y01_cov.yaml
+---
+name: Table 45
+location: Data from Table 26 of paper.
+description: Measured absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d023-x01-y01.yaml
+---
+name: Table 46
+location: Data from Figure 46 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d023-x01-y01_cov.yaml
+---
+name: Table 47
+location: Data from Table 26 of paper.
+description: Measured normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d024-x01-y01.yaml
+---
+name: Table 48
+location: Data from Figure 48 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d024-x01-y01_cov.yaml
+---
+name: Table 49
+location: Data from Table 13 of paper.
+description: Measured absolute differential cross section at parton level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d025-x01-y01.yaml
+---
+name: Table 50
+location: Data from Figure 50 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d025-x01-y01_cov.yaml
+---
+name: Table 51
+location: Data from Table 13 of paper.
+description: Measured normalised differential cross section at parton level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d026-x01-y01.yaml
+---
+name: Table 52
+location: Data from Figure 52 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d026-x01-y01_cov.yaml
+---
+name: Table 53
+location: Data from Table 28 of paper.
+description: Measured absolute differential cross section at particle level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d027-x01-y01.yaml
+---
+name: Table 54
+location: Data from Figure 54 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d027-x01-y01_cov.yaml
+---
+name: Table 55
+location: Data from Table 28 of paper.
+description: Measured normalised differential cross section at particle level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d028-x01-y01.yaml
+---
+name: Table 56
+location: Data from Figure 56 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $y_{\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d028-x01-y01_cov.yaml
+---
+name: Table 57
+location: Data from Table 15 of paper.
+description: Measured absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d029-x01-y01.yaml
+---
+name: Table 58
+location: Data from Figure 58 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d029-x01-y01_cov.yaml
+---
+name: Table 59
+location: Data from Table 15 of paper.
+description: Measured normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d030-x01-y01.yaml
+---
+name: Table 60
+location: Data from Figure 60 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d030-x01-y01_cov.yaml
+---
+name: Table 61
+location: Data from Table 30 of paper.
+description: Measured absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d031-x01-y01.yaml
+---
+name: Table 62
+location: Data from Figure 62 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d031-x01-y01_cov.yaml
+---
+name: Table 63
+location: Data from Table 30 of paper.
+description: Measured normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d032-x01-y01.yaml
+---
+name: Table 64
+location: Data from Figure 64 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d032-x01-y01_cov.yaml
+---
+name: Table 65
+location: Data from Table 17 of paper.
+description: Measured absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d033-x01-y01.yaml
+---
+name: Table 66
+location: Data from Figure 66 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d033-x01-y01_cov.yaml
+---
+name: Table 67
+location: Data from Table 17 of paper.
+description: Measured normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d034-x01-y01.yaml
+---
+name: Table 68
+location: Data from Figure 68 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d034-x01-y01_cov.yaml
+---
+name: Table 69
+location: Data from Table 32 of paper.
+description: Measured absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d035-x01-y01.yaml
+---
+name: Table 70
+location: Data from Figure 70 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d035-x01-y01_cov.yaml
+---
+name: Table 71
+location: Data from Table 32 of paper.
+description: Measured normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d036-x01-y01.yaml
+---
+name: Table 72
+location: Data from Figure 72 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $y_{t}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d036-x01-y01_cov.yaml
+---
+name: Table 73
+location: Data from Table 19 of paper.
+description: Measured absolute differential cross section at parton level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d037-x01-y01.yaml
+---
+name: Table 74
+location: Data from Figure 74 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d037-x01-y01_cov.yaml
+---
+name: Table 75
+location: Data from Table 19 of paper.
+description: Measured normalised differential cross section at parton level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d038-x01-y01.yaml
+---
+name: Table 76
+location: Data from Figure 76 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d038-x01-y01_cov.yaml
+---
+name: Table 77
+location: Data from Table 34 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d039-x01-y01.yaml
+---
+name: Table 78
+location: Data from Figure 78 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d039-x01-y01_cov.yaml
+---
+name: Table 79
+location: Data from Table 34 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d040-x01-y01.yaml
+---
+name: Table 80
+location: Data from Figure 80 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d040-x01-y01_cov.yaml
+---
+name: Table 81
+location: Data from Table 21 of paper.
+description: Measured absolute differential cross section at parton level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d041-x01-y01.yaml
+---
+name: Table 82
+location: Data from Figure 82 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d041-x01-y01_cov.yaml
+---
+name: Table 83
+location: Data from Table 21 of paper.
+description: Measured normalised differential cross section at parton level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d042-x01-y01.yaml
+---
+name: Table 84
+location: Data from Figure 84 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d042-x01-y01_cov.yaml
+---
+name: Table 85
+location: Data from Table 36 of paper.
+description: Measured absolute differential cross section at particle level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d043-x01-y01.yaml
+---
+name: Table 86
+location: Data from Figure 86 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d043-x01-y01_cov.yaml
+---
+name: Table 87
+location: Data from Table 36 of paper.
+description: Measured normalised differential cross section at particle level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d044-x01-y01.yaml
+---
+name: Table 88
+location: Data from Figure 88 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $y_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d044-x01-y01_cov.yaml
+---
+name: Table 89
+location: Data from Table 23 of paper.
+description: Measured absolute differential cross section at parton level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d045-x01-y01.yaml
+---
+name: Table 90
+location: Data from Figure 90 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d045-x01-y01_cov.yaml
+---
+name: Table 91
+location: Data from Table 23 of paper.
+description: Measured normalised differential cross section at parton level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d046-x01-y01.yaml
+---
+name: Table 92
+location: Data from Figure 92 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d046-x01-y01_cov.yaml
+---
+name: Table 93
+location: Data from Table 38 of paper.
+description: Measured absolute differential cross section at particle level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d047-x01-y01.yaml
+---
+name: Table 94
+location: Data from Figure 94 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d047-x01-y01_cov.yaml
+---
+name: Table 95
+location: Data from Table 38 of paper.
+description: Measured normalised differential cross section at particle level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d048-x01-y01.yaml
+---
+name: Table 96
+location: Data from Figure 96 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $m_{t\bar{t}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d048-x01-y01_cov.yaml
+---
+name: Table 97
+location: Data from Table 25 of paper.
+description: Measured absolute differential cross section at parton level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d049-x01-y01.yaml
+---
+name: Table 98
+location: Data from Figure 98 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d049-x01-y01_cov.yaml
+---
+name: Table 99
+location: Data from Table 25 of paper.
+description: Measured normalised differential cross section at parton level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d050-x01-y01.yaml
+---
+name: Table 100
+location: Data from Figure 100 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d050-x01-y01_cov.yaml
+---
+name: Table 101
+location: Data from Table 40 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d051-x01-y01.yaml
+---
+name: Table 102
+location: Data from Figure 102 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d051-x01-y01_cov.yaml
+---
+name: Table 103
+location: Data from Table 40 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d052-x01-y01.yaml
+---
+name: Table 104
+location: Data from Figure 104 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\Delta|y|(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d052-x01-y01_cov.yaml
+---
+name: Table 105
+location: Data from Table 27 of paper.
+description: Measured absolute differential cross section at parton level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d053-x01-y01.yaml
+---
+name: Table 106
+location: Data from Figure 106 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at parton level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d053-x01-y01_cov.yaml
+---
+name: Table 107
+location: Data from Table 27 of paper.
+description: Measured normalised differential cross section at parton level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d054-x01-y01.yaml
+---
+name: Table 108
+location: Data from Figure 108 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at parton level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d054-x01-y01_cov.yaml
+---
+name: Table 109
+location: Data from Table 42 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d055-x01-y01.yaml
+---
+name: Table 110
+location: Data from Figure 110 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d055-x01-y01_cov.yaml
+---
+name: Table 111
+location: Data from Table 42 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d056-x01-y01.yaml
+---
+name: Table 112
+location: Data from Figure 112 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\Delta\phi(t,\bar{t})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d056-x01-y01_cov.yaml
+---
+name: Table 113
+location: Data from Table 43 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d057-x01-y01.yaml
+---
+name: Table 114
+location: Data from Figure 114 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d057-x01-y01_cov.yaml
+---
+name: Table 115
+location: Data from Table 43 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d058-x01-y01.yaml
+---
+name: Table 116
+location: Data from Figure 116 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d058-x01-y01_cov.yaml
+---
+name: Table 117
+location: Data from Table 44 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d059-x01-y01.yaml
+---
+name: Table 118
+location: Data from Figure 118 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d059-x01-y01_cov.yaml
+---
+name: Table 119
+location: Data from Table 44 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d060-x01-y01.yaml
+---
+name: Table 120
+location: Data from Figure 120 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d060-x01-y01_cov.yaml
+---
+name: Table 121
+location: Data from Table 45 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d061-x01-y01.yaml
+---
+name: Table 122
+location: Data from Figure 122 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d061-x01-y01_cov.yaml
+---
+name: Table 123
+location: Data from Table 45 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d062-x01-y01.yaml
+---
+name: Table 124
+location: Data from Figure 124 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d062-x01-y01_cov.yaml
+---
+name: Table 125
+location: Data from Table 46 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d063-x01-y01.yaml
+---
+name: Table 126
+location: Data from Figure 126 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d063-x01-y01_cov.yaml
+---
+name: Table 127
+location: Data from Table 46 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d064-x01-y01.yaml
+---
+name: Table 128
+location: Data from Figure 128 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d064-x01-y01_cov.yaml
+---
+name: Table 129
+location: Data from Table 47 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d065-x01-y01.yaml
+---
+name: Table 130
+location: Data from Figure 130 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d065-x01-y01_cov.yaml
+---
+name: Table 131
+location: Data from Table 47 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d066-x01-y01.yaml
+---
+name: Table 132
+location: Data from Figure 132 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d066-x01-y01_cov.yaml
+---
+name: Table 133
+location: Data from Table 48 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d067-x01-y01.yaml
+---
+name: Table 134
+location: Data from Figure 134 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d067-x01-y01_cov.yaml
+---
+name: Table 135
+location: Data from Table 48 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d068-x01-y01.yaml
+---
+name: Table 136
+location: Data from Figure 136 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d068-x01-y01_cov.yaml
+---
+name: Table 137
+location: Data from Table 49 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d069-x01-y01.yaml
+---
+name: Table 138
+location: Data from Figure 138 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d069-x01-y01_cov.yaml
+---
+name: Table 139
+location: Data from Table 49 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d070-x01-y01.yaml
+---
+name: Table 140
+location: Data from Figure 140 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d070-x01-y01_cov.yaml
+---
+name: Table 141
+location: Data from Table 50 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d071-x01-y01.yaml
+---
+name: Table 142
+location: Data from Figure 142 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d071-x01-y01_cov.yaml
+---
+name: Table 143
+location: Data from Table 50 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d072-x01-y01.yaml
+---
+name: Table 144
+location: Data from Figure 144 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{l}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d072-x01-y01_cov.yaml
+---
+name: Table 145
+location: Data from Table 51 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{l\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d073-x01-y01.yaml
+---
+name: Table 146
+location: Data from Figure 146 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{l\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d073-x01-y01_cov.yaml
+---
+name: Table 147
+location: Data from Table 51 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{l\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d074-x01-y01.yaml
+---
+name: Table 148
+location: Data from Figure 148 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{l\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d074-x01-y01_cov.yaml
+---
+name: Table 149
+location: Data from Table 52 of paper.
+description: Measured absolute differential cross section at particle level as a function of $m_{l\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d075-x01-y01.yaml
+---
+name: Table 150
+location: Data from Figure 150 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $m_{l\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d075-x01-y01_cov.yaml
+---
+name: Table 151
+location: Data from Table 52 of paper.
+description: Measured normalised differential cross section at particle level as a function of $m_{l\bar{l}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d076-x01-y01.yaml
+---
+name: Table 152
+location: Data from Figure 152 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $m_{l\bar{l}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d076-x01-y01_cov.yaml
+---
+name: Table 153
+location: Data from Table 53 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\Delta\phi(l,\bar{l})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d077-x01-y01.yaml
+---
+name: Table 154
+location: Data from Figure 154 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\Delta\phi(l,\bar{l})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d077-x01-y01_cov.yaml
+---
+name: Table 155
+location: Data from Table 53 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\Delta\phi(l,\bar{l})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d078-x01-y01.yaml
+---
+name: Table 156
+location: Data from Figure 156 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\Delta\phi(l,\bar{l})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d078-x01-y01_cov.yaml
+---
+name: Table 157
+location: Data from Table 54 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\Delta|\eta|(l,\bar{l})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d079-x01-y01.yaml
+---
+name: Table 158
+location: Data from Figure 158 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\Delta|\eta|(l,\bar{l})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d079-x01-y01_cov.yaml
+---
+name: Table 159
+location: Data from Table 54 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\Delta|\eta|(l,\bar{l})$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d080-x01-y01.yaml
+---
+name: Table 160
+location: Data from Figure 160 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\Delta|\eta|(l,\bar{l})$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d080-x01-y01_cov.yaml
+---
+name: Table 161
+location: Data from Table 55 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d081-x01-y01.yaml
+---
+name: Table 162
+location: Data from Figure 162 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d081-x01-y01_cov.yaml
+---
+name: Table 163
+location: Data from Table 55 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d082-x01-y01.yaml
+---
+name: Table 164
+location: Data from Figure 164 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d082-x01-y01_cov.yaml
+---
+name: Table 165
+location: Data from Table 56 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d083-x01-y01.yaml
+---
+name: Table 166
+location: Data from Figure 166 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d083-x01-y01_cov.yaml
+---
+name: Table 167
+location: Data from Table 56 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d084-x01-y01.yaml
+---
+name: Table 168
+location: Data from Figure 168 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d084-x01-y01_cov.yaml
+---
+name: Table 169
+location: Data from Table 57 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d085-x01-y01.yaml
+---
+name: Table 170
+location: Data from Figure 170 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d085-x01-y01_cov.yaml
+---
+name: Table 171
+location: Data from Table 57 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d086-x01-y01.yaml
+---
+name: Table 172
+location: Data from Figure 172 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d086-x01-y01_cov.yaml
+---
+name: Table 173
+location: Data from Table 58 of paper.
+description: Measured absolute differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d087-x01-y01.yaml
+---
+name: Table 174
+location: Data from Figure 174 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d087-x01-y01_cov.yaml
+---
+name: Table 175
+location: Data from Table 58 of paper.
+description: Measured normalised differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d088-x01-y01.yaml
+---
+name: Table 176
+location: Data from Figure 176 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $\eta_{b}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d088-x01-y01_cov.yaml
+---
+name: Table 177
+location: Data from Table 59 of paper.
+description: Measured absolute differential cross section at particle level as a function of $p_{T}^{b\bar{b}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d089-x01-y01.yaml
+---
+name: Table 178
+location: Data from Figure 178 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $p_{T}^{b\bar{b}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d089-x01-y01_cov.yaml
+---
+name: Table 179
+location: Data from Table 59 of paper.
+description: Measured normalised differential cross section at particle level as a function of $p_{T}^{b\bar{b}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d090-x01-y01.yaml
+---
+name: Table 180
+location: Data from Figure 180 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $p_{T}^{b\bar{b}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d090-x01-y01_cov.yaml
+---
+name: Table 181
+location: Data from Table 60 of paper.
+description: Measured absolute differential cross section at particle level as a function of $m_{b\bar{b}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d091-x01-y01.yaml
+---
+name: Table 182
+location: Data from Figure 182 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $m_{b\bar{b}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d091-x01-y01_cov.yaml
+---
+name: Table 183
+location: Data from Table 60 of paper.
+description: Measured normalised differential cross section at particle level as a function of $m_{b\bar{b}}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d092-x01-y01.yaml
+---
+name: Table 184
+location: Data from Figure 184 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $m_{b\bar{b}}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d092-x01-y01_cov.yaml
+---
+name: Table 185
+location: Data from Table 61 of paper.
+description: Measured absolute differential cross section at particle level as a function of $N_{jets}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d093-x01-y01.yaml
+---
+name: Table 186
+location: Data from Figure 186 of additional figures on analysis webpage.
+description: Covariance matrix of the absolute differential cross section at particle level as a function of $N_{jets}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d093-x01-y01_cov.yaml
+---
+name: Table 187
+location: Data from Table 61 of paper.
+description: Measured normalised differential cross section at particle level as a function of $N_{jets}$.
+keywords: 
+- {name: reactions, values: [P P --> TOP TOPBAR X]}
+- {name: observables,  values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d094-x01-y01.yaml
+---
+name: Table 188
+location: Data from Figure 188 of additional figures on analysis webpage.
+description: Covariance matrix of the normalised differential cross section at particle level as a function of $N_{jets}$.
+keywords: 
+- {name: reactions,values: [P P --> TOP TOPBAR X]}
+- {name: observables, values: [SIG]}
+- {name: phrases, values: [Top, Differential Cross Section, Proton-Proton Scattering, Top Production]}
+- {name: cmenergies, values: [13000.0]}
+data_file: d094-x01-y01_cov.yaml
