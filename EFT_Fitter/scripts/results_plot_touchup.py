@@ -5,7 +5,7 @@ import subprocess
 
 gStyle.SetOptStat(00000)
 
-directory_base = "files/Jan18"
+directory_base = "../files/Jan18"
 target_directory_base = "/Users/keaveney/Desktop/testplots/"
 #target_directory_base = "/Users/keaveney/docs/TOP-17-014/myDir/papers/TOP-17-014/trunk/fig_logo/diff_results/primary/"
 
@@ -93,10 +93,8 @@ for xsec_type in xsec_types:
                         h_data.GetYaxis().SetRangeUser(0.0000004, 0.02)
                 if (filename == "DiffXS_HypBBBarpT_source.root"):
                     if((xsec_level == "particle") & (xsec_type == "absolute")):
-                        print "BBAR BBAR BBAR1"
                         h_data.GetYaxis().SetRangeUser(0.0006, 0.385)
                     if((xsec_level == "particle") & (xsec_type == "normalised")):
-                        print "BBAR BBAR BBAR2"
                         h_data.GetYaxis().SetRangeUser(0.00006, 0.0385)
                 if (filename == "DiffXS_HypLeptonEta_source.root"):
                     if( (xsec_type == "absolute")):
@@ -227,7 +225,7 @@ for xsec_type in xsec_types:
                                     if((xsec_level == "particle") & (xsec_type == "absolute")):
                                         prim_pad.GetYaxis().SetRangeUser(0.92, 1.22)
                                     if((xsec_level == "particle") & (xsec_type == "normalised")):
-                                        prim_pad.GetYaxis().SetRangeUser(0.977, 1.08)
+                                        prim_pad.GetYaxis().SetRangeUser(0.963, 1.08)
                             if ( (filename == "DiffXS_HypLLBarDEta_source.root") ):
                                 if (prim_pad.InheritsFrom("TH1")):
                                     if((xsec_level == "particle") & (xsec_type == "absolute")):
@@ -261,13 +259,7 @@ for xsec_type in xsec_types:
                             if ( (filename == "DiffXS_HypBBBarpT_source.root") ):
                                 if (prim_pad.InheritsFrom("TH1")):
                                     if((xsec_level == "particle") & (xsec_type == "absolute")):
-                                        prim_pad.GetYaxis().SetRangeUser(0.83, 1.31)
-                                    if((xsec_level == "particle") & (xsec_type == "normalised")):
-                                        prim_pad.GetYaxis().SetRangeUser(0.86, 1.28)
-                            if ( (filename == "DiffXS_HypBBBarpT_source.root") ):
-                                if (prim_pad.InheritsFrom("TH1")):
-                                    if((xsec_level == "particle") & (xsec_type == "absolute")):
-                                        prim_pad.GetYaxis().SetRangeUser(0.87, 1.24)
+                                        prim_pad.GetYaxis().SetRangeUser(0.82, 1.321)
                                     if((xsec_level == "particle") & (xsec_type == "normalised")):
                                         prim_pad.GetYaxis().SetRangeUser(0.86, 1.24)
                             if ( (filename == "DiffXS_HypBBBarMass_source.root") ):
@@ -367,8 +359,8 @@ for xsec_type in xsec_types:
                                     if( (xsec_level == "particle") &(xsec_type == "absolute")):
                                         prim_pad.SetX1NDC(0.24)
                                         prim_pad.SetX2NDC(0.42)
-                                        prim_pad.SetY1NDC(0.73)
-                                        prim_pad.SetY2NDC(0.96)
+                                        prim_pad.SetY1NDC(0.72)
+                                        prim_pad.SetY2NDC(0.95)
                                     if( (xsec_level == "particle") &(xsec_type == "normalised")):
                                         prim_pad.SetX1NDC(0.24)
                                         prim_pad.SetX2NDC(0.42)
